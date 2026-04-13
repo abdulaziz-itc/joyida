@@ -34,6 +34,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
+      const formData = new FormData();
       formData.append('username', email);
       formData.append('password', password);
 
