@@ -6,6 +6,9 @@ export interface User {
     email: string;
     full_name?: string;
     is_active: boolean;
+    is_superuser?: boolean;
+    is_expert?: boolean;
+    subscription_tier?: string;
     profile_completed?: boolean;
 }
 
