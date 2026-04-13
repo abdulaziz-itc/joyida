@@ -1,9 +1,9 @@
+import React, { useState } from 'react';
 import { Mail, Lock, LogIn, Github, Chrome } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useGoogleLogin } from '@react-oauth/google';
 import apiClient from '../../api/apiClient';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');

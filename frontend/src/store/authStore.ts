@@ -6,6 +6,7 @@ export interface User {
     email: string;
     full_name?: string;
     is_active: boolean;
+    profile_completed?: boolean;
 }
 
 interface AuthState {
