@@ -18,7 +18,7 @@ class AuthProvider with ChangeNotifier {
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/api/v1/auth/login/access-token'),
+        Uri.parse('https://backend.joida.uz/api/v1/auth/login/access-token'),
         body: {
           'username': email,
           'password': password,
@@ -53,7 +53,7 @@ class AuthProvider with ChangeNotifier {
       if (idToken == null) return false;
 
       final response = await http.post(
-        Uri.parse('http://localhost:8000/api/v1/google-auth/google'),
+        Uri.parse('https://backend.joida.uz/api/v1/google-auth/google'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'idToken': idToken}),
       );
