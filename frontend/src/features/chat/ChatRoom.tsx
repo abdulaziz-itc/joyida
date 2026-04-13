@@ -8,7 +8,7 @@ import {
 
 interface Message {
   id: number;
-  sender: 'me' | 'other';
+  sender: 'me' | 'other' | 'system';
   text: string;
   type: 'text' | 'offer' | 'system';
   timestamp: string;
