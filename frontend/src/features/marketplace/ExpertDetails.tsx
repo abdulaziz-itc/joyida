@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, Star, MapPin, Phone, MessageSquare, 
   Play, Image as ImageIcon, MessageCircle, MoreVertical, 
-  ChevronRight, Heart, Share2, Award, ShieldAlert
+  ChevronRight, Heart, Share2, Award, ShieldAlert, X
 } from 'lucide-react';
 import SafetyGuidelines from './SafetyGuidelines';
 import ChatRoom from '../chat/ChatRoom';
