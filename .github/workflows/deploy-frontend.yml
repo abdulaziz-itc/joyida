@@ -36,7 +36,7 @@ jobs:
           username: joidauz
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./frontend/dist/
-          server-dir: /public_html/
+          server-dir: public_html/
           protocol: ftp
           port: 21
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
