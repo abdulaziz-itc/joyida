@@ -14,16 +14,3 @@ class PortfolioItem(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     owner = relationship("User", backref="portfolio")
-
-class Review(Base):
-    __tablename__ = "reviews"
-
-    id = Column(Integer, primary_key=True, index=True)
-    expert_id = Column(Integer, ForeignKey("users.id"))
-    reviewer_id = Column(Integer, ForeignKey("users.id"))
-    rating = Column(Integer, default=5)
-    comment = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    expert = relationship("User", foreign_keys=[expert_id], backref="reviews_received")
-    reviewer = relationship("User", foreign_keys=[reviewer_id], backref="reviews_given")
