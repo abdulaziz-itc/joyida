@@ -1,0 +1,22 @@
+{
+  "onboarding": {
+    "slide1_title": "Yaqin mutaxassislarni toping",
+    "slide1_subtitle": "O'z mahallangizdagi santexniklar, advokatlar va boshqa ekspertlar bilan bog'laning.",
+    "slide2_title": "Vaqt va pulingizni tejang",
+    "slide2_subtitle": "Ortiqcha yo'l xarajatlarisiz, yaqin atrofdagi mutaxassislardan yordam oling.",
+    "slide3_title": "Mutaxassis sifatida daromad toping",
+    "slide3_subtitle": "O'z ko'nikmalaringizni qo'shimcha daromadga aylantiring.",
+    "next": "Keyingi qadam",
+    "getStarted": "Boshlash",
+    "skip": "O'tkazib yuborish"
+  },
+  "preferences": {
+    "title": "Ilovani o'zingizga moslang",
+    "subtitle": "Boshlash uchun til va ko'rinishni (mavzu) tanlang.",
+    "language": "Til",
+    "theme": "Ko'rinish",
+    "dark": "Tungi rejim",
+    "light": "Kungi rejim",
+    "continue": "Davom etish"
+  }
+}

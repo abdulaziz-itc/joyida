@@ -1,0 +1,20 @@
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from app.db.session import Base
+from datetime import datetime
+
+class Project(Base):
+    __tablename__ = "projects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True, nullable=False)
+    description = Column(String, nullable=True)
+    status = Column(String, default="Ongoing") # Ongoing, Completed, Overdue
+    progress = Column(Float, default=0.0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="projects")
+
+# Update User model to include projects relationship
+# (This would usually be in models/user.py)

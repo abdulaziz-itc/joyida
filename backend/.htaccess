@@ -1,0 +1,9 @@
+# Enable Phusion Passenger
+PassengerEnabled on
+PassengerAppRoot /home/USERNAME/api.joyida.uz/backend
+PassengerPython /home/USERNAME/virtualenv/api.joyida.uz/backend/3.10/bin/python
+PassengerAppType wsgi
+PassengerStartupFile passenger_wsgi.py
+
+# Optional: Set environment variables
+# SetEnv SECRET_KEY your-super-secret-key

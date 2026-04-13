@@ -1,0 +1,22 @@
+{
+  "onboarding": {
+    "slide1_title": "Find Local Experts",
+    "slide1_subtitle": "Connect with plumbers, lawyers, and experts in your own neighborhood.",
+    "slide2_title": "Save Time & Money",
+    "slide2_subtitle": "Get help instantly from people nearby without expensive travel costs.",
+    "slide3_title": "Earn as an Expert",
+    "slide3_subtitle": "Turn your skills into income by helping your neighbors after hours.",
+    "next": "Next Step",
+    "getStarted": "Get Started",
+    "skip": "Skip Intro"
+  },
+  "preferences": {
+    "title": "Customize Your Experience",
+    "subtitle": "Choose your preferred language and theme to get started.",
+    "language": "Language",
+    "theme": "Theme",
+    "dark": "Dark Mode",
+    "light": "Light Mode",
+    "continue": "Continue"
+  }
+}
