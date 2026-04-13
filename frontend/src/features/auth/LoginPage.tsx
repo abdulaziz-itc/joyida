@@ -64,14 +64,14 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-[#020205] overflow-hidden selection:bg-purple-500/30">
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#020205] overflow-hidden selection:bg-purple-500/30">
       
       {/* --- LEFT SIDE: PREMIUM HERO (Wider 55%) --- */}
       <motion.div 
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="hidden lg:flex lg:w-[55%] relative flex-col justify-center p-24 xl:p-32 overflow-hidden"
+        className="hidden md:flex md:w-[50%] lg:w-[55%] relative flex-col justify-center p-12 lg:p-24 xl:p-32 overflow-hidden"
       >
         {/* Advanced Dynamic Background */}
         <div className="absolute inset-0 z-0">
@@ -85,29 +85,29 @@ const LoginPage: React.FC = () => {
             <Zap className="w-4 h-4 fill-purple-400" /> Digital Evolution
           </motion.div>
           
-          <motion.h1 variants={itemVariants} className="text-7xl xl:text-8xl font-black tracking-tight leading-[0.95] mb-10 text-white">
+          <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[0.95] mb-10 text-white">
             Design your <br />
             <span className="gradient-text">dream space.</span>
           </motion.h1>
           
-          <motion.p variants={itemVariants} className="text-2xl text-gray-400 mb-16 max-w-xl leading-relaxed font-medium">
+          <motion.p variants={itemVariants} className="text-lg md:text-xl lg:text-2xl text-gray-400 mb-16 max-w-xl leading-relaxed font-medium">
             Joyida brings together visionary planners and expert specialists in one seamless ecosystem. Built for growth, designed for clarity.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="grid grid-cols-2 gap-12 max-w-2xl">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-2xl">
             <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10 text-purple-400 shadow-xl">
-                <ShieldCheck className="w-7 h-7" />
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10 text-purple-400 shadow-xl">
+                <ShieldCheck className="w-6 h-6 lg:w-7 lg:h-7" />
               </div>
-              <h4 className="text-xl font-bold text-white">Ironclad Security</h4>
-              <p className="text-gray-500 leading-relaxed font-medium">Your assets and data are protected by industry-standard encryption protocols.</p>
+              <h4 className="text-lg lg:text-xl font-bold text-white">Ironclad Security</h4>
+              <p className="text-sm lg:text-base text-gray-500 leading-relaxed font-medium">Your assets and data are protected by industry-standard encryption protocols.</p>
             </div>
             <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 text-pink-400 shadow-xl">
-                <Globe className="w-7 h-7" />
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 text-pink-400 shadow-xl">
+                <Globe className="w-6 h-6 lg:w-7 lg:h-7" />
               </div>
-              <h4 className="text-xl font-bold text-white">Global Reach</h4>
-              <p className="text-gray-500 leading-relaxed font-medium">Access a worldwide network of property experts and innovative designers.</p>
+              <h4 className="text-lg lg:text-xl font-bold text-white">Global Reach</h4>
+              <p className="text-sm lg:text-base text-gray-500 leading-relaxed font-medium">Access a worldwide network of property experts and innovative designers.</p>
             </div>
           </motion.div>
         </div>
@@ -121,9 +121,9 @@ const LoginPage: React.FC = () => {
       </motion.div>
 
       {/* --- RIGHT SIDE: PRECISION LOGIN FORM (Fixed 45%) --- */}
-      <div className="flex-1 flex items-center justify-center relative px-6 py-20 lg:py-0 lg:bg-[#050508]/50 backdrop-blur-3xl lg:border-l lg:border-white/[0.05]">
+      <div className="flex-1 flex items-center justify-center relative px-6 py-20 md:py-0 md:bg-[#050508]/50 backdrop-blur-3xl md:border-l md:border-white/[0.05]">
         {/* Background Accents for Mobile/Tablet */}
-        <div className="lg:hidden absolute inset-0 -z-10">
+        <div className="md:hidden absolute inset-0 -z-10">
           <div className="absolute top-1/4 left-0 w-64 h-64 bg-purple-600/20 blur-[100px]" />
           <div className="absolute bottom-1/4 right-0 w-64 h-64 bg-blue-600/20 blur-[100px]" />
         </div>
@@ -135,7 +135,7 @@ const LoginPage: React.FC = () => {
           className="w-full max-w-md relative z-10"
         >
           {/* Header */}
-          <div className="text-center lg:text-left mb-12">
+          <div className="text-center md:text-left mb-12">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -143,7 +143,7 @@ const LoginPage: React.FC = () => {
             >
               <Sparkles className="w-3 h-3" /> Secure Access
             </motion.div>
-            <h2 className="text-5xl lg:text-6xl font-black mb-4 text-white tracking-tight">
+            <h2 className="text-5xl md:text-5xl lg:text-6xl font-black mb-4 text-white tracking-tight">
               Sign In.
             </h2>
             <p className="text-gray-400 text-lg font-medium">Enter your credentials to manage your space.</p>
