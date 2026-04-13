@@ -28,12 +28,30 @@ async def google_login(
     if not id_token_str:
         raise HTTPException(status_code=400, detail="ID Token missing")
 
-    try:
-        # Verify the ID token
-        id_info = id_token.verify_oauth2_token(
-            id_token_str, requests.Request(), GOOGLE_CLIENT_IDS[0]
+    id_info = None
+    last_error = None
+    
+    # Try verifying the token against all known Client IDs
+    for client_id in GOOGLE_CLIENT_IDS:
+        try:
+            id_info = id_token.verify_oauth2_token(
+                id_token_str, requests.Request(), client_id
+            )
+            # If successful, break the loop
+            if id_info:
+                break
+        except Exception as e:
+            last_error = str(e)
+            continue
+
+    if not id_info:
+        # If verification failed for all IDs
+        raise HTTPException(
+            status_code=401, 
+            detail=f"Invalid Google token. Error: {last_error}"
         )
 
+    try:
         # ID token is valid. Get user info
         email = id_info.get("email")
         full_name = id_info.get("name")
@@ -59,6 +77,5 @@ async def google_login(
             ),
             "token_type": "bearer",
         }
-    except ValueError:
-        # Invalid token
-        raise HTTPException(status_code=401, detail="Invalid Google token")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
