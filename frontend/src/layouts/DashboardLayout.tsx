@@ -1,4 +1,7 @@
-  Briefcase, Settings, LogOut, ShieldCheck, MapPin, Zap
+import React from 'react';
+import { 
+  LayoutDashboard, Briefcase, Settings, LogOut, 
+  ShieldCheck, MapPin, Zap, Users, PieChart 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
