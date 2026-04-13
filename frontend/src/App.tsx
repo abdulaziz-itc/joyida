@@ -1,3 +1,4 @@
+// Joyida Platform: Production Deployment Trigger
 import { useState, useEffect } from 'react';
 import LoginPage from './features/auth/LoginPage';
 import Onboarding from './features/auth/Onboarding';
