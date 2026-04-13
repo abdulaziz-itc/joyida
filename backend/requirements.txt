@@ -27,3 +27,4 @@ typing_extensions==4.15.0
 uvicorn==0.39.0
 a2wsgi
 alembic
+pydantic-settings
