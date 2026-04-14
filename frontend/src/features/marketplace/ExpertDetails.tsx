@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, Star, MapPin, Phone, MessageSquare, 
@@ -25,6 +26,7 @@ interface Review {
 }
 
 const ExpertDetails: React.FC<{ expertId: number, onBack: () => void }> = ({ onBack }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'portfolio' | 'reviews'>('portfolio');
   const [showVideo, setShowVideo] = useState<string | null>(null);
   const [showSafety, setShowSafety] = useState(false);
@@ -87,7 +89,7 @@ const ExpertDetails: React.FC<{ expertId: number, onBack: () => void }> = ({ onB
                  <p className="text-xl text-purple-400 font-medium mb-2">Professional Santexnik</p>
                  <div className="flex gap-4">
                     <div className="flex items-center gap-1.5 text-yellow-500 font-bold">
-                       <Star className="w-5 h-5 fill-current" /> 4.9 (124 reviews)
+                       <Star className="w-5 h-5 fill-current" /> 4.9 (124 {t('expert.reviews_count')})
                     </div>
                     <div className="flex items-center gap-1.5 text-gray-400">
                        <MapPin className="w-5 h-5" /> Yunusobod, Toshkent
@@ -100,7 +102,7 @@ const ExpertDetails: React.FC<{ expertId: number, onBack: () => void }> = ({ onB
         {/* Bio & Actions */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-20">
            <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold mb-4">Mutaxassis haqida</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('expert.about')}</h2>
               <p className="text-gray-400 leading-relaxed mb-8 text-lg">
                  10 yillik tajribaga ega santexnikman. Har qanday murakkablikdagi suv va kanalizatsiya tizimlarini ta'mirlash, montaj qilish va servis xizmatlarini ko'rsataman. Ishimga to'liq kafolat beraman.
               </p>
@@ -111,13 +113,13 @@ const ExpertDetails: React.FC<{ expertId: number, onBack: () => void }> = ({ onB
                     onClick={() => setActiveTab('portfolio')}
                     className={`pb-4 px-8 font-bold text-lg transition-all relative ${activeTab === 'portfolio' ? 'text-white' : 'text-gray-500'}`}
                  >
-                    Portfolio {activeTab === 'portfolio' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500 rounded-full" />}
+                    {t('expert.portfolio')} {activeTab === 'portfolio' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500 rounded-full" />}
                  </button>
                  <button 
                     onClick={() => setActiveTab('reviews')}
                     className={`pb-4 px-8 font-bold text-lg transition-all relative ${activeTab === 'reviews' ? 'text-white' : 'text-gray-500'}`}
                  >
-                    Sharhlar {activeTab === 'reviews' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500 rounded-full" />}
+                    {t('expert.reviews')} {activeTab === 'reviews' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500 rounded-full" />}
                  </button>
               </div>
 
@@ -173,29 +175,29 @@ const ExpertDetails: React.FC<{ expertId: number, onBack: () => void }> = ({ onB
            <div className="space-y-6">
               <div className="glass-card p-8 border-purple-500/20">
                  <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                    Bog'lanish <ShieldAlert className="w-5 h-5 text-gray-500" />
+                    {t('expert.contact')} <ShieldAlert className="w-5 h-5 text-gray-500" />
                  </h3>
                  <div className="space-y-4">
                     <button 
                       onClick={() => handleContactClick('call')}
                       className="glow-button w-full h-14 flex items-center justify-center gap-3 text-lg"
                     >
-                       <Phone className="w-5 h-5" /> Qo'ng'iroq qilish
+                       <Phone className="w-5 h-5" /> {t('expert.call')}
                     </button>
                     <button 
                       onClick={() => handleContactClick('chat')}
                       className="w-full h-14 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all flex items-center justify-center gap-3 text-lg"
                     >
-                       <MessageCircle className="w-5 h-5" /> Chat boshlash
+                       <MessageCircle className="w-5 h-5" /> {t('expert.chat')}
                     </button>
                  </div>
                  <div className="mt-8 pt-8 border-t border-white/10">
                     <div className="flex justify-between items-center mb-4 text-sm">
-                       <span className="text-gray-400">Xizmat narxi (o'rtacha)</span>
+                       <span className="text-gray-400">{t('expert.avgPrice')}</span>
                        <span className="font-bold text-green-400">100,000 UZS dan</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                       <span className="text-gray-400">Ish vaqti</span>
+                       <span className="text-gray-400">{t('expert.workTime')}</span>
                        <span className="font-bold">09:00 - 21:00</span>
                     </div>
                  </div>
@@ -207,8 +209,8 @@ const ExpertDetails: React.FC<{ expertId: number, onBack: () => void }> = ({ onB
                        <Award className="w-6 h-6" />
                     </div>
                     <div>
-                       <p className="font-bold text-white text-base">Sertifikatlangan mutaxassis</p>
-                       <p>Loyiha tomonidan tasdiqlangan</p>
+                       <p className="font-bold text-white text-base">{t('expert.certified')}</p>
+                       <p>{t('expert.approvedByProject')}</p>
                     </div>
                  </div>
               </div>

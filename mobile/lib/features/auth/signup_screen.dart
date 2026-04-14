@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../core/auth_provider.dart';
@@ -73,9 +74,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         setState(() {
           _latitude = position.latitude;
           _longitude = position.longitude;
-          _locationName = "Current Location Detected";
+          _locationName = "auth.location_acquired".tr();
         });
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Location acquired!')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('auth.location_acquired'.tr())));
       }
     } catch (e) {
       print('Location error: $e');
@@ -118,7 +119,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     
     if (errorMessage == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Registration Successful!')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('auth.registration_success'.tr())));
         Navigator.of(context).pop(); 
       }
     } else {
@@ -167,8 +168,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Create Account', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-              Text('Step ${_currentStep + 1} of ${_isExpert ? 4 : 2}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+              Text('auth.create_account'.tr(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text('auth.step_n_of_m'.tr(namedArgs: {'step': '${_currentStep + 1}', 'total': '${_isExpert ? 4 : 2}'}), style: const TextStyle(color: Colors.grey, fontSize: 12)),
             ],
           ),
         ],
@@ -189,19 +190,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildStep0Selection() {
     return Column(
       children: [
-        const Text("I want to use Joyida as a...", style: TextStyle(fontSize: 18, color: Colors.white70)),
+        Text("auth.role_selection_title".tr(), style: const TextStyle(fontSize: 18, color: Colors.white70)),
         const SizedBox(height: 32),
         _SelectionCard(
-          title: "Regular User",
-          subtitle: "Looking for specialist services",
+          title: "auth.role_user".tr(),
+          subtitle: "auth.role_user_desc".tr(),
           icon: Icons.person_outline,
           isSelected: !_isExpert,
           onTap: () => setState(() => _isExpert = false),
         ),
         const SizedBox(height: 16),
         _SelectionCard(
-          title: "Specialist / Expert",
-          subtitle: "Offering my professional services",
+          title: "auth.role_expert".tr(),
+          subtitle: "auth.role_expert_desc".tr(),
           icon: Icons.handyman_outlined,
           isSelected: _isExpert,
           onTap: () => setState(() => _isExpert = true),
@@ -213,11 +214,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildStep1Basic() {
     return Column(
       children: [
-        _buildGlassField(_fullNameController, 'Full Name', Icons.person_outline),
+        _buildGlassField(_fullNameController, 'auth.full_name'.tr(), Icons.person_outline),
         const SizedBox(height: 16),
-        _buildGlassField(_emailController, 'Email Address', Icons.mail_outline),
+        _buildGlassField(_emailController, 'auth.email_hint'.tr(), Icons.mail_outline),
         const SizedBox(height: 16),
-        _buildGlassField(_passwordController, 'Password', Icons.lock_outline, obscure: true),
+        _buildGlassField(_passwordController, 'auth.password_hint'.tr(), Icons.lock_outline, obscure: true),
       ],
     );
   }
@@ -226,7 +227,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Service Categories", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
+        Text("auth.service_categories".tr(), style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -251,15 +252,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SizedBox(height: 24),
         Row(
           children: [
-            Expanded(child: _buildDropdown('Birth Year', List.generate(50, (i) => 2010 - i), _selectedBirthYear, (v) => setState(() => _selectedBirthYear = v))),
+            Expanded(child: _buildDropdown('auth.birth_year'.tr(), List.generate(50, (i) => 2010 - i), _selectedBirthYear, (v) => setState(() => _selectedBirthYear = v))),
             const SizedBox(width: 16),
-            Expanded(child: _buildDropdown('Gender', ['Male', 'Female'], _selectedGender, (v) => setState(() => _selectedGender = v))),
+            Expanded(child: _buildDropdown('auth.gender'.tr(), ['auth.male'.tr(), 'auth.female'.tr()], _selectedGender, (v) => setState(() => _selectedGender = v))),
           ],
         ),
         const SizedBox(height: 16),
-        _buildDropdown('Education', ['High School', 'Bachelor', 'Master', 'PhD', 'DS'], _selectedEducation, (v) => setState(() => _selectedEducation = v)),
+        _buildDropdown('auth.education'.tr(), ['High School', 'Bachelor', 'Master', 'PhD', 'DS'], _selectedEducation, (v) => setState(() => _selectedEducation = v)),
         const SizedBox(height: 16),
-        _buildGlassField(_workplaceController, 'Current Workplace', Icons.business_outlined),
+        _buildGlassField(_workplaceController, 'auth.workplace'.tr(), Icons.business_outlined),
       ],
     );
   }
@@ -267,14 +268,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildStep3Uploads() {
     return Column(
       children: [
-        _buildUploadTile('Profile Picture', _profileImagePath, () => _pickImage(true), Icons.add_a_photo_outlined),
+        _buildUploadTile('auth.profile_pic'.tr(), _profileImagePath, () => _pickImage(true), Icons.add_a_photo_outlined),
         const SizedBox(height: 16),
-        _buildUploadTile('Diploma / Certificate', _diplomaPath, () => _pickImage(false), Icons.description_outlined),
+        _buildUploadTile('auth.diploma'.tr(), _diplomaPath, () => _pickImage(false), Icons.description_outlined),
         const SizedBox(height: 32),
         ElevatedButton.icon(
           onPressed: _getCurrentLocation,
           icon: const Icon(Icons.my_location),
-          label: Text(_locationName ?? "Get Current Location"),
+          label: Text(_locationName ?? "auth.get_location".tr()),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white10,
             foregroundColor: Colors.white,
@@ -296,7 +297,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: OutlinedButton(
                 onPressed: () => setState(() => _currentStep--),
                 style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: Colors.white24)),
-                child: const Text('Back', style: TextStyle(color: Colors.white)),
+                child: Text('auth.back'.tr(), style: const TextStyle(color: Colors.white)),
               ),
             ),
           if (_currentStep > 0) const SizedBox(width: 16),
@@ -309,7 +310,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 backgroundColor: AppTheme.primary,
                 foregroundColor: Colors.white,
               ),
-              child: Text(isLast ? 'Complete Registration' : 'Continue'),
+              child: Text(isLast ? 'auth.complete_registration'.tr() : 'auth.continue'.tr()),
             ),
           ),
         ],
@@ -368,7 +369,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             Icon(icon, color: path != null ? AppTheme.primary : Colors.grey),
             const SizedBox(width: 16),
-            Expanded(child: Text(path != null ? 'File selected' : label, style: TextStyle(color: path != null ? Colors.white : Colors.grey))),
+            Expanded(child: Text(path != null ? 'auth.file_selected'.tr() : label, style: TextStyle(color: path != null ? Colors.white : Colors.grey))),
             if (path != null) const Icon(Icons.check_circle, color: AppTheme.primary),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../core/auth_provider.dart';
 import '../../core/theme.dart';
 import 'signup_screen.dart';
@@ -26,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (errorMessage == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login Successful!')),
+          SnackBar(content: Text('auth.login_success'.tr())),
         );
       }
     } else {
@@ -106,26 +107,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Text(
-                                'Welcome back! Sign in to continue.',
+                              Text(
+                                'auth.login_subtitle'.tr(),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.grey),
+                                style: const TextStyle(color: Colors.grey),
                               ),
                               const SizedBox(height: 32),
                               TextField(
                                 controller: _emailController,
-                                decoration: const InputDecoration(
-                                  hintText: 'Email Address',
-                                  prefixIcon: Icon(Icons.mail_outline, color: Colors.grey),
+                                decoration: InputDecoration(
+                                  hintText: 'auth.email_hint'.tr(),
+                                  prefixIcon: const Icon(Icons.mail_outline, color: Colors.grey),
                                 ),
                               ),
                               const SizedBox(height: 16),
                               TextField(
                                 controller: _passwordController,
                                 obscureText: true,
-                                decoration: const InputDecoration(
-                                  hintText: 'Password',
-                                  prefixIcon: Icon(Icons.lock_outline, color: Colors.grey),
+                                decoration: InputDecoration(
+                                  hintText: 'auth.password_hint'.tr(),
+                                  prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
                                 ),
                               ),
                               const SizedBox(height: 24),
@@ -139,21 +140,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 child: _isLoading
                                     ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                    : const Row(
+                                    : Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text('Sign In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                          SizedBox(width: 8),
-                                          Icon(Icons.arrow_forward),
+                                          Text('auth.sign_in'.tr(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                          const SizedBox(width: 8),
+                                          const Icon(Icons.arrow_forward),
                                         ],
                                       ),
                               ),
                               const SizedBox(height: 24),
-                              const Row(
+                              Row(
                                 children: [
-                                  Expanded(child: Divider(color: Colors.white10)),
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('OR', style: TextStyle(color: Colors.grey, fontSize: 12))),
-                                  Expanded(child: Divider(color: Colors.white10)),
+                                  const Expanded(child: Divider(color: Colors.white10)),
+                                  Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text('auth.or'.tr(), style: const TextStyle(color: Colors.grey, fontSize: 12))),
+                                  const Expanded(child: Divider(color: Colors.white10)),
                                 ],
                               ),
                               const SizedBox(height: 24),
@@ -167,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         if (mounted) setState(() => _isLoading = false);
                                       },
                                       icon: Image.network('https://www.gstatic.com/images/branding/product/1x/gsuite_64dp.png', height: 20, errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata)),
-                                      label: const Text('Google'),
+                                      label: Text('auth.google'.tr()),
                                       style: OutlinedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(vertical: 12),
                                         side: const BorderSide(color: Colors.white12),
@@ -179,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: OutlinedButton.icon(
                                       onPressed: () {},
                                       icon: const Icon(Icons.apple, color: Colors.white),
-                                      label: const Text('Apple'),
+                                      label: Text('auth.apple'.tr()),
                                       style: OutlinedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(vertical: 12),
                                         side: const BorderSide(color: Colors.white12),
@@ -197,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Don't have an account?", style: TextStyle(color: Colors.grey)),
+                        Text("auth.no_account".tr(), style: const TextStyle(color: Colors.grey)),
                         TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -205,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               MaterialPageRoute(builder: (context) => const SignUpScreen()),
                             );
                           },
-                          child: const Text('Sign Up', style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold)),
+                          child: Text('auth.sign_up'.tr(), style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),

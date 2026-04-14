@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Star, Phone, MessageSquare, List, Map as MapIcon, X, ChevronRight, ShieldCheck, Gem } from 'lucide-react';
 import ExpertDetails from './ExpertDetails';
@@ -17,8 +18,10 @@ interface Expert {
   isPro?: boolean;
 }
 
-const ExpertCard = ({ expert, onClick }: { expert: Expert, onClick: () => void }) => (
-  <motion.div 
+const ExpertCard = ({ expert, onClick }: { expert: Expert, onClick: () => void }) => {
+  const { t } = useTranslation();
+  return (
+    <motion.div 
     whileHover={{ y: -5, scale: 1.02 }}
     onClick={onClick}
     className={`group cursor-pointer p-5 rounded-[32px] border transition-all flex gap-6 relative overflow-hidden ${
@@ -52,11 +55,11 @@ const ExpertCard = ({ expert, onClick }: { expert: Expert, onClick: () => void }
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-1.5 text-sm text-gray-500">
            <MapPin className="w-4 h-4 text-purple-500" /> 
-           <span>Distance: <b>{expert.distance}</b></span>
+           <span>{t('expert.distance')}: <b>{expert.distance}</b></span>
         </div>
         <div className="flex items-center gap-1 text-sm text-yellow-500 font-bold">
            <Star className="w-4 h-4 fill-current" /> 
-           <span>Rate: {expert.rating} ({expert.reviews} reviews)</span>
+           <span>{t('expert.rate')}: {expert.rating} ({expert.reviews} {t('expert.reviews_count')})</span>
         </div>
       </div>
     </div>
@@ -68,9 +71,12 @@ const ExpertCard = ({ expert, onClick }: { expert: Expert, onClick: () => void }
     </div>
   </motion.div>
 );
+};
 
-const AuthGuardAlert = ({ onCancel, onConfirm }: { onCancel: () => void, onConfirm: () => void }) => (
-  <motion.div 
+const AuthGuardAlert = ({ onCancel, onConfirm }: { onCancel: () => void, onConfirm: () => void }) => {
+  const { t } = useTranslation();
+  return (
+    <motion.div 
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
@@ -83,18 +89,20 @@ const AuthGuardAlert = ({ onCancel, onConfirm }: { onCancel: () => void, onConfi
       <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-500 mx-auto mb-6">
          <X className="w-8 h-8" />
       </div>
-      <h3 className="text-xl font-bold mb-4">Registration Required</h3>
-      <p className="text-gray-400 mb-8 text-sm leading-relaxed">Detailed information can only be viewed after registration. Do you want to register?</p>
+      <h3 className="text-xl font-bold mb-4">{t('marketplace.registrationRequired')}</h3>
+      <p className="text-gray-400 mb-8 text-sm leading-relaxed">{t('marketplace.registrationDesc')}</p>
       
       <div className="grid grid-cols-2 gap-4">
-        <button onClick={onCancel} className="px-6 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all text-sm font-bold">No</button>
-        <button onClick={onConfirm} className="glow-button px-6 py-3 rounded-xl text-sm font-bold">Yes</button>
+        <button onClick={onCancel} className="px-6 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all text-sm font-bold">{t('marketplace.no')}</button>
+        <button onClick={onConfirm} className="glow-button px-6 py-3 rounded-xl text-sm font-bold">{t('marketplace.yes')}</button>
       </div>
     </motion.div>
   </motion.div>
 );
+};
 
 const ExpertExplorer: React.FC = () => {
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuthStore();
   const [view, setView] = useState<'list' | 'map'>('list');
   const [searchQuery, setSearchQuery] = useState('');
@@ -126,8 +134,8 @@ const ExpertExplorer: React.FC = () => {
       {/* Header & Filters */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Expert Explorer</h1>
-          <p className="text-gray-400">Discover top-rated professionals right in your neighborhood.</p>
+          <h1 className="text-3xl font-bold">{t('marketplace.title')}</h1>
+          <p className="text-gray-400">{t('marketplace.subtitle')}</p>
         </div>
         
         <div className="flex items-center gap-4 bg-white/5 p-1 rounded-2xl border border-white/10">
@@ -135,13 +143,13 @@ const ExpertExplorer: React.FC = () => {
             onClick={() => setView('list')}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${view === 'list' ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/30' : 'text-gray-500 hover:text-gray-300'}`}
           >
-            <List className="w-4 h-4" /> List
+            <List className="w-4 h-4" /> {t('marketplace.list')}
           </button>
           <button 
             onClick={() => setView('map')}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${view === 'map' ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/30' : 'text-gray-500 hover:text-gray-300'}`}
           >
-            <MapIcon className="w-4 h-4" /> Map
+            <MapIcon className="w-4 h-4" /> {t('marketplace.map')}
           </button>
         </div>
       </div>
@@ -152,7 +160,7 @@ const ExpertExplorer: React.FC = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input 
               type="text" 
-              placeholder="Search by profession or name..." 
+              placeholder={t('marketplace.searchPlaceholder')} 
               className="input-field pl-12 mb-0"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -170,7 +178,7 @@ const ExpertExplorer: React.FC = () => {
           <div className="absolute inset-0 bg-blue-500/5 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4 text-gray-500">
               <MapPin className="w-12 h-12 animate-bounce text-purple-500" />
-              <p className="font-medium">Interactive Map Loading...</p>
+              <p className="font-medium">{t('marketplace.mapLoading')}</p>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, ShieldCheck, Mail, Lock, LogIn, ArrowRight, ArrowLeft, Camera, FileText, MapPin, Zap, GraduationCap, Briefcase } from 'lucide-react';
 import apiClient from '../../api/apiClient';
@@ -9,6 +10,7 @@ interface RegisterPageProps {
 }
 
 const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [isExpert, setIsExpert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +58,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
       const response = await apiClient.post('/utils/upload', data);
       setFormData(prev => ({ ...prev, [field]: response.data.url }));
     } catch (error) {
-      alert('Upload failed');
+       console.error('Upload failed', error);
     } finally {
       setIsLoading(false);
     }
@@ -88,9 +90,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
       
       const loginResponse = await apiClient.post('/auth/login/access-token', loginData);
       setAuth(response.data, loginResponse.data.access_token);
-      alert('Registration successful!');
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Registration failed');
+       console.error('Registration failed', error);
     } finally {
       setIsLoading(false);
     }
@@ -110,8 +111,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
         <div className="max-w-2xl w-full">
             <div className="mb-12 flex items-center justify-between">
                 <div>
-                   <h2 className="text-4xl font-black gradient-text">Create Account.</h2>
-                   <p className="text-gray-400 mt-2">Join Joyida Ecosystem</p>
+                   <h2 className="text-4xl font-black gradient-text">{t('register.title')}.</h2>
+                   <p className="text-gray-400 mt-2">{t('register.subtitle')}</p>
                 </div>
                 <div className="flex gap-2">
                     {[0, 1, 2, 3].map(i => (
@@ -123,28 +124,28 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
             <AnimatePresence mode="wait">
                 {step === 0 && (
                     <motion.div key="step0" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6">
-                        <h3 className="text-xl font-bold mb-8">I want to register as...</h3>
+                        <h3 className="text-xl font-bold mb-8">{t('register.choose_role')}</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div 
                                 onClick={() => setIsExpert(false)}
                                 className={`p-8 rounded-3xl border-2 transition-all cursor-pointer ${!isExpert ? 'border-purple-500 bg-purple-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
                             >
                                 <User className={`w-12 h-12 mb-4 ${!isExpert ? 'text-purple-400' : 'text-gray-400'}`} />
-                                <h4 className="text-xl font-bold">Regular User</h4>
-                                <p className="text-sm text-gray-400 mt-2">I am looking for services and specialists.</p>
+                                <h4 className="text-xl font-bold">{t('auth.regular_user')}</h4>
+                                <p className="text-sm text-gray-400 mt-2">{t('register.user_desc')}</p>
                             </div>
                             <div 
                                 onClick={() => setIsExpert(true)}
                                 className={`p-8 rounded-3xl border-2 transition-all cursor-pointer ${isExpert ? 'border-purple-500 bg-purple-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
                             >
                                 <ShieldCheck className={`w-12 h-12 mb-4 ${isExpert ? 'text-purple-400' : 'text-gray-400'}`} />
-                                <h4 className="text-xl font-bold">Specialist / Expert</h4>
-                                <p className="text-sm text-gray-400 mt-2">I want to offer my services to clients.</p>
+                                <h4 className="text-xl font-bold">{t('auth.expert')}</h4>
+                                <p className="text-sm text-gray-400 mt-2">{t('register.expert_desc')}</p>
                             </div>
                         </div>
                         <div className="pt-8">
                              <button onClick={nextStep} className="glow-button w-full py-5 text-xl flex items-center justify-center gap-2">
-                                Continue <ArrowRight className="w-6 h-6" />
+                                {t('register.next')} <ArrowRight className="w-6 h-6" />
                              </button>
                         </div>
                     </motion.div>
@@ -155,30 +156,30 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                         <div className="group relative">
                             <User className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
                             <input 
-                                type="text" placeholder="Full Name" className="premium-input pl-14 py-5" 
+                                type="text" placeholder={t('register.fullname_placeholder')} className="premium-input pl-14 py-5" 
                                 value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})}
                             />
                         </div>
                         <div className="group relative">
                             <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
                             <input 
-                                type="email" placeholder="Email Address" className="premium-input pl-14 py-5" 
+                                type="email" placeholder={t('register.email_placeholder')} className="premium-input pl-14 py-5" 
                                 value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
                             />
                         </div>
                         <div className="group relative">
                             <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
                             <input 
-                                type="password" placeholder="Password" className="premium-input pl-14 py-5" 
+                                type="password" placeholder={t('register.password_placeholder')} className="premium-input pl-14 py-5" 
                                 value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})}
                             />
                         </div>
                         <div className="flex gap-4 pt-8">
                             <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-gray-400 flex items-center justify-center gap-2">
-                                <ArrowLeft className="w-5 h-5" /> Back
+                                <ArrowLeft className="w-5 h-5" /> {t('register.prev')}
                             </button>
                             <button onClick={isExpert ? nextStep : handleRegister} className="flex-[2] glow-button py-5 text-xl">
-                                {isExpert ? 'Next Step' : (isLoading ? 'Creating...' : 'Register Now')}
+                                {isExpert ? t('register.next') : (isLoading ? t('register.creating') : t('register.register_now'))}
                             </button>
                         </div>
                     </motion.div>
@@ -187,7 +188,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                 {step === 2 && (
                     <motion.div key="step2" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6">
                         <div>
-                            <label className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 block">Professional Categories</label>
+                            <label className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 block">{t('register.prof_categories')}</label>
                             <div className="flex flex-wrap gap-2">
                                 {services.map(s => (
                                     <button 
@@ -208,7 +209,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                         
                         <div className="grid grid-cols-2 gap-4">
                             <div className="premium-input-group">
-                                <label className="text-xs text-gray-500 ml-2">Birth Year</label>
+                                <label className="text-xs text-gray-500 ml-2">{t('auth.birth_year')}</label>
                                 <select 
                                     className="premium-input py-3" 
                                     value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: parseInt(e.target.value)})}
@@ -217,46 +218,46 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                                 </select>
                             </div>
                             <div className="premium-input-group">
-                                <label className="text-xs text-gray-500 ml-2">Gender</label>
+                                <label className="text-xs text-gray-500 ml-2">{t('auth.gender')}</label>
                                 <select 
                                     className="premium-input py-3"
                                     value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})}
                                 >
-                                    <option value="Male" className="bg-[#020205]">Male</option>
-                                    <option value="Female" className="bg-[#020205]">Female</option>
+                                    <option value="Male" className="bg-[#020205]">{t('auth.male')}</option>
+                                    <option value="Female" className="bg-[#020205]">{t('auth.female')}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div className="premium-input-group">
-                            <label className="text-xs text-gray-500 ml-2">Education Level</label>
+                            <label className="text-xs text-gray-500 ml-2">{t('auth.education')}</label>
                             <div className="flex gap-3">
                                 <GraduationCap className="text-purple-400 w-6 h-6 mt-3" />
                                 <select className="premium-input py-3" value={formData.educationLevel} onChange={e => setFormData({...formData, educationLevel: e.target.value})}>
-                                    <option value="Bachelor" className="bg-[#020205]">Bachelor Degree</option>
-                                    <option value="Master" className="bg-[#020205]">Master Degree</option>
-                                    <option value="PhD" className="bg-[#020205]">PhD / Doctorate</option>
-                                    <option value="DS" className="bg-[#020205]">Docent / Professor</option>
-                                    <option value="Middle" className="bg-[#020205]">Secondary / Others</option>
+                                    <option value="Bachelor" className="bg-[#020205]">{t('register.bachelor')}</option>
+                                    <option value="Master" className="bg-[#020205]">{t('register.master')}</option>
+                                    <option value="PhD" className="bg-[#020205]">{t('register.phd')}</option>
+                                    <option value="DS" className="bg-[#020205]">{t('register.professor')}</option>
+                                    <option value="Middle" className="bg-[#020205]">{t('register.other_edu')}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div className="group relative">
                             <Briefcase className="absolute left-5 top-14 -translate-y-1/2 text-gray-500 w-5 h-5" />
-                            <label className="text-xs text-gray-500 ml-2">Current Workplace</label>
+                            <label className="text-xs text-gray-500 ml-2">{t('auth.workplace')}</label>
                             <input 
-                                type="text" placeholder="Company or Institution" className="premium-input pl-14 py-4" 
+                                type="text" placeholder={t('register.workplace_hint')} className="premium-input pl-14 py-4" 
                                 value={formData.workplace} onChange={e => setFormData({...formData, workplace: e.target.value})}
                             />
                         </div>
 
                         <div className="flex gap-4 pt-4">
                             <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-gray-400 flex items-center justify-center gap-2">
-                                <ArrowLeft className="w-5 h-5" /> Back
+                                <ArrowLeft className="w-5 h-5" /> {t('register.prev')}
                             </button>
                             <button onClick={nextStep} className="flex-[2] glow-button py-5 text-xl">
-                                Continue
+                                {t('register.next')}
                             </button>
                         </div>
                     </motion.div>
@@ -266,31 +267,31 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                     <motion.div key="step3" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-8">
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-3">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">Profile Photo</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">{t('register.profile_photo')}</label>
                                 <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-white/10 rounded-3xl cursor-pointer hover:border-purple-500/50 hover:bg-white/5 transition-all group">
                                     {formData.profilePictureUrl ? (
-                                        <img src={`https://backend.joida.uz${formData.profilePictureUrl}`} className="w-full h-full object-cover rounded-3xl" alt="Profile" />
+                                        <img src={`https://backend.joyida.uz${formData.profilePictureUrl}`} className="w-full h-full object-cover rounded-3xl" alt="Profile" />
                                     ) : (
                                         <>
                                           <Camera className="w-10 h-10 text-gray-600 group-hover:text-purple-400 transition-colors" />
-                                          <span className="text-xs text-gray-500 mt-3 font-bold group-hover:text-white transition-colors">Select Image</span>
+                                          <span className="text-xs text-gray-500 mt-3 font-bold group-hover:text-white transition-colors">{t('register.select_image')}</span>
                                         </>
                                     )}
                                     <input type="file" className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'profilePictureUrl')} />
                                 </label>
                             </div>
                             <div className="space-y-3">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">Diploma / Cert</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">{t('register.diploma_cert')}</label>
                                 <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-white/10 rounded-3xl cursor-pointer hover:border-purple-500/50 hover:bg-white/5 transition-all group">
                                     {formData.diplomaUrl ? (
                                         <div className="flex flex-col items-center text-purple-400">
                                             <FileText className="w-10 h-10" />
-                                            <span className="text-[10px] mt-2 font-bold uppercase">Uploaded</span>
+                                            <span className="text-[10px] mt-2 font-bold uppercase">{t('register.uploaded')}</span>
                                         </div>
                                     ) : (
                                         <>
                                           <FileText className="w-10 h-10 text-gray-600 group-hover:text-purple-400 transition-colors" />
-                                          <span className="text-xs text-gray-500 mt-3 font-bold group-hover:text-white transition-colors">Select PDF/IMG</span>
+                                          <span className="text-xs text-gray-500 mt-3 font-bold group-hover:text-white transition-colors">{t('register.select_file')}</span>
                                         </>
                                     )}
                                     <input type="file" className="hidden" onChange={e => handleFileUpload(e, 'diplomaUrl')} />
@@ -304,8 +305,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                                     <MapPin className="text-purple-400 w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h5 className="font-bold">Service Location</h5>
-                                    <p className="text-xs text-gray-500">{formData.locationName || 'Detecting...'}</p>
+                                    <h5 className="font-bold">{t('register.service_location')}</h5>
+                                    <p className="text-xs text-gray-500">{formData.locationName || t('register.detecting')}</p>
                                 </div>
                             </div>
                             <button 
@@ -316,16 +317,16 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                                 }}
                                 className="px-5 py-2 bg-purple-500 hover:bg-purple-600 rounded-xl text-xs font-bold transition-all shadow-lg shadow-purple-500/20"
                             >
-                                Get GPS
+                                {t('register.get_gps')}
                             </button>
                         </div>
 
                         <div className="flex gap-4 pt-4">
                             <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-gray-400 flex items-center justify-center gap-2">
-                                <ArrowLeft className="w-5 h-5" /> Back
+                                <ArrowLeft className="w-5 h-5" /> {t('register.prev')}
                             </button>
                             <button onClick={handleRegister} disabled={isLoading} className="flex-[2] glow-button py-5 text-xl">
-                                {isLoading ? 'Finalizing...' : 'Register as Specialist'}
+                                {isLoading ? t('register.finalizing') : t('register.register_expert')}
                             </button>
                         </div>
                     </motion.div>
@@ -334,7 +335,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
 
             <div className="mt-12 text-center">
                  <button onClick={onBackToLogin} className="text-gray-500 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 mx-auto">
-                    <LogIn className="w-4 h-4" /> Already have an account? Login
+                    <LogIn className="w-4 h-4" /> {t('register.already_account')}
                  </button>
             </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Mail, Lock, LogIn, Github, Chrome, ShieldCheck, Zap, Globe, Sparkles } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { GoogleLogin } from '@react-oauth/google';
@@ -10,6 +11,7 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -23,10 +25,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
       });
       const { access_token } = response.data;
       setAuth({ id: 1, email: 'google-user@joyida.com', full_name: 'Google User', is_active: true }, access_token);
-      alert('Google Login successful!');
     } catch (error) {
       console.error('Google Login failed', error);
-      alert('Google Login failed. Please check your SSL status and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -45,10 +45,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
       });
       const { access_token } = response.data;
       setAuth({ id: 1, email, full_name: 'Test User', is_active: true }, access_token);
-      alert('Login successful!');
     } catch (error) {
       console.error('Login failed', error);
-      alert('Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
@@ -86,16 +84,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
         
         <div className="relative z-10">
           <motion.div variants={itemVariants} className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/10 text-purple-400 font-black text-xs mb-10 uppercase tracking-[0.2em] shadow-2xl">
-            <Zap className="w-4 h-4 fill-purple-400" /> Digital Evolution
+            <Zap className="w-4 h-4 fill-purple-400" /> {t('login.digital_evo')}
           </motion.div>
           
           <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[0.95] mb-10 text-white">
-            Design your <br />
-            <span className="gradient-text">dream space.</span>
+            {t('login.hero_title')}
           </motion.h1>
           
           <motion.p variants={itemVariants} className="text-lg md:text-xl lg:text-2xl text-gray-400 mb-16 max-w-xl leading-relaxed font-medium">
-            Joyida brings together visionary planners and expert specialists in one seamless ecosystem. Built for growth, designed for clarity.
+            {t('login.hero_p')}
           </motion.p>
 
           <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-2xl">
@@ -103,15 +100,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
               <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center border border-white/10 text-purple-400 shadow-xl">
                 <ShieldCheck className="w-6 h-6 lg:w-7 lg:h-7" />
               </div>
-              <h4 className="text-lg lg:text-xl font-bold text-white">Ironclad Security</h4>
-              <p className="text-sm lg:text-base text-gray-500 leading-relaxed font-medium">Your assets and data are protected by industry-standard encryption protocols.</p>
+              <h4 className="text-lg lg:text-xl font-bold text-white">{t('login.security_title')}</h4>
+              <p className="text-sm lg:text-base text-gray-500 leading-relaxed font-medium">{t('login.security_desc')}</p>
             </div>
             <div className="space-y-4">
               <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 text-pink-400 shadow-xl">
                 <Globe className="w-6 h-6 lg:w-7 lg:h-7" />
               </div>
-              <h4 className="text-lg lg:text-xl font-bold text-white">Global Reach</h4>
-              <p className="text-sm lg:text-base text-gray-500 leading-relaxed font-medium">Access a worldwide network of property experts and innovative designers.</p>
+              <h4 className="text-lg lg:text-xl font-bold text-white">{t('login.global_reach')}</h4>
+              <p className="text-sm lg:text-base text-gray-500 leading-relaxed font-medium">{t('login.global_desc')}</p>
             </div>
           </motion.div>
         </div>
@@ -145,12 +142,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
               animate={{ opacity: 1, scale: 1 }}
               className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black text-purple-400 uppercase tracking-[0.25em] mb-6"
             >
-              <Sparkles className="w-3 h-3" /> Secure Access
+              <Sparkles className="w-3 h-3" /> {t('login.secure_access')}
             </motion.div>
             <h2 className="text-5xl md:text-5xl lg:text-6xl font-black mb-4 text-white tracking-tight">
-              Sign In.
+              {t('login.title')}
             </h2>
-            <p className="text-gray-400 text-lg font-medium">Enter your credentials to manage your space.</p>
+            <p className="text-gray-400 text-lg font-medium">{t('login.subtitle')}</p>
           </div>
 
           {/* Form */}
@@ -159,7 +156,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
               <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5 transition-colors group-focus-within:text-purple-400" />
               <input 
                 type="email" 
-                placeholder="Email Address" 
+                placeholder={t('register.email_placeholder')} 
                 className="premium-input pl-14 py-5 bg-white/[0.02] border-white/10 focus:bg-white/[0.04] transition-all"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -171,7 +168,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
               <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5 transition-colors group-focus-within:text-purple-400" />
               <input 
                 type="password" 
-                placeholder="Password" 
+                placeholder={t('register.password_placeholder')} 
                 className="premium-input pl-14 py-5 bg-white/[0.02] border-white/10 focus:bg-white/[0.04] transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -180,7 +177,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
             </div>
 
             <div className="flex justify-end pt-1">
-              <a href="#" className="text-xs font-bold text-gray-500 hover:text-white transition-colors">Forgot Password?</a>
+              <a href="#" className="text-xs font-bold text-gray-500 hover:text-white transition-colors">{t('login.forgot_password')}</a>
             </div>
 
             <button 
@@ -188,9 +185,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
               disabled={isLoading}
               className="glow-button w-full text-xl py-5 group shadow-2xl shadow-purple-500/20"
             >
-              {isLoading ? 'Authenticating...' : (
+              {isLoading ? t('login.authenticating') : (
                 <span className="flex items-center justify-center gap-3">
-                  Sign In <LogIn className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
+                  {t('login.sign_in_btn')} <LogIn className="w-6 h-6 group-hover:translate-x-1.5 transition-transform" />
                 </span>
               )}
             </button>
@@ -202,7 +199,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
               <div className="w-full border-t border-white/[0.05]"></div>
             </div>
             <div className="relative flex justify-center text-[9px] uppercase tracking-[0.4em] font-black">
-              <span className="bg-[#050508] px-4 text-gray-600">Omni-Channel Login</span>
+              <span className="bg-[#050508] px-4 text-gray-600">{t('login.omni_channel')}</span>
             </div>
           </div>
 
@@ -221,17 +218,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
             
             <button type="button" className="flex items-center justify-center gap-4 bg-white/[0.03] border border-white/10 p-5 rounded-2xl hover:bg-white/[0.07] transition-all font-black group w-full text-sm">
               <Github className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
-              <span>Continue with GitHub</span>
+              <span>{t('login.github_login')}</span>
             </button>
           </div>
 
           {/* Footer */}
           <p className="text-center mt-12 text-sm text-gray-400 font-medium">
-            Don't have an account? <button 
+            {t('login.dont_have_account')} <button 
               onClick={onRegister}
               className="text-purple-400 hover:text-purple-300 font-black transition-colors ml-1 uppercase tracking-wider"
             >
-              Join Now
+              {t('login.join_now')}
             </button>
           </p>
         </motion.div>

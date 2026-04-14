@@ -94,7 +94,7 @@ const Onboarding: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
             style={{ color: slides[currentSlide].color }}
           >
             {slides[currentSlide].icon}
-            Step {currentSlide + 1} of 3
+            {t('onboarding.step_n_of_m', { step: currentSlide + 1, total: slides.length })}
           </motion.div>
 
           <AnimatePresence mode="wait">

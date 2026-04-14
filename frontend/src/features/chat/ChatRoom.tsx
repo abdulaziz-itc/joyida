@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Send, Phone, ShieldCheck, MoreVertical, 
@@ -16,6 +17,7 @@ interface Message {
 }
 
 const ChatRoom: React.FC<{ roomName: string, onBack: () => void }> = ({ roomName, onBack }) => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, sender: 'other', text: 'Assalomu alaykum, quvurda qanday muammo bor?', type: 'text', timestamp: '10:30' },
     { id: 2, sender: 'me', text: 'Vaalaykum assalom. Suv sizib chiqyapti, tezroq tuzatish kerak.', type: 'text', timestamp: '10:32' },
@@ -27,7 +29,7 @@ const ChatRoom: React.FC<{ roomName: string, onBack: () => void }> = ({ roomName
       timestamp: '10:35',
       metadata: { price: '80,000 UZS', desc: 'Quvurni almashtirish va germetiklash' }
     },
-    { id: 4, sender: 'system', text: 'Joyida Safety Tip: Do not pay in advance. Pay only after service completion.', type: 'system', timestamp: '10:36' }
+    { id: 4, sender: 'system', text: t('chat.safety_tip'), type: 'system', timestamp: '10:36' }
   ]);
   const [inputText, setInputText] = useState('');
   const [privacyConsent, setPrivacyConsent] = useState(false);
@@ -62,7 +64,7 @@ const ChatRoom: React.FC<{ roomName: string, onBack: () => void }> = ({ roomName
              </div>
              <div>
                 <h3 className="font-bold flex items-center gap-2">
-                   {privacyConsent ? "Anvar Toshov" : "Expert #382"}
+                   {privacyConsent ? "Anvar Toshov" : `${t('chat.expert_placeholder')} #382`}
                    {privacyConsent && <ShieldCheck className="w-4 h-4 text-purple-400" />}
                 </h3>
                 <p className="text-xs text-green-400 font-medium">Online</p>
@@ -83,7 +85,7 @@ const ChatRoom: React.FC<{ roomName: string, onBack: () => void }> = ({ roomName
       <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-gradient-to-b from-transparent to-purple-900/5">
         <div className="flex justify-center">
            <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-              Messages are encrypted & secure
+              {t('chat.encrypted')}
            </div>
         </div>
 
@@ -100,16 +102,16 @@ const ChatRoom: React.FC<{ roomName: string, onBack: () => void }> = ({ roomName
                     <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
                        <ShieldCheck className="w-6 h-6" />
                     </div>
-                    <h4 className="font-bold">Rasmiy Taklif</h4>
+                    <h4 className="font-bold">{t('chat.official_offer')}</h4>
                  </div>
                  <p className="text-sm text-gray-400 mb-4">{m.metadata.desc}</p>
                  <div className="flex justify-between items-center mb-6">
-                    <span className="text-xs text-gray-500 uppercase tracking-wider font-bold">Narxi:</span>
+                    <span className="text-xs text-gray-500 uppercase tracking-wider font-bold">{t('chat.price_label')}</span>
                     <span className="text-xl font-black text-green-400">{m.metadata.price}</span>
                  </div>
                  <div className="grid grid-cols-2 gap-3">
-                    <button className="py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-all text-xs font-bold text-gray-400">Reject</button>
-                    <button className="glow-button py-2.5 rounded-xl text-xs font-bold">Accept</button>
+                    <button className="py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-all text-xs font-bold text-gray-400">{t('chat.reject')}</button>
+                    <button className="glow-button py-2.5 rounded-xl text-xs font-bold">{t('chat.accept')}</button>
                  </div>
               </div>
             ) : (
@@ -120,7 +122,7 @@ const ChatRoom: React.FC<{ roomName: string, onBack: () => void }> = ({ roomName
               }`}>
                 <p className="text-sm leading-relaxed">{m.text}</p>
                 <p className={`text-[10px] mt-1.5 opacity-40 font-bold ${m.sender === 'me' ? 'text-right' : 'text-left'}`}>
-                   {m.timestamp} {m.sender === 'me' && '• Read'}
+                   {m.timestamp} {m.sender === 'me' && `• ${t('chat.read')}`}
                 </p>
               </div>
             )}
@@ -139,7 +141,7 @@ const ChatRoom: React.FC<{ roomName: string, onBack: () => void }> = ({ roomName
                 rows={1}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Xabaringizni yozing..." 
+                placeholder={t('chat.placeholder')} 
                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-purple-500/50 transition-all text-sm resize-none pr-14"
               />
               <button className="absolute right-4 bottom-3 p-2 text-gray-500 hover:text-white transition-all">

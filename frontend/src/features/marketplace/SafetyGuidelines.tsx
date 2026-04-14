@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { ShieldAlert, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 
 interface SafetyGuidelinesProps {
@@ -8,6 +9,7 @@ interface SafetyGuidelinesProps {
 }
 
 const SafetyGuidelines: React.FC<SafetyGuidelinesProps> = ({ onClose, onContinue }) => {
+  const { t } = useTranslation();
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -27,33 +29,33 @@ const SafetyGuidelines: React.FC<SafetyGuidelinesProps> = ({ onClose, onContinue
                <ShieldAlert className="w-10 h-10" />
             </div>
             <div>
-               <h2 className="text-3xl font-bold">Safety First</h2>
-               <p className="text-gray-400">Please read our safety guidelines before contacting professionals.</p>
+               <h2 className="text-3xl font-bold">{t('safety.title')}</h2>
+               <p className="text-gray-400">{t('safety.subtitle')}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div className="space-y-4">
                <h3 className="font-bold text-green-400 flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5" /> Dos
+                  <CheckCircle2 className="w-5 h-5" /> {t('safety.dos')}
                </h3>
                <ul className="space-y-3 text-sm text-gray-300">
-                  <li>• Meet in a public place or with others present.</li>
-                  <li>• Pay only AFTER the service is fully completed.</li>
-                  <li>• Verify the expert's identity upon arrival.</li>
-                  <li>• Keep all communication within the Joyida app.</li>
+                  <li>• {t('safety.do1')}</li>
+                  <li>• {t('safety.do2')}</li>
+                  <li>• {t('safety.do3')}</li>
+                  <li>• {t('safety.do4')}</li>
                </ul>
             </div>
 
             <div className="space-y-4">
                <h3 className="font-bold text-red-400 flex items-center gap-2">
-                  <XCircle className="w-5 h-5" /> Don'ts
+                  <XCircle className="w-5 h-5" /> {t('safety.donts')}
                </h3>
                <ul className="space-y-3 text-sm text-gray-300">
-                  <li>• Do not pay an advance or deposit.</li>
-                  <li>• Do not share your personal financial details.</li>
-                  <li>• Avoid meeting in isolated dark areas.</li>
-                  <li>• Don't ignore your intuition - safety first!</li>
+                  <li>• {t('safety.dont1')}</li>
+                  <li>• {t('safety.dont2')}</li>
+                  <li>• {t('safety.dont3')}</li>
+                  <li>• {t('safety.dont4')}</li>
                </ul>
             </div>
           </div>
@@ -63,13 +65,13 @@ const SafetyGuidelines: React.FC<SafetyGuidelinesProps> = ({ onClose, onContinue
                onClick={onClose}
                className="flex-1 py-4 rounded-2xl border border-white/10 hover:bg-white/5 transition-all font-bold text-gray-400"
              >
-                Go Back
+                {t('safety.back')}
              </button>
              <button 
                onClick={onContinue}
                className="flex-[2] py-4 rounded-2xl glow-button font-bold flex items-center justify-center gap-2"
              >
-                I Understand & Continue <ArrowRight className="w-5 h-5" />
+                {t('safety.continue')} <ArrowRight className="w-5 h-5" />
              </button>
           </div>
         </div>
