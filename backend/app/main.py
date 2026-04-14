@@ -1,6 +1,17 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+import os
+import traceback
+import logging
+
+# Setup local file logging for production debugging
+logging.basicConfig(
+    filename='tmp/error.log',
+    level=logging.ERROR,
+    format='%(asctime)s %(levelname)s %(name)s %(message)s'
+)
+logger = logging.getLogger(__name__)
 from app.api.v1.endpoints import auth, google_auth, dashboard, projects, experts, chat, bookings, admin, payments, reviews, notifications, utils
 
 app = FastAPI(
@@ -8,6 +19,14 @@ app = FastAPI(
     description="Backend API for Joyida Mobile and Web applications",
     version="1.0.0",
 )
+
+@app.middleware("http")
+async def catch_exceptions_middleware(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as e:
+        logger.error(f"Unhandled Exception: {e}\n{traceback.format_exc()}")
+        return Response("Internal Server Error", status_code=500)
 
 # Set all CORS enabled origins
 app.add_middleware(
@@ -39,8 +58,13 @@ api_router.include_router(notifications.router, prefix="/notifications", tags=["
 api_router.include_router(utils.router, prefix="/utils", tags=["utils"])
 app.include_router(api_router, prefix="/api/v1")
 
-# Serve static files
-app.mount("/uploads", StaticFiles(directory="static/uploads"), name="uploads")
+# Serve static files with robust path discovery
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_DIR = os.path.join(BASE_DIR, "static", "uploads")
+if not os.path.exists(STATIC_DIR):
+    os.makedirs(STATIC_DIR, exist_ok=True)
+
+app.mount("/uploads", StaticFiles(directory=STATIC_DIR), name="uploads")
 
 @app.get("/")
 def read_root():

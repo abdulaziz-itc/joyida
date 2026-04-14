@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import List
+import os
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Joyida"
@@ -8,7 +9,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
     
     # DATABASE_URL: str = "postgresql://user:password@localhost/joyida"
-    DATABASE_URL: str = "sqlite:///./joyida.db"
+    # Convert relative sqlite path to absolute path
+    DATABASE_URL: str = f"sqlite:///{os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'joyida.db')}"
     
     CORS_ORIGINS: List[str] = ["*"]
 
