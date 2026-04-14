@@ -119,8 +119,7 @@ class AuthProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final loginSuccess = await login(email, password);
-        return loginSuccess ? null : 'Registration successful but login failed.';
+        return await login(email, password);
       } else {
         final data = json.decode(response.body);
         return data['detail'] ?? 'Registration failed with status: ${response.statusCode}';
