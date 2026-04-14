@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, ShieldCheck, Mail, Lock, LogIn, ArrowRight, ArrowLeft, Camera, FileText, MapPin, Zap, GraduationCap, Briefcase } from 'lucide-react';
+import { User, ShieldCheck, Mail, Lock, LogIn, ArrowRight, ArrowLeft, Camera, FileText, MapPin, Sparkles, GraduationCap, Briefcase } from 'lucide-react';
 import apiClient from '../../api/apiClient';
 import { useAuthStore } from '../../store/authStore';
 
@@ -17,7 +17,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
   const [services, setServices] = useState<any[]>([]);
   const { setAuth } = useAuthStore();
 
-  // Form State
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -83,7 +82,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
         profile_picture_url: formData.profilePictureUrl,
       });
 
-      // Automatically login
       const loginData = new FormData();
       loginData.append('username', formData.email);
       loginData.append('password', formData.password);
@@ -100,245 +98,273 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
   const nextStep = () => setStep(s => s + 1);
   const prevStep = () => setStep(s => s - 1);
 
-  const containerVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
-    exit: { opacity: 0, x: -20, transition: { duration: 0.5 } }
+  const stepVariants = {
+    hidden: { opacity: 0, x: 40 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+    exit: { opacity: 0, x: -40, transition: { duration: 0.4 } }
   };
 
   return (
-    <div className="min-h-screen bg-[#020205] text-white flex items-center justify-center p-6 bg-glow-mesh selection:bg-purple-500/30">
-        <div className="max-w-2xl w-full">
-            <div className="mb-12 flex items-center justify-between">
-                <div>
-                   <h2 className="text-4xl font-black gradient-text">{t('register.title')}.</h2>
-                   <p className="text-gray-400 mt-2">{t('register.subtitle')}</p>
-                </div>
-                <div className="flex gap-2">
-                    {[0, 1, 2, 3].map(i => (
-                        <div key={i} className={`h-1 w-8 rounded-full transition-colors ${step >= i ? 'bg-purple-500' : 'bg-white/10'}`} />
-                    ))}
-                </div>
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden font-main">
+      {/* Background Decor */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[100px] rounded-full" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[40%] h-[40%] bg-secondary/10 blur-[100px] rounded-full" />
+        <div className="absolute inset-0 bg-[url('/hero-bg.png')] bg-cover bg-center opacity-30 mix-blend-overlay" />
+      </div>
+
+      <div className="w-full max-w-2xl relative z-10">
+        <div className="mb-12 flex items-end justify-between px-2">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black text-primary uppercase tracking-[0.25em]">
+              <Sparkles className="w-3 h-3" /> {t('register.step_indicator', 'Onboarding')}
             </div>
-
-            <AnimatePresence mode="wait">
-                {step === 0 && (
-                    <motion.div key="step0" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6">
-                        <h3 className="text-xl font-bold mb-8">{t('register.choose_role')}</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div 
-                                onClick={() => setIsExpert(false)}
-                                className={`p-8 rounded-3xl border-2 transition-all cursor-pointer ${!isExpert ? 'border-purple-500 bg-purple-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
-                            >
-                                <User className={`w-12 h-12 mb-4 ${!isExpert ? 'text-purple-400' : 'text-gray-400'}`} />
-                                <h4 className="text-xl font-bold">{t('auth.regular_user')}</h4>
-                                <p className="text-sm text-gray-400 mt-2">{t('register.user_desc')}</p>
-                            </div>
-                            <div 
-                                onClick={() => setIsExpert(true)}
-                                className={`p-8 rounded-3xl border-2 transition-all cursor-pointer ${isExpert ? 'border-purple-500 bg-purple-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
-                            >
-                                <ShieldCheck className={`w-12 h-12 mb-4 ${isExpert ? 'text-purple-400' : 'text-gray-400'}`} />
-                                <h4 className="text-xl font-bold">{t('auth.expert')}</h4>
-                                <p className="text-sm text-gray-400 mt-2">{t('register.expert_desc')}</p>
-                            </div>
-                        </div>
-                        <div className="pt-8">
-                             <button onClick={nextStep} className="glow-button w-full py-5 text-xl flex items-center justify-center gap-2">
-                                {t('register.next')} <ArrowRight className="w-6 h-6" />
-                             </button>
-                        </div>
-                    </motion.div>
-                )}
-
-                {step === 1 && (
-                    <motion.div key="step1" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-4">
-                        <div className="group relative">
-                            <User className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-                            <input 
-                                type="text" placeholder={t('register.fullname_placeholder')} className="premium-input pl-14 py-5" 
-                                value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})}
-                            />
-                        </div>
-                        <div className="group relative">
-                            <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-                            <input 
-                                type="email" placeholder={t('register.email_placeholder')} className="premium-input pl-14 py-5" 
-                                value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
-                            />
-                        </div>
-                        <div className="group relative">
-                            <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-                            <input 
-                                type="password" placeholder={t('register.password_placeholder')} className="premium-input pl-14 py-5" 
-                                value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})}
-                            />
-                        </div>
-                        <div className="flex gap-4 pt-8">
-                            <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-gray-400 flex items-center justify-center gap-2">
-                                <ArrowLeft className="w-5 h-5" /> {t('register.prev')}
-                            </button>
-                            <button onClick={isExpert ? nextStep : handleRegister} className="flex-[2] glow-button py-5 text-xl">
-                                {isExpert ? t('register.next') : (isLoading ? t('register.creating') : t('register.register_now'))}
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-
-                {step === 2 && (
-                    <motion.div key="step2" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6">
-                        <div>
-                            <label className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 block">{t('register.prof_categories')}</label>
-                            <div className="flex flex-wrap gap-2">
-                                {services.map(s => (
-                                    <button 
-                                        key={s.id}
-                                        onClick={() => {
-                                            const ids = formData.serviceIds.includes(s.id) 
-                                                ? formData.serviceIds.filter(id => id !== s.id)
-                                                : [...formData.serviceIds, s.id];
-                                            setFormData({...formData, serviceIds: ids});
-                                        }}
-                                        className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${formData.serviceIds.includes(s.id) ? 'bg-purple-500 text-white' : 'bg-white/5 border border-white/10 text-gray-400 hover:border-purple-500/50'}`}
-                                    >
-                                        {s.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="premium-input-group">
-                                <label className="text-xs text-gray-500 ml-2">{t('auth.birth_year')}</label>
-                                <select 
-                                    className="premium-input py-3" 
-                                    value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: parseInt(e.target.value)})}
-                                >
-                                    {Array.from({length: 50}, (_, i) => 2010 - i).map(y => <option key={y} value={y} className="bg-[#020205]">{y}</option>)}
-                                </select>
-                            </div>
-                            <div className="premium-input-group">
-                                <label className="text-xs text-gray-500 ml-2">{t('auth.gender')}</label>
-                                <select 
-                                    className="premium-input py-3"
-                                    value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})}
-                                >
-                                    <option value="Male" className="bg-[#020205]">{t('auth.male')}</option>
-                                    <option value="Female" className="bg-[#020205]">{t('auth.female')}</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="premium-input-group">
-                            <label className="text-xs text-gray-500 ml-2">{t('auth.education')}</label>
-                            <div className="flex gap-3">
-                                <GraduationCap className="text-purple-400 w-6 h-6 mt-3" />
-                                <select className="premium-input py-3" value={formData.educationLevel} onChange={e => setFormData({...formData, educationLevel: e.target.value})}>
-                                    <option value="Bachelor" className="bg-[#020205]">{t('register.bachelor')}</option>
-                                    <option value="Master" className="bg-[#020205]">{t('register.master')}</option>
-                                    <option value="PhD" className="bg-[#020205]">{t('register.phd')}</option>
-                                    <option value="DS" className="bg-[#020205]">{t('register.professor')}</option>
-                                    <option value="Middle" className="bg-[#020205]">{t('register.other_edu')}</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="group relative">
-                            <Briefcase className="absolute left-5 top-14 -translate-y-1/2 text-gray-500 w-5 h-5" />
-                            <label className="text-xs text-gray-500 ml-2">{t('auth.workplace')}</label>
-                            <input 
-                                type="text" placeholder={t('register.workplace_hint')} className="premium-input pl-14 py-4" 
-                                value={formData.workplace} onChange={e => setFormData({...formData, workplace: e.target.value})}
-                            />
-                        </div>
-
-                        <div className="flex gap-4 pt-4">
-                            <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-gray-400 flex items-center justify-center gap-2">
-                                <ArrowLeft className="w-5 h-5" /> {t('register.prev')}
-                            </button>
-                            <button onClick={nextStep} className="flex-[2] glow-button py-5 text-xl">
-                                {t('register.next')}
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-
-                {step === 3 && (
-                    <motion.div key="step3" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-8">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-3">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">{t('register.profile_photo')}</label>
-                                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-white/10 rounded-3xl cursor-pointer hover:border-purple-500/50 hover:bg-white/5 transition-all group">
-                                    {formData.profilePictureUrl ? (
-                                        <img src={`https://backend.joyida.uz${formData.profilePictureUrl}`} className="w-full h-full object-cover rounded-3xl" alt="Profile" />
-                                    ) : (
-                                        <>
-                                          <Camera className="w-10 h-10 text-gray-600 group-hover:text-purple-400 transition-colors" />
-                                          <span className="text-xs text-gray-500 mt-3 font-bold group-hover:text-white transition-colors">{t('register.select_image')}</span>
-                                        </>
-                                    )}
-                                    <input type="file" className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'profilePictureUrl')} />
-                                </label>
-                            </div>
-                            <div className="space-y-3">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">{t('register.diploma_cert')}</label>
-                                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-white/10 rounded-3xl cursor-pointer hover:border-purple-500/50 hover:bg-white/5 transition-all group">
-                                    {formData.diplomaUrl ? (
-                                        <div className="flex flex-col items-center text-purple-400">
-                                            <FileText className="w-10 h-10" />
-                                            <span className="text-[10px] mt-2 font-bold uppercase">{t('register.uploaded')}</span>
-                                        </div>
-                                    ) : (
-                                        <>
-                                          <FileText className="w-10 h-10 text-gray-600 group-hover:text-purple-400 transition-colors" />
-                                          <span className="text-xs text-gray-500 mt-3 font-bold group-hover:text-white transition-colors">{t('register.select_file')}</span>
-                                        </>
-                                    )}
-                                    <input type="file" className="hidden" onChange={e => handleFileUpload(e, 'diplomaUrl')} />
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-purple-500/20 rounded-xl">
-                                    <MapPin className="text-purple-400 w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h5 className="font-bold">{t('register.service_location')}</h5>
-                                    <p className="text-xs text-gray-500">{formData.locationName || t('register.detecting')}</p>
-                                </div>
-                            </div>
-                            <button 
-                                onClick={() => {
-                                    navigator.geolocation.getCurrentPosition((pos) => {
-                                        setFormData({...formData, latitude: pos.coords.latitude, longitude: pos.coords.longitude, locationName: 'Current Location Verified'});
-                                    });
-                                }}
-                                className="px-5 py-2 bg-purple-500 hover:bg-purple-600 rounded-xl text-xs font-bold transition-all shadow-lg shadow-purple-500/20"
-                            >
-                                {t('register.get_gps')}
-                            </button>
-                        </div>
-
-                        <div className="flex gap-4 pt-4">
-                            <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-gray-400 flex items-center justify-center gap-2">
-                                <ArrowLeft className="w-5 h-5" /> {t('register.prev')}
-                            </button>
-                            <button onClick={handleRegister} disabled={isLoading} className="flex-[2] glow-button py-5 text-xl">
-                                {isLoading ? t('register.finalizing') : t('register.register_expert')}
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <div className="mt-12 text-center">
-                 <button onClick={onBackToLogin} className="text-gray-500 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 mx-auto">
-                    <LogIn className="w-4 h-4" /> {t('register.already_account')}
-                 </button>
-            </div>
+            <h2 className="text-5xl font-black font-display text-white tracking-tight">
+              {t('register.title', 'Join Us')}.
+            </h2>
+            <p className="text-foreground/50 font-medium">{t('register.subtitle', 'Create your professional profile today.')}</p>
+          </div>
+          <div className="flex gap-2 mb-4">
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} className={`h-1.5 w-10 rounded-full transition-all duration-500 ${step >= i ? 'bg-primary' : 'bg-white/10'}`} />
+            ))}
+          </div>
         </div>
+
+        <motion.div
+           layout
+           className="glass-card p-8 md:p-12 border-white/5 shadow-2xl shadow-primary/5"
+        >
+          <AnimatePresence mode="wait">
+            {step === 0 && (
+              <motion.div key="step0" variants={stepVariants} initial="hidden" animate="visible" exit="exit" className="space-y-8">
+                <h3 className="text-2xl font-black text-white px-2 tracking-tight">{t('register.choose_role', 'Select your path')}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div 
+                    onClick={() => setIsExpert(false)}
+                    className={`p-10 rounded-[32px] border-2 transition-all cursor-pointer group ${!isExpert ? 'border-primary bg-primary/10' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05]'}`}
+                  >
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 ${!isExpert ? 'bg-primary text-white' : 'bg-white/5 text-foreground/40'}`}>
+                      <User className="w-7 h-7" />
+                    </div>
+                    <h4 className="text-xl font-black text-white">{t('auth.regular_user', 'Client')}</h4>
+                    <p className="text-sm text-foreground/40 mt-3 font-medium leading-relaxed">{t('register.user_desc', 'I want to discover and book architects.')}</p>
+                  </div>
+                  <div 
+                    onClick={() => setIsExpert(true)}
+                    className={`p-10 rounded-[32px] border-2 transition-all cursor-pointer group ${isExpert ? 'border-primary bg-primary/10' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05]'}`}
+                  >
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 ${isExpert ? 'bg-primary text-white' : 'bg-white/5 text-foreground/40'}`}>
+                      <ShieldCheck className="w-7 h-7" />
+                    </div>
+                    <h4 className="text-xl font-black text-white">{t('auth.expert', 'Architect')}</h4>
+                    <p className="text-sm text-foreground/40 mt-3 font-medium leading-relaxed">{t('register.expert_desc', 'I want to offer my services to clients.')}</p>
+                  </div>
+                </div>
+                <div className="pt-4 px-2">
+                  <button onClick={nextStep} className="glow-button w-full">
+                    {t('register.next', 'Continue')} <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 1 && (
+              <motion.div key="step1" variants={stepVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6">
+                <div className="relative group px-1">
+                  <User className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
+                  <input 
+                    type="text" placeholder={t('register.fullname_placeholder', 'Full Name')} className="premium-input pl-14" 
+                    value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})}
+                  />
+                </div>
+                <div className="relative group px-1">
+                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
+                  <input 
+                    type="email" placeholder={t('register.email_placeholder', 'Email Address')} className="premium-input pl-14" 
+                    value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
+                  />
+                </div>
+                <div className="relative group px-1">
+                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
+                  <input 
+                    type="password" placeholder={t('register.password_placeholder', 'Create Password')} className="premium-input pl-14" 
+                    value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})}
+                  />
+                </div>
+                <div className="flex gap-4 pt-6 px-1">
+                  <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-foreground/40 flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest">
+                    <ArrowLeft className="w-4 h-4" /> {t('register.prev', 'Back')}
+                  </button>
+                  <button onClick={isExpert ? nextStep : handleRegister} className="flex-[2] glow-button">
+                    {isExpert ? t('register.next', 'Next') : (isLoading ? t('register.creating', 'Joining...') : t('register.register_now', 'Join Now'))}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 2 && (
+              <motion.div key="step2" variants={stepVariants} initial="hidden" animate="visible" exit="exit" className="space-y-8">
+                <div className="px-1">
+                  <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.3em] mb-6 block">{t('register.prof_categories', 'Expertise Fields')}</label>
+                  <div className="flex flex-wrap gap-2.5">
+                    {services.map(s => (
+                      <button 
+                        key={s.id}
+                        onClick={() => {
+                          const ids = formData.serviceIds.includes(s.id) 
+                            ? formData.serviceIds.filter(id => id !== s.id)
+                            : [...formData.serviceIds, s.id];
+                          setFormData({...formData, serviceIds: ids});
+                        }}
+                        className={`px-5 py-2.5 rounded-full text-xs font-black transition-all ${formData.serviceIds.includes(s.id) ? 'bg-primary text-white shadow-glow-primary' : 'bg-white/5 border border-white/10 text-foreground/40 hover:border-primary/50'}`}
+                      >
+                        {s.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-6 px-1">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.birth_year', 'Birth Year')}</label>
+                    <select 
+                      className="premium-input py-4 text-sm" 
+                      value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: parseInt(e.target.value)})}
+                    >
+                      {Array.from({length: 50}, (_, i) => 2010 - i).map(y => <option key={y} value={y} className="bg-background">{y}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.gender', 'Gender')}</label>
+                    <select 
+                      className="premium-input py-4 text-sm"
+                      value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})}
+                    >
+                      <option value="Male" className="bg-background">{t('auth.male', 'Male')}</option>
+                      <option value="Female" className="bg-background">{t('auth.female', 'Female')}</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2 px-1">
+                  <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.education', 'Qualification')}</label>
+                  <div className="relative group">
+                    <GraduationCap className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
+                    <select className="premium-input pl-14 py-4 text-sm" value={formData.educationLevel} onChange={e => setFormData({...formData, educationLevel: e.target.value})}>
+                      <option value="Bachelor" className="bg-background">{t('register.bachelor', 'Bachelor')}</option>
+                      <option value="Master" className="bg-background">{t('register.master', 'Master')}</option>
+                      <option value="PhD" className="bg-background">{t('register.phd', 'PhD')}</option>
+                      <option value="DS" className="bg-background">{t('register.professor', 'Doctor Science')}</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2 px-1">
+                  <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.workplace', 'Organization')}</label>
+                  <div className="relative group">
+                    <Briefcase className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
+                    <input 
+                      type="text" placeholder={t('register.workplace_hint', 'Company Name')} className="premium-input pl-14" 
+                      value={formData.workplace} onChange={e => setFormData({...formData, workplace: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-4 px-1">
+                  <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-foreground/40 flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest">
+                    <ArrowLeft className="w-4 h-4" /> {t('register.prev', 'Back')}
+                  </button>
+                  <button onClick={nextStep} className="flex-[2] glow-button">
+                    {t('register.next', 'Continue')}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 3 && (
+              <motion.div key="step3" variants={stepVariants} initial="hidden" animate="visible" exit="exit" className="space-y-10">
+                <div className="grid grid-cols-2 gap-8 px-1">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.3em] pl-1">{t('register.profile_photo', 'Identity Scan')}</label>
+                    <label className="flex flex-col items-center justify-center w-full h-44 border-2 border-dashed border-white/5 rounded-[32px] cursor-pointer hover:border-primary/50 hover:bg-white/[0.03] transition-all group overflow-hidden">
+                      {formData.profilePictureUrl ? (
+                        <img src={`https://backend.joida.uz${formData.profilePictureUrl}`} className="w-full h-full object-cover" alt="Profile" />
+                      ) : (
+                        <>
+                          <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-500">
+                             <Camera className="w-6 h-6 text-foreground/30 group-hover:text-primary transition-colors" />
+                          </div>
+                          <span className="text-[10px] text-foreground/30 font-black uppercase tracking-wider group-hover:text-white transition-colors">{t('register.select_image', 'Upload Photo')}</span>
+                        </>
+                      )}
+                      <input type="file" className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'profilePictureUrl')} />
+                    </label>
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.3em] pl-1">{t('register.diploma_cert', 'Certification')}</label>
+                    <label className="flex flex-col items-center justify-center w-full h-44 border-2 border-dashed border-white/5 rounded-[32px] cursor-pointer hover:border-primary/50 hover:bg-white/[0.03] transition-all group overflow-hidden">
+                      {formData.diplomaUrl ? (
+                        <div className="flex flex-col items-center text-primary">
+                          <FileText className="w-10 h-10 mb-2" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">{t('register.uploaded', 'Ready')}</span>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-500">
+                             <FileText className="w-6 h-6 text-foreground/30 group-hover:text-primary transition-colors" />
+                          </div>
+                          <span className="text-[10px] text-foreground/30 font-black uppercase tracking-wider group-hover:text-white transition-colors">{t('register.select_file', 'Upload PDF')}</span>
+                        </>
+                      )}
+                      <input type="file" className="hidden" onChange={e => handleFileUpload(e, 'diplomaUrl')} />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="p-8 rounded-[32px] bg-white/[0.03] border border-white/5 flex items-center justify-between mx-1 group hover:border-primary/30 transition-colors">
+                  <div className="flex items-center gap-5">
+                    <div className="p-4 bg-primary/10 rounded-2xl group-hover:scale-110 transition-transform duration-500">
+                      <MapPin className="text-primary w-6 h-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <h5 className="font-black text-white text-sm">{t('register.service_location', 'Practice Location')}</h5>
+                      <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">
+                        {formData.locationName || t('register.detecting', 'Awaiting Sync')}
+                      </p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      navigator.geolocation.getCurrentPosition((pos) => {
+                        setFormData({...formData, latitude: pos.coords.latitude, longitude: pos.coords.longitude, locationName: 'Satellite Verified'});
+                      });
+                    }}
+                    className="px-6 py-3 bg-white/5 border border-white/10 hover:bg-primary hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                  >
+                    {t('register.get_gps', 'Sync GPS')}
+                  </button>
+                </div>
+
+                <div className="flex gap-4 pt-6 px-1">
+                  <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-foreground/40 flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest">
+                    <ArrowLeft className="w-4 h-4" /> {t('register.prev', 'Back')}
+                  </button>
+                  <button onClick={handleRegister} disabled={isLoading} className="flex-[2] glow-button">
+                    {isLoading ? t('register.finalizing', 'Processing...') : t('register.register_expert', 'Complete Registration')}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        <div className="mt-12 text-center">
+          <button onClick={onBackToLogin} className="text-foreground/30 hover:text-white transition-all text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 mx-auto">
+            <LogIn className="w-4 h-4" /> {t('register.already_account', 'Established User? Sign In')}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
