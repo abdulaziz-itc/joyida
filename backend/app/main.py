@@ -6,7 +6,7 @@ import traceback
 import logging
 
 # Setup absolute path for logging in production
-LOG_FILE = "/home/joidauz/repositories/joyida/backend/tmp/error.log"
+LOG_FILE = "/home/joidauz/backend/tmp/error.log"
 
 logging.basicConfig(
     filename=LOG_FILE,
