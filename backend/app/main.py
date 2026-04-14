@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.endpoints import auth, google_auth, dashboard, projects, experts, chat, bookings, admin, payments, reviews, notifications, utils
 
@@ -37,6 +38,9 @@ api_router.include_router(reviews.router, prefix="/reviews", tags=["reviews"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
 api_router.include_router(utils.router, prefix="/utils", tags=["utils"])
 app.include_router(api_router, prefix="/api/v1")
+
+# Serve static files
+app.mount("/uploads", StaticFiles(directory="static/uploads"), name="uploads")
 
 @app.get("/")
 def read_root():

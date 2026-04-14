@@ -120,8 +120,8 @@ class AuthProvider with ChangeNotifier {
         return data['detail'] ?? 'Registration failed with status: ${response.statusCode}';
       }
     } catch (e) {
-      print('Registration error: $e');
-      return 'Network error: Please check your connection.';
+      print('Registration detailed error: $e');
+      return 'Registration Error: ${e.toString().split(':').last.trim()}';
     }
   }
 
