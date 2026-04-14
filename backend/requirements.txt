@@ -28,3 +28,6 @@ uvicorn==0.39.0
 a2wsgi
 alembic
 pydantic-settings
+email-validator
+google-auth
+google-api-python-client

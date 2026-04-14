@@ -5,9 +5,11 @@ import os
 import traceback
 import logging
 
-# Setup local file logging for production debugging
+# Setup absolute path for logging in production
+LOG_FILE = "/home/joidauz/backend/tmp/error.log"
+
 logging.basicConfig(
-    filename='tmp/error.log',
+    filename=LOG_FILE,
     level=logging.ERROR,
     format='%(asctime)s %(levelname)s %(name)s %(message)s'
 )

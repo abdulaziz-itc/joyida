@@ -1,7 +1,7 @@
 # Enable Phusion Passenger
 PassengerEnabled on
 PassengerAppRoot /Users/macbook13/Documents/joyida/backend
-PassengerPython /Users/macbook13/Documents/joyida/backend/venv/bin/python
+PassengerPython /usr/bin/python3
 PassengerAppType wsgi
 PassengerStartupFile passenger_wsgi.py
 
