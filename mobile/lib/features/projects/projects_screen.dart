@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../core/theme.dart';
 
 class Project {
@@ -16,16 +17,17 @@ class ProjectsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Note: In a real app, these would come from an API and be already localized or use keys
     final projects = [
-      Project(id: 1, title: 'Branding Identity', description: 'Design a new logo and brand guidelines for Joyida platform.', status: 'Ongoing', progress: 0.65),
-      Project(id: 2, title: 'Mobile App API', description: 'Develop the REST API endpoints for the mobile application.', status: 'Completed', progress: 1.0),
-      Project(id: 3, title: 'Market Research', description: 'Analyze competitors and define the target audience demographics.', status: 'Overdue', progress: 0.45),
+      Project(id: 1, title: 'Branding Identity', description: 'Design a new logo and brand guidelines for Joyida platform.', status: 'projects.ongoing', progress: 0.65),
+      Project(id: 2, title: 'Mobile App API', description: 'Develop the REST API endpoints for the mobile application.', status: 'projects.completed', progress: 1.0),
+      Project(id: 3, title: 'Market Research', description: 'Analyze competitors and define the target audience demographics.', status: 'projects.overdue', progress: 0.45),
     ];
 
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Projects', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('projects.title'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -49,7 +51,11 @@ class ProjectsScreen extends StatelessWidget {
   }
 
   Widget _buildProjectCard(Project project) {
-    Color statusColor = project.status == 'Completed' ? Colors.greenAccent : (project.status == 'Overdue' ? Colors.redAccent : Colors.blueAccent);
+    // Status translation and color mapping
+    String translatedStatus = project.status.tr();
+    Color statusColor = project.status == 'projects.completed' 
+        ? Colors.greenAccent 
+        : (project.status == 'projects.overdue' ? Colors.redAccent : Colors.blueAccent);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -73,7 +79,7 @@ class ProjectsScreen extends StatelessWidget {
                   border: Border.all(color: statusColor.withOpacity(0.3)),
                 ),
                 child: Text(
-                  project.status,
+                  translatedStatus,
                   style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -93,7 +99,7 @@ class ProjectsScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Progress', style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+              Text('projects.progress'.tr(), style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
               Text('${(project.progress * 100).toInt()}%', style: const TextStyle(color: AppTheme.primary, fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),

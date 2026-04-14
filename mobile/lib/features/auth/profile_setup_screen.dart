@@ -16,11 +16,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final TextEditingController _bioController = TextEditingController();
 
   final List<Map<String, String>> _professions = [
-    {'id': 'plumber', 'name': 'Santexnik', 'icon': '🔧'},
-    {'id': 'electrician', 'name': 'Elektrchi', 'icon': '⚡'},
-    {'id': 'lawyer', 'name': 'Advokat', 'icon': '⚖️'},
-    {'id': 'tutor', 'name': 'O\'qituvchi', 'icon': '📚'},
-    {'id': 'it', 'name': 'IT Mutaxassis', 'icon': '💻'},
+    {'id': 'plumber', 'icon': '🔧'},
+    {'id': 'electrician', 'icon': '⚡'},
+    {'id': 'lawyer', 'icon': '⚖️'},
+    {'id': 'tutor', 'icon': '📚'},
+    {'id': 'it', 'icon': '💻'},
   ];
 
   @override
@@ -65,7 +65,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   if (_step > 1)
                     TextButton(
                       onPressed: () => setState(() => _step--),
-                      child: const Text('Back', style: TextStyle(color: Colors.grey)),
+                      child: Text('auth.back'.tr(), style: const TextStyle(color: Colors.grey)),
                     )
                   else
                     const SizedBox(),
@@ -78,7 +78,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                     child: Text(
-                      _step == 3 ? 'Complete' : 'Next',
+                      _step == 3 ? 'auth.complete_registration'.tr() : 'auth.continue'.tr(),
                       style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
@@ -105,13 +105,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       key: const ValueKey(1),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Who are you?', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        Text('profile_setup.title'.tr(), style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
-        const Text('Choose your primary role on Joyida.', style: TextStyle(color: Colors.grey, fontSize: 16)),
+        Text('profile_setup.subtitle'.tr(), style: const TextStyle(color: Colors.grey, fontSize: 16)),
         const SizedBox(height: 40),
         _buildRoleCard(
-          title: "Just a Client",
-          desc: "I'm looking for local experts to help me with tasks.",
+          title: "profile_setup.role_client".tr(),
+          desc: "profile_setup.role_client_desc".tr(),
           icon: Icons.person_outline,
           color: Colors.blueAccent,
           isSelected: !_isExpert,
@@ -119,8 +119,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         ),
         const SizedBox(height: 16),
         _buildRoleCard(
-          title: "I'm an Expert",
-          desc: "I want to offer my skills and earn money nearby.",
+          title: "profile_setup.role_expert".tr(),
+          desc: "profile_setup.role_expert_desc".tr(),
           icon: Icons.work_outline,
           color: AppTheme.primary,
           isSelected: _isExpert,
@@ -137,19 +137,20 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _isExpert ? "What is your profession?" : "What are you looking for?",
+            _isExpert ? "profile_setup.prof_title_expert".tr() : "profile_setup.prof_title_user".tr(),
             style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          const Text('This helps us show you the most relevant content.', style: TextStyle(color: Colors.grey, fontSize: 16)),
+          Text('profile_setup.prof_subtitle'.tr(), style: const TextStyle(color: Colors.grey, fontSize: 16)),
           const SizedBox(height: 32),
           Wrap(
             spacing: 12,
             runSpacing: 12,
             children: _professions.map((p) {
-              bool isSelected = _selectedProfession == p['name'];
+              String professionName = "profile_setup.professions.${p['id']}".tr();
+              bool isSelected = _selectedProfession == p['id'];
               return GestureDetector(
-                onTap: () => setState(() => _selectedProfession = p['name']),
+                onTap: () => setState(() => _selectedProfession = p['id']),
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -162,7 +163,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     children: [
                       Text(p['icon']!),
                       const SizedBox(width: 8),
-                      Text(p['name']!, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                      Text(professionName, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
                     ],
                   ),
                 ),
@@ -174,7 +175,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             controller: _bioController,
             maxLines: 4,
             decoration: InputDecoration(
-              hintText: 'Tell us a bit about yourself...',
+              hintText: 'profile_setup.bio_hint'.tr(),
               hintStyle: const TextStyle(color: Colors.grey),
               filled: true,
               fillColor: Colors.white.withOpacity(0.05),
@@ -197,22 +198,22 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           child: const Icon(Icons.location_on, size: 64, color: Colors.greenAccent),
         ),
         const SizedBox(height: 32),
-        const Text('Set Your Location', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        Text('profile_setup.location_title'.tr(), style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
-        const Text(
-          'We use your location to find experts and clients right in your neighborhood.',
+        Text(
+          'profile_setup.location_desc'.tr(),
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey, fontSize: 16),
+          style: const TextStyle(color: Colors.grey, fontSize: 16),
         ),
         const SizedBox(height: 40),
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(20)),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.gps_fixed, color: AppTheme.primary),
-              SizedBox(width: 16),
-              Text('Auto-detect location', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Icon(Icons.gps_fixed, color: AppTheme.primary),
+              const SizedBox(width: 16),
+              Text('profile_setup.auto_detect'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
         ),

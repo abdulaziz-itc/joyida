@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     
     # DATABASE_URL: str = "postgresql://user:password@localhost/joyida"
     # Convert relative sqlite path to absolute path
-    DATABASE_URL: str = f"sqlite:///{os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'joyida.db')}"
+    DATABASE_URL: str = f"sqlite:///{os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'joyida.db')}"
     
     CORS_ORIGINS: List[str] = ["*"]
 

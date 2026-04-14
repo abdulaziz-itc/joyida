@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../core/theme.dart';
 
 class Message {
@@ -20,7 +21,7 @@ class ChatRoomScreen extends StatefulWidget {
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
 }
 
-class _ChatRoomScreenState extends State<ChatRoomScreen> {
+class _ExpertChatState extends State<ChatRoomScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isVerified = false; // Privacy Toggle
 
@@ -35,18 +36,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       timestamp: '10:35',
       metadata: {'price': '80,000 UZS', 'desc': 'Quvurni almashtirish va germetiklash'}
     ),
-    Message(id: 4, sender: 'system', text: 'Joyida Safety Tip: Do not pay in advance. Pay only after service completion.', type: 'system', timestamp: '10:36'),
+    Message(id: 4, sender: 'system', text: 'chat.safety_tip'.tr(), type: 'system', timestamp: '10:36'),
   ];
-
-  void _playNotificationSound() {
-    // In a real app: AudioPlayer().play(AssetSource('sounds/ping.mp3'));
-    debugPrint('Playing premium notification Ping sound');
-  }
-
-  void _addMockMessage() {
-    _playNotificationSound();
-    // Logic to add message would go here
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +57,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(_isVerified ? widget.expertName : 'Expert #382', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const Text('Online', style: TextStyle(color: Colors.greenAccent, fontSize: 12)),
+                Text(_isVerified ? widget.expertName : 'chat.expert_id'.tr(namedArgs: {'id': '382'}), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text('chat.online'.tr(), style: const TextStyle(color: Colors.greenAccent, fontSize: 12)),
               ],
             ),
           ],
@@ -123,15 +114,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(color: AppTheme.primary.withOpacity(0.3), width: 1),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: const Offset(0, 5))],
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))],
         ),
         child: Column(
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.verified_user_outlined, color: AppTheme.primary),
-                SizedBox(width: 8),
-                Text('Rasmiy Taklif', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                const Icon(Icons.verified_user_outlined, color: AppTheme.primary),
+                const SizedBox(width: 8),
+                Text('chat.official_offer'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               ],
             ),
             const SizedBox(height: 16),
@@ -140,7 +131,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('NARXI:', style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
+                Text('chat.price'.tr(), style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
                 Text(message.metadata?['price'] ?? '', style: const TextStyle(color: Colors.greenAccent, fontSize: 24, fontWeight: FontWeight.black)),
               ],
             ),
@@ -154,7 +145,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: const Text('Rad etish'),
+                    child: Text('chat.reject'.tr()),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -166,7 +157,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: const Text('Qabul qilish', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: Text('chat.accept'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -222,7 +213,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 ),
                 child: TextField(
                   controller: _controller,
-                  decoration: const InputDecoration(hintText: 'Xabar yozing...', border: InputDescription.none),
+                  decoration: InputDecoration(hintText: 'chat.type_message'.tr(), border: InputDescription.none),
                 ),
               ),
             ),
@@ -239,6 +230,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       ),
     );
   }
+}
+
+class ChatRoomScreen extends StatefulWidget {
+  final String expertName;
+  const ChatRoomScreen({super.key, required this.expertName});
+
+  @override
+  State<ChatRoomScreen> createState() => _ExpertChatState();
 }
 
 // Add simple InputDescription for mocking behavior

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../core/theme.dart';
 import '../../core/auth_provider.dart';
 import '../auth/auth_guard_dialog.dart';
@@ -43,7 +44,7 @@ class _ExpertExplorerScreenState extends State<ExpertExplorerScreen> {
     return Scaffold(
       backgroundColor: isDark ? Colors.black : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text('Expert Explorer', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('marketplace.explorer_title'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
             onPressed: () => setState(() => _showMap = !_showMap),
@@ -73,13 +74,13 @@ class _ExpertExplorerScreenState extends State<ExpertExplorerScreen> {
           width: double.infinity,
           height: double.infinity,
           color: AppTheme.primary.withOpacity(0.05),
-          child: const Center(
+          child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.location_on, size: 64, color: AppTheme.primary),
-                SizedBox(height: 16),
-                Text('Interactive Map Loading...', style: TextStyle(color: Colors.grey)),
+                const Icon(Icons.location_on, size: 64, color: AppTheme.primary),
+                const SizedBox(height: 16),
+                Text('marketplace.loading'.tr(), style: const TextStyle(color: Colors.grey)),
               ],
             ),
           ),
@@ -171,7 +172,7 @@ class _ExpertExplorerScreenState extends State<ExpertExplorerScreen> {
                     children: [
                       const Icon(Icons.location_on, color: AppTheme.primary, size: 14),
                       const SizedBox(width: 4),
-                      Text('Distance: ', style: TextStyle(color: isDark ? Colors.grey : Colors.grey.shade600, fontSize: 12)),
+                      Text('${"marketplace.distance".tr()}: ', style: TextStyle(color: isDark ? Colors.grey : Colors.grey.shade600, fontSize: 12)),
                       Text(expert.distance, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                     ],
                   ),
@@ -180,7 +181,7 @@ class _ExpertExplorerScreenState extends State<ExpertExplorerScreen> {
                     children: [
                       const Icon(Icons.star, color: Colors.amber, size: 14),
                       const SizedBox(width: 4),
-                      const Text('Rate: ', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      Text('${"marketplace.rate".tr()}: ', style: const TextStyle(color: Colors.grey, fontSize: 12)),
                       Text('${expert.rating} (${expert.reviews})', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                     ],
                   ),

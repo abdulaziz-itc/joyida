@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../core/theme.dart';
 import '../projects/projects_screen.dart';
 import '../marketplace/expert_explorer_screen.dart';
@@ -18,9 +19,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     const HomeView(),
     const ProjectsScreen(),
-    const Center(child: Text('Add New', style: TextStyle(color: Colors.white))),
+    Center(child: Text('dashboard.add_new'.tr(), style: const TextStyle(color: Colors.white))),
     const ExpertExplorerScreen(),
-    const Center(child: Text('Settings', style: TextStyle(color: Colors.white))),
+    Center(child: Text('dashboard.settings'.tr(), style: const TextStyle(color: Colors.white))),
   ];
 
   @override
@@ -107,8 +108,8 @@ class HomeView extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Hello, Alex!', style: TextStyle(color: Colors.grey.shade400, fontSize: 16)),
-                        const Text('Good Morning', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        Text('dashboard.hello'.tr(args: ['Alex']), style: TextStyle(color: Colors.grey.shade400, fontSize: 16)),
+                        Text('dashboard.good_morning'.tr(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     Container(
@@ -136,10 +137,10 @@ class HomeView extends StatelessWidget {
                   crossAxisSpacing: 16,
                   childAspectRatio: 1.1,
                   children: [
-                    _buildKpiCard('Total Users', '67.4k', '+12%', true, Icons.people_outline),
-                    _buildKpiCard('Revenue', '\$1.2M', '+24%', true, Icons.monetization_on_outlined),
-                    _buildKpiCard('Projects', '815', '-3%', false, Icons.work_outline),
-                    _buildKpiCard('Growth', '4.8%', '+7%', true, Icons.trending_up),
+                    _buildKpiCard('dashboard.total_users'.tr(), '67.4k', '+12%', true, Icons.people_outline),
+                    _buildKpiCard('dashboard.revenue'.tr(), '$1.2M', '+24%', true, Icons.monetization_on_outlined),
+                    _buildKpiCard('projects.title'.tr(), '815', '-3%', false, Icons.work_outline),
+                    _buildKpiCard('dashboard.growth'.tr(), '4.8%', '+7%', true, Icons.trending_up),
                   ],
                 ),
                 const SizedBox(height: 32),
@@ -149,11 +150,11 @@ class HomeView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Weekly Performance', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Icon(Icons.more_horiz, color: Colors.grey),
+                          Text('dashboard.performance'.tr(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          const Icon(Icons.more_horiz, color: Colors.grey),
                         ],
                       ),
                       const SizedBox(height: 24),
@@ -194,7 +195,7 @@ class HomeView extends StatelessWidget {
                 ),
                 const SizedBox(height: 32),
                 
-                const Text('Recent Activity', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('dashboard.activity'.tr(), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 _buildActivityList(),
               ],
@@ -262,12 +263,12 @@ class HomeView extends StatelessWidget {
               child: const Icon(Icons.flash_on, color: Colors.blueAccent),
             ),
             const SizedBox(width: 16),
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('New project created', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text('Sarah updated the design file', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text('dashboard.new_project'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Sarah updated the design file', style: TextStyle(color: Colors.grey, fontSize: 12)),
                 ],
               ),
             ),

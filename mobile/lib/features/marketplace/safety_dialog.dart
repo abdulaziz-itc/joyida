@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../core/theme.dart';
 
 class SafetyDialog extends StatelessWidget {
@@ -30,38 +31,38 @@ class SafetyDialog extends StatelessWidget {
                 child: const Icon(Icons.security_rounded, color: Colors.orangeAccent, size: 40),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Safety First',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Text(
+                'marketplace.safety_title'.tr(),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Please follow these guidelines for your safety.',
+              Text(
+                'marketplace.safety_subtitle'.tr(),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
               const SizedBox(height: 32),
               
               _buildSection(
-                title: 'Dos',
+                title: 'marketplace.safety_dos'.tr(),
                 icon: Icons.check_circle_outline,
                 color: Colors.greenAccent,
                 items: [
-                  'Meet in a public or safe place.',
-                  'Pay ONLY after the service is done.',
-                  'Verify identity upon arrival.',
+                  'marketplace.safety_do1'.tr(),
+                  'marketplace.safety_do2'.tr(),
+                  'marketplace.safety_do3'.tr(),
                 ],
                 isDark: isDark,
               ),
               const SizedBox(height: 24),
               _buildSection(
-                title: 'Don\'ts',
+                title: 'marketplace.safety_donts'.tr(),
                 icon: Icons.cancel_outlined,
                 color: Colors.redAccent,
                 items: [
-                  'Do NOT pay any advance/deposit.',
-                  'Do NOT share financial details.',
-                  'Avoid meeting in isolated areas.',
+                  'marketplace.safety_dont1'.tr(),
+                  'marketplace.safety_dont2'.tr(),
+                  'marketplace.safety_dont3'.tr(),
                 ],
                 isDark: isDark,
               ),
@@ -74,11 +75,11 @@ class SafetyDialog extends StatelessWidget {
                   minimumSize: const Size(double.infinity, 56),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
-                child: const Text('I Understand & Continue', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                child: Text('marketplace.safety_confirm'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: Text('Go Back', style: TextStyle(color: isDark ? Colors.white70 : Colors.black54)),
+                child: Text('marketplace.safety_back'.tr(), style: TextStyle(color: isDark ? Colors.white70 : Colors.black54)),
               ),
             ],
           ),

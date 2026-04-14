@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../core/theme.dart';
 
 class SubscriptionScreen extends StatefulWidget {
@@ -41,12 +41,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               child: const Icon(Icons.workspace_premium, color: Colors.amber, size: 60),
             ),
             const SizedBox(height: 24),
-            const Text('Welcome to Pro!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+            Text('subscription.welcome_pro'.tr(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
             const SizedBox(height: 12),
-            const Text(
-              'Your profile is now boosted. You will appear at the top of search results.',
+            Text(
+              'subscription.pro_desc'.tr(),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
+              style: const TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -59,7 +59,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 minimumSize: const Size(double.infinity, 56),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: const Text('Great!', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text('subscription.great'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -74,7 +74,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Scaffold(
       backgroundColor: isDark ? Colors.black : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text('Upgrade Account', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('subscription.title'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -82,22 +82,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Grow Your Business',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.black, letterSpacing: -1),
+              Text(
+                'subscription.header'.tr(),
+                style: const TextStyle(fontSize: 32, fontWeight: FontWeight.black, letterSpacing: -1),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Professional tools for local experts to get more clients and build a premium reputation.',
-                style: TextStyle(color: Colors.grey, fontSize: 16),
+              Text(
+                'subscription.subtitle'.tr(),
+                style: const TextStyle(color: Colors.grey, fontSize: 16),
               ),
               const SizedBox(height: 48),
               
               _buildPlanCard(
                 id: 'free',
-                name: 'Free Plan',
+                name: 'subscription.plan_free'.tr(),
                 price: '0 UZS',
-                features: ['Basic search visibility', 'Up to 3 portfolio items', 'Standard badge'],
+                features: [
+                  'subscription.f1'.tr(),
+                  'subscription.f2'.tr(),
+                  'subscription.f3'.tr(),
+                ],
                 color: Colors.grey,
                 isSelected: _selectedPlan == 'free',
                 onSelect: () => setState(() => _selectedPlan = 'free'),
@@ -106,9 +110,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               const SizedBox(height: 20),
               _buildPlanCard(
                 id: 'pro',
-                name: 'Professional',
+                name: 'subscription.plan_pro'.tr(),
                 price: '49,000 UZS',
-                features: ['Top priority ranking', 'Unlimited portfolio/reels', 'Diamond premium badge', 'Client analytics'],
+                features: [
+                  'subscription.p1'.tr(),
+                  'subscription.p2'.tr(),
+                  'subscription.p3'.tr(),
+                  'subscription.p4'.tr(),
+                ],
                 color: Colors.amber,
                 isSelected: _selectedPlan == 'pro',
                 onSelect: () => setState(() => _selectedPlan = 'pro'),
@@ -117,16 +126,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
               
               const SizedBox(height: 48),
-              const Text(
-                'Select Payment Method',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              Text(
+                'subscription.select_payment'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  _buildPaymentMethod('Payme', 'assets/images/payme.png', true, isDark),
+                  _buildPaymentMethod('Payme', isDark),
                   const SizedBox(width: 16),
-                  _buildPaymentMethod('CLICK', 'assets/images/click.png', false, isDark),
+                  _buildPaymentMethod('CLICK', isDark),
                 ],
               ),
               
@@ -143,7 +152,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: _isProcessing 
                   ? const CircularProgressIndicator(color: Colors.black)
                   : Text(
-                      _selectedPlan == 'pro' ? 'Upgrade Now' : 'Continue with Free',
+                      _selectedPlan == 'pro' ? 'subscription.upgrade_now'.tr() : 'subscription.continue_free'.tr(),
                       style: const TextStyle(fontWeight: FontWeight.black, fontSize: 16, color: Colors.black),
                     ),
               ),
@@ -211,7 +220,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Widget _buildPaymentMethod(String name, String asset, bool isSelected, bool isDark) {
+  Widget _buildPaymentMethod(String name, bool isDark) {
+    bool isSelected = name == 'Payme'; // Mock selection
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 20),

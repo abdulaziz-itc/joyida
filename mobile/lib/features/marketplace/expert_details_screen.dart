@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../core/theme.dart';
 import 'safety_dialog.dart';
 
@@ -40,7 +41,7 @@ class _ExpertDetailsScreenState extends State<ExpertDetailsScreen> with SingleTi
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Mutaxassis haqida', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  Text('marketplace.about'.tr(), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
                   Text(
                     '10 yillik tajribaga ega santexnikman. Har qanday murakkablikdagi suv va kanalizatsiya tizimlarini ta\'mirlash, montaj qilish va servis xizmatlarini ko\'rsataman.',
@@ -54,9 +55,9 @@ class _ExpertDetailsScreenState extends State<ExpertDetailsScreen> with SingleTi
                     unselectedLabelColor: Colors.grey,
                     indicatorColor: AppTheme.primary,
                     indicatorSize: TabBarIndicatorSize.label,
-                    tabs: const [
-                      Tab(text: 'Portfolio'),
-                      Tab(text: 'Sharhlar (124)'),
+                    tabs: [
+                      Tab(text: 'marketplace.portfolio'.tr()),
+                      Tab(text: 'marketplace.reviews'.tr() + ' (124)'),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -115,7 +116,7 @@ class _ExpertDetailsScreenState extends State<ExpertDetailsScreen> with SingleTi
                       const Icon(Icons.star, color: Colors.amber, size: 20),
                       const SizedBox(width: 4),
                       const Text('4.9', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      const Text(' (124 reviews)', style: TextStyle(color: Colors.white70)),
+                      Text('marketplace.reviews_count'.tr(namedArgs: {'count': '124'}), style: const TextStyle(color: Colors.white70)),
                       const Spacer(),
                       const Icon(Icons.location_on, color: Colors.white70, size: 16),
                       const SizedBox(width: 4),
@@ -208,7 +209,7 @@ class _ExpertDetailsScreenState extends State<ExpertDetailsScreen> with SingleTi
             child: ElevatedButton.icon(
               onPressed: () => _handleContactClick(),
               icon: const Icon(Icons.phone),
-              label: const Text('Qo\'ng\'iroq'),
+              label: Text('marketplace.call'.tr()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primary,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -221,7 +222,7 @@ class _ExpertDetailsScreenState extends State<ExpertDetailsScreen> with SingleTi
             child: OutlinedButton.icon(
               onPressed: () => _handleContactClick(),
               icon: const Icon(Icons.chat_bubble_outline),
-              label: const Text('Chat'),
+              label: Text('marketplace.chat'.tr()),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: AppTheme.primary),
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -321,7 +322,7 @@ class _ReelsViewerScreenState extends State<ReelsViewerScreen> {
                 const SizedBox(height: 24),
                 _buildAction(Icons.comment, '45'),
                 const SizedBox(height: 24),
-                _buildAction(Icons.share, 'Share'),
+                _buildAction(Icons.share, 'marketplace.share'.tr()),
               ],
             ),
           ),
