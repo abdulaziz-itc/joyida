@@ -138,7 +138,7 @@ class HomeView extends StatelessWidget {
                   childAspectRatio: 1.1,
                   children: [
                     _buildKpiCard('dashboard.total_users'.tr(), '67.4k', '+12%', true, Icons.people_outline),
-                    _buildKpiCard('dashboard.revenue'.tr(), '$1.2M', '+24%', true, Icons.monetization_on_outlined),
+                    _buildKpiCard('dashboard.revenue'.tr(), '\$1.2M', '+24%', true, Icons.monetization_on_outlined),
                     _buildKpiCard('projects.title'.tr(), '815', '-3%', false, Icons.work_outline),
                     _buildKpiCard('dashboard.growth'.tr(), '4.8%', '+7%', true, Icons.trending_up),
                   ],
