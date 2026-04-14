@@ -19,11 +19,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleLogin() async {
     setState(() => _isLoading = true);
-    final success = await Provider.of<AuthProvider>(context, listen: false)
+    final errorMessage = await Provider.of<AuthProvider>(context, listen: false)
         .login(_emailController.text, _passwordController.text);
     
     setState(() => _isLoading = false);
-    if (success) {
+    if (errorMessage == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login Successful!')),
@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login Failed. Check credentials.')),
+          SnackBar(content: Text(errorMessage)),
         );
       }
     }
@@ -133,10 +133,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onPressed: _isLoading ? null : _handleLogin,
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                ).copyWith(
-                                  backgroundColor: WidgetStateProperty.all(AppTheme.primary),
+                                  backgroundColor: AppTheme.primary,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 ),
                                 child: _isLoading
                                     ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))

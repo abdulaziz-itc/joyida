@@ -17,7 +17,7 @@ class AuthProvider with ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
   bool get profileCompleted => _profileCompleted;
 
-  Future<bool> login(String email, String password) async {
+  Future<String?> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('https://backend.joida.uz/api/v1/auth/login/access-token'),
@@ -32,15 +32,21 @@ class AuthProvider with ChangeNotifier {
         _token = data['access_token'];
         await _storage.write(key: 'token', value: _token);
         _isAuthenticated = true;
-        // In a real app, we'd fetch the user profile here to check profileCompleted
         _profileCompleted = false; 
         notifyListeners();
-        return true;
+        return null; // Success
+      } else {
+        try {
+          final data = json.decode(response.body);
+          return data['detail'] ?? 'Login failed with status: ${response.statusCode}';
+        } catch (e) {
+          // If response is HTML (like 500 error), show a descriptive message
+          return 'Server Error (${response.statusCode}): The backend is currently unavailable.';
+        }
       }
-      return false;
     } catch (e) {
       print('Login error: $e');
-      return false;
+      return 'Connection Error: Please check your internet.';
     }
   }
 
