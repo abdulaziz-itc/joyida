@@ -1,30 +1,38 @@
 import sys
 import os
-import traceback
 
-# cPanel specific absolute paths
+# 1. Define the absolute path to the backend directory
+# On cPanel this is usually /home/username/backend
 BASE_DIR = "/home/joidauz/backend"
-# Attempt to find the site-packages in the cPanel venv
-VENV_SITE_PACKAGES = os.path.join(BASE_DIR, "venv", "lib", "python3.11", "site-packages")
+
+# 2. Add the virtual environment's site-packages to sys.path
+# This bypasses the need for os.execl which can cause issues on some cPanel setups
+VENV_SITE_PACKAGES = os.path.join(BASE_DIR, "venv", "lib", "python3.9", "site-packages")
 if not os.path.exists(VENV_SITE_PACKAGES):
-    # Try alternate python version if 3.11 is not standard on cPanel
-    VENV_SITE_PACKAGES = os.path.join(BASE_DIR, "venv", "lib", "python3.9", "site-packages")
+    # Fallback for common cPanel python versions
+    VENV_SITE_PACKAGES = os.path.join(BASE_DIR, "venv", "lib", "python3.11", "site-packages")
 
-# Setup sys.path to prioritize production virtual environment
-sys.path.insert(0, VENV_SITE_PACKAGES)
-sys.path.insert(0, BASE_DIR)
+if VENV_SITE_PACKAGES not in sys.path:
+    sys.path.insert(0, VENV_SITE_PACKAGES)
 
+# 3. Add the application directory to the path
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+    sys.path.insert(0, os.path.join(BASE_DIR, "app"))
+
+# 4. Import the application after the paths are setup
+# We use a try-except to log any startup errors to a file we can read
 try:
     from a2wsgi import ASGIMiddleware
     from app.main import app
+    
+    # Phusion Passenger looks for a variable named 'application'
     application = ASGIMiddleware(app)
+    
 except Exception as e:
-    # Error logging in production
-    try:
-        DEBUG_LOG = os.path.join(BASE_DIR, "tmp", "error.log")
-        with open(DEBUG_LOG, "a") as f:
-            f.write("\n" + "="*50 + "\n")
-            f.write(f"Startup error: {traceback.format_exc()}\n")
-    except:
-        pass
+    import traceback
+    with open(os.path.join(BASE_DIR, "tmp", "startup_error.log"), "a") as f:
+        f.write("\n" + "="*50 + "\n")
+        f.write(f"Startup error at {os.getcwd()}\n")
+        f.write(traceback.format_exc())
     raise
