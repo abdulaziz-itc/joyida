@@ -1,6 +1,7 @@
 // Joyida Platform: FINAL DEPLOYMENT PUSH - VERIFIED CONFIG
 import { useState, useEffect } from 'react';
 import LoginPage from './features/auth/LoginPage';
+import RegisterPage from './features/auth/RegisterPage';
 import Onboarding from './features/auth/Onboarding';
 import PreferenceSelection from './features/auth/PreferenceSelection';
 import ProfileSetup from './features/auth/ProfileSetup';
@@ -19,6 +20,7 @@ function App() {
   const [showPreferences, setShowPreferences] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
     // Apply saved theme
@@ -84,7 +86,11 @@ function App() {
             {currentPage === 'admin' && <AdminLayout />}
           </DashboardLayout>
         ) : (
-          <LoginPage />
+          showRegister ? (
+            <RegisterPage onBackToLogin={() => setShowRegister(false)} />
+          ) : (
+            <LoginPage onRegister={() => setShowRegister(true)} />
+          )
         )}
         <ToastContainer />
       </div>

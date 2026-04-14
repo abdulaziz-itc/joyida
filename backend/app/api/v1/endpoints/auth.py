@@ -51,7 +51,24 @@ def register_user(
         email=user_in.email,
         hashed_password=security.get_password_hash(user_in.password),
         full_name=user_in.full_name,
+        is_expert=user_in.is_expert,
+        profession=user_in.profession,
+        birth_year=user_in.birth_year,
+        gender=user_in.gender,
+        education_level=user_in.education_level,
+        workplace=user_in.workplace,
+        latitude=user_in.latitude,
+        longitude=user_in.longitude,
+        service_location_name=user_in.service_location_name,
+        profile_picture_url=user_in.profile_picture_url,
     )
+    
+    # Handle service associations
+    if user_in.is_expert and user_in.service_ids:
+        from app.models.service import ServiceCategory
+        services = db.query(ServiceCategory).filter(ServiceCategory.id.in_(user_in.service_ids)).all()
+        db_user.services = services
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

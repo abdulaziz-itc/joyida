@@ -5,7 +5,11 @@ import { GoogleLogin } from '@react-oauth/google';
 import apiClient from '../../api/apiClient';
 import { motion } from 'framer-motion';
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  onRegister: () => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -223,7 +227,12 @@ const LoginPage: React.FC = () => {
 
           {/* Footer */}
           <p className="text-center mt-12 text-sm text-gray-400 font-medium">
-            Don't have an account? <a href="#" className="text-purple-400 hover:text-purple-300 font-black transition-colors ml-1 uppercase tracking-wider">Join Now</a>
+            Don't have an account? <button 
+              onClick={onRegister}
+              className="text-purple-400 hover:text-purple-300 font-black transition-colors ml-1 uppercase tracking-wider"
+            >
+              Join Now
+            </button>
           </p>
         </motion.div>
       </div>

@@ -10,20 +10,24 @@ class UserBase(BaseModel):
     full_name: Optional[str] = None
     is_expert: bool = False
     profession: Optional[str] = None
-    bio: Optional[str] = None
+    birth_year: Optional[int] = None
+    gender: Optional[str] = None
+    education_level: Optional[str] = None
+    workplace: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    service_location_name: Optional[str] = None
     profile_completed: bool = False
+    profile_picture_url: Optional[str] = None
     is_verified: bool = False
     verification_status: str = "unverified"
     verification_data: Optional[Any] = None
-    subscription_tier: str = "free"
-    subscription_expires_at: Optional[datetime] = None
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
     email: EmailStr
     password: str
+    service_ids: Optional[list[int]] = []
 
 # Properties to receive via API on update
 class UserUpdate(UserBase):
@@ -49,3 +53,13 @@ class Token(BaseModel):
 
 class TokenPayload(BaseModel):
     sub: Optional[int] = None
+
+class ServiceCategoryBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+class ServiceCategory(ServiceCategoryBase):
+    id: int
+
+    class Config:
+        from_attributes = True

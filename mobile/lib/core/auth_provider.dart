@@ -6,7 +6,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final _storage = const FlutterSecureStorage();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId: '596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com',
+  );
   String? _token;
   bool _isAuthenticated = false;
   bool _profileCompleted = false;
@@ -42,15 +44,101 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<List<dynamic>> getServices() async {
+    try {
+      final response = await http.get(Uri.parse('https://backend.joida.uz/api/v1/utils/services'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching services: $e');
+      return [];
+    }
+  }
+
+  Future<String?> uploadFile(String filePath) async {
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse('https://backend.joida.uz/api/v1/utils/upload'));
+      request.files.add(await http.MultipartFile.fromPath('file', filePath));
+      
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['url'];
+      }
+      return null;
+    } catch (e) {
+      print('Upload error: $e');
+      return null;
+    }
+  }
+
+  Future<String?> register({
+    required String fullName,
+    required String email,
+    required String password,
+    bool isExpert = false,
+    int? birthYear,
+    String? gender,
+    String? educationLevel,
+    String? workplace,
+    List<int>? serviceIds,
+    double? latitude,
+    double? longitude,
+    String? locationName,
+    String? profilePictureUrl,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://backend.joida.uz/api/v1/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': email,
+          'password': password,
+          'full_name': fullName,
+          'is_expert': isExpert,
+          'birth_year': birthYear,
+          'gender': gender,
+          'education_level': educationLevel,
+          'workplace': workplace,
+          'service_ids': serviceIds ?? [],
+          'latitude': latitude,
+          'longitude': longitude,
+          'service_location_name': locationName,
+          'profile_picture_url': profilePictureUrl,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final loginSuccess = await login(email, password);
+        return loginSuccess ? null : 'Registration successful but login failed.';
+      } else {
+        final data = json.decode(response.body);
+        return data['detail'] ?? 'Registration failed with status: ${response.statusCode}';
+      }
+    } catch (e) {
+      print('Registration error: $e');
+      return 'Network error: Please check your connection.';
+    }
+  }
+
   Future<bool> signInWithGoogle() async {
     try {
+      // Sign out first to ensure account selection dialog shows up if needed
+      await _googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return false;
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
 
-      if (idToken == null) return false;
+      if (idToken == null) {
+        print('Google ID Token is null');
+        return false;
+      }
 
       final response = await http.post(
         Uri.parse('https://backend.joida.uz/api/v1/google-auth/google'),

@@ -152,7 +152,7 @@ class _ExpertExplorerScreenState extends State<ExpertExplorerScreen> {
                       ],
                       if (expert.isPro) ...[
                         const SizedBox(width: 4),
-                        const Icon(Icons.gem, color: Colors.amber, size: 18),
+                        const Icon(Icons.workspace_premium, color: Colors.amber, size: 18),
                       ],
                     ],
                   ),

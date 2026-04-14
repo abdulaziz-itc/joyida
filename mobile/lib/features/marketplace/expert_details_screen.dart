@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../core/theme.dart';
 import 'safety_dialog.dart';
@@ -199,7 +200,7 @@ class _ExpertDetailsScreenState extends State<ExpertDetailsScreen> with SingleTi
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: isDark ? Colors.black : Colors.white,
-        border: Border(top: BorderSide(color: isDark ? Colors.white10 : Colors.black10)),
+        border: Border(top: BorderSide(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.1))),
       ),
       child: Row(
         children: [

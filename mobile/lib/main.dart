@@ -3,13 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'core/theme.dart';
-import 'core/theme_provider.dart';
-import 'core/auth_provider.dart';
-import 'features/auth/login_screen.dart';
-import 'features/auth/onboarding_screen.dart';
-import 'features/auth/preference_screen.dart';
-import 'features/dashboard/home_screen.dart';
+import 'package:mobile/core/theme.dart';
+import 'package:mobile/core/theme_provider.dart';
+import 'package:mobile/core/auth_provider.dart';
+import 'package:mobile/features/auth/login_screen.dart';
+import 'package:mobile/features/auth/onboarding_screen.dart';
+import 'package:mobile/features/auth/preference_screen.dart';
+import 'package:mobile/features/auth/profile_setup_screen.dart';
+import 'package:mobile/features/dashboard/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,7 +96,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     
     if (authProvider.isAuthenticated) {
       if (!authProvider.profileCompleted) {
-        return const ProfileSetupScreen();
+        return ProfileSetupScreen();
       }
       return const HomeScreen();
     }

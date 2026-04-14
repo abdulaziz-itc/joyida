@@ -14,19 +14,25 @@ class User(Base):
     
     # Marketplace/Expert fields
     is_expert = Column(Boolean(), default=False)
-    profession = Column(String, nullable=True)
-    bio = Column(Text, nullable=True)
+    profession = Column(String, nullable=True) # Unified with specialization/direction
+    birth_year = Column(Integer, nullable=True)
+    gender = Column(String, nullable=True)
+    education_level = Column(String, nullable=True)
+    workplace = Column(String, nullable=True)
+    
+    # Location fields
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+    service_location_name = Column(String, nullable=True)
+    
     profile_completed = Column(Boolean(), default=False)
 
-    # Verification fields
+    # Verification and Profile Assets
+    profile_picture_url = Column(String, nullable=True)
     is_verified = Column(Boolean(), default=False)
     verification_status = Column(String, default="unverified") # unverified, pending, verified, rejected
     verification_data = Column(JSON, nullable=True) # stores document URLs, timestamps
 
-    # Monetization fields (Freemium Subscription)
-    subscription_tier = Column(String, default="free") # free, pro
-    subscription_expires_at = Column(DateTime, nullable=True)
-
+    # Relationships
     projects = relationship("Project", back_populates="owner")
+    services = relationship("ServiceCategory", secondary="user_services", back_populates="users")
