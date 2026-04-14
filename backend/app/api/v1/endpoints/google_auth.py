@@ -62,7 +62,7 @@ async def google_login(
             user = UserModel(
                 email=email,
                 full_name=full_name,
-                hashed_password=security.get_password_hash(security.create_access_token(email)), # Dummy password for social users
+                hashed_password=security.get_password_hash(os.urandom(24).hex()), # Secure random dummy password for social users
                 is_active=True,
             )
             db.add(user)
