@@ -3,7 +3,7 @@ import os
 import traceback
 
 # 1. Configuration (Verified from server)
-BASE_DIR = "/home/joidauz/backend"
+BASE_DIR = "/home/joidauz/repositories/joyida/backend"
 VENV_PATHS = [
     '/home/joidauz/virtualenv/backend/3.14/lib64/python3.14/site-packages',
     '/home/joidauz/virtualenv/backend/3.14/lib/python3.14/site-packages'
