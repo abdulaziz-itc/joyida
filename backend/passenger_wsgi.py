@@ -1,38 +1,67 @@
 import sys
 import os
+import glob
+import traceback
 
-# 1. Define the absolute path to the backend directory
-# On cPanel this is usually /home/username/backend
+# 1. Configuration
 BASE_DIR = "/home/joidauz/backend"
+INTERPRETER = sys.executable
 
-# 2. Add the virtual environment's site-packages to sys.path
-# This bypasses the need for os.execl which can cause issues on some cPanel setups
-VENV_SITE_PACKAGES = os.path.join(BASE_DIR, "venv", "lib", "python3.9", "site-packages")
-if not os.path.exists(VENV_SITE_PACKAGES):
-    # Fallback for common cPanel python versions
-    VENV_SITE_PACKAGES = os.path.join(BASE_DIR, "venv", "lib", "python3.11", "site-packages")
+def log_error(msg):
+    with open(os.path.join(BASE_DIR, "tmp", "startup_error.log"), "a") as f:
+        import datetime
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"\n[{timestamp}] {msg}\n")
 
-if VENV_SITE_PACKAGES not in sys.path:
-    sys.path.insert(0, VENV_SITE_PACKAGES)
+log_error("--- PASSENGER STARTUP INITIATED ---")
+log_error(f"Using Python: {sys.version}")
+log_error(f"Executable: {INTERPRETER}")
 
-# 3. Add the application directory to the path
+# 2. Dynamic VENV Discovery
+# We check common cPanel venv locations
+possible_venv_paths = [
+    os.path.join(BASE_DIR, "venv"),
+    os.path.join("/home/joidauz/virtualenv", "backend"), # Based on shell prompt ((backend:3.14))
+]
+
+found_packages = False
+for venv_base in possible_venv_paths:
+    # Handle both BASE/lib/pythonX.X/site-packages and BASE/lib/pythonX.X/site-packages
+    # We use glob to find the python version directory automatically
+    pattern = os.path.join(venv_base, "lib", "python*", "site-packages")
+    matches = glob.glob(pattern)
+    
+    for site_pkgs in matches:
+        if os.path.exists(site_pkgs):
+            if site_pkgs not in sys.path:
+                sys.path.insert(0, site_pkgs)
+                log_error(f"Added site-packages: {site_pkgs}")
+            found_packages = True
+
+if not found_packages:
+    log_error("CRITICAL: No site-packages found in common venv locations!")
+
+# 3. Add application paths
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
-    sys.path.insert(0, os.path.join(BASE_DIR, "app"))
+log_error(f"Current sys.path: {sys.path}")
 
-# 4. Import the application after the paths are setup
-# We use a try-except to log any startup errors to a file we can read
+# 4. Bootstrap Application
 try:
+    log_error("Attempting to import ASGIMiddleware...")
     from a2wsgi import ASGIMiddleware
+    
+    log_error("Attempting to import app.main...")
     from app.main import app
     
-    # Phusion Passenger looks for a variable named 'application'
+    log_error("Successfully initialized application.")
     application = ASGIMiddleware(app)
     
-except Exception as e:
-    import traceback
-    with open(os.path.join(BASE_DIR, "tmp", "startup_error.log"), "a") as f:
-        f.write("\n" + "="*50 + "\n")
-        f.write(f"Startup error at {os.getcwd()}\n")
-        f.write(traceback.format_exc())
-    raise
+except Exception:
+    error_msg = traceback.format_exc()
+    log_error("FATAL ERROR DURING STARTUP:")
+    log_error(error_msg)
+    # Return a basic error message if possible
+    def application(environ, start_response):
+        start_response('500 Internal Server Error', [('Content-Type', 'text/plain')])
+        return [b"Internal Server Error during startup. Check tmp/startup_error.log"]
