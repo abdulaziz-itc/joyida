@@ -11,11 +11,13 @@ class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
   bool _profileCompleted = false;
   bool _isInitializing = true;
+  Map<String, dynamic>? _currentUser;
 
   String? get token => _token;
   bool get isAuthenticated => _isAuthenticated;
   bool get profileCompleted => _profileCompleted;
   bool get isInitializing => _isInitializing;
+  Map<String, dynamic>? get currentUser => _currentUser;
 
   AuthProvider() {
     tryAutoLogin();
@@ -35,8 +37,9 @@ class AuthProvider with ChangeNotifier {
         final data = json.decode(response.body);
         _token = data['access_token'];
         await _storage.write(key: 'token', value: _token);
+        await fetchUserInfo(); // Fetch user details after login
         _isAuthenticated = true;
-        _profileCompleted = false; 
+        _profileCompleted = true; // Assuming profile is completed for standard login
         notifyListeners();
         return null; // Success
       } else {
@@ -62,8 +65,22 @@ class AuthProvider with ChangeNotifier {
       }
       return [];
     } catch (e) {
-      print('Error fetching services: $e');
       return [];
+    }
+  }
+
+  Future<void> fetchUserInfo() async {
+    if (_token == null) return;
+    try {
+      final response = await http.get(
+        Uri.parse('https://backend.joida.uz/api/v1/auth/me'),
+        headers: {'Authorization': 'Bearer $_token'},
+      );
+      if (response.statusCode == 200) {
+        _currentUser = json.decode(response.body);
+      }
+    } catch (e) {
+      print('Fetch User Info error: $e');
     }
   }
 
@@ -157,8 +174,9 @@ class AuthProvider with ChangeNotifier {
         final data = json.decode(response.body);
         _token = data['access_token'];
         await _storage.write(key: 'token', value: _token);
+        await fetchUserInfo();
         _isAuthenticated = true;
-        _profileCompleted = false;
+        _profileCompleted = true; // Assuming Google users are also completed
         notifyListeners();
         return null; // Success
       }
@@ -173,6 +191,7 @@ class AuthProvider with ChangeNotifier {
     await _storage.delete(key: 'token');
     await _googleSignIn.signOut();
     _token = null;
+    _currentUser = null;
     _isAuthenticated = false;
     _profileCompleted = false;
     notifyListeners();
@@ -181,9 +200,14 @@ class AuthProvider with ChangeNotifier {
   Future<void> tryAutoLogin() async {
     _token = await _storage.read(key: 'token');
     if (_token != null) {
-      _isAuthenticated = true;
-      // In a real app, we'd fetch the user profile here
-      _profileCompleted = true; // For demo purposes, assuming auto-login users are completed
+      await fetchUserInfo();
+      if (_currentUser != null) {
+        _isAuthenticated = true;
+        _profileCompleted = true; 
+      } else {
+        // Token might be expired
+        await logout();
+      }
     }
     _isInitializing = false;
     notifyListeners();

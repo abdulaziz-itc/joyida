@@ -8,9 +8,12 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
     
-    # DATABASE_URL: str = "postgresql://user:password@localhost/joyida"
-    # Convert relative sqlite path to absolute path
-    DATABASE_URL: str = "sqlite:////home/joidauz/backend/joyida.db"
+    # Use env var or dynamic path for sqlite
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", 
+        "sqlite:////home/joidauz/backend/joyida.db" if os.path.exists("/home/joidauz") 
+        else f"sqlite:///{os.path.join(os.getcwd(), 'joyida.db')}"
+    )
     
     CORS_ORIGINS: List[str] = ["*"]
 

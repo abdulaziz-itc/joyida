@@ -25,6 +25,11 @@ class User(Base):
     longitude = Column(Float, nullable=True)
     service_location_name = Column(String, nullable=True)
     
+    # Expert profile details
+    hourly_rate = Column(Float, nullable=True) # Price per hour
+    rating = Column(Float, default=0.0)
+    review_count = Column(Integer, default=0)
+
     profile_completed = Column(Boolean(), default=False)
 
     # Verification and Profile Assets

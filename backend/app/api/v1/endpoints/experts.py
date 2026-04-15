@@ -6,7 +6,7 @@ import math
 
 from app.db.session import get_db
 from app.models.user import User as UserModel
-from app.schemas.user import User as UserSchema
+from app.schemas.user import User as UserSchema, UserWithDistance
 from app.api import deps
 
 router = APIRouter()
@@ -22,7 +22,7 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * math.asin(math.sqrt(a))
     return R * c
 
-@router.get("/nearby", response_model=List[UserSchema])
+@router.get("/nearby", response_model=List[UserWithDistance])
 def get_nearby_experts(
     *,
     db: Session = Depends(get_db),
@@ -61,11 +61,12 @@ def get_nearby_experts(
     for expert in experts:
         dist = haversine(lat, lon, expert.latitude, expert.longitude)
         if dist <= radius:
-            # We can't easily add a field to a Pydantic model response from SQL row 
-            # without a custom schema, but for now we'll just return the experts.
-            nearby_experts.append(expert)
+            # Create a dict from the SQLAlchemy model and add distance
+            expert_data = UserWithDistance.model_validate(expert).model_dump()
+            expert_data["distance"] = round(dist, 2)
+            nearby_experts.append(expert_data)
             
-    # Sort by distance (if we had the distance field)
-    # nearby_experts.sort(key=lambda x: haversine(lat, lon, x.latitude, x.longitude))
+    # Sort by distance
+    nearby_experts.sort(key=lambda x: x["distance"])
     
     return nearby_experts

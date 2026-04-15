@@ -36,6 +36,8 @@ class ProfileSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.currentUser;
     
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0A0A0A) : Colors.white,
@@ -56,14 +58,19 @@ class ProfileSettingsScreen extends StatelessWidget {
                     CircleAvatar(
                        radius: 40,
                        backgroundColor: AppTheme.primary.withOpacity(0.2),
-                       child: const Icon(Icons.person, size: 40, color: AppTheme.primary),
+                       backgroundImage: user?['profile_picture_url'] != null 
+                           ? NetworkImage(user!['profile_picture_url']) 
+                           : null,
+                       child: user?['profile_picture_url'] == null 
+                           ? const Icon(Icons.person, size: 40, color: AppTheme.primary)
+                           : null,
                     ),
                     const SizedBox(width: 20),
                     Column(
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
-                          const Text("User Profile", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                          Text("user@joida.uz", style: TextStyle(color: Colors.grey.shade500)),
+                          Text(user?['full_name'] ?? "User Profile", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text(user?['email'] ?? "user@joida.uz", style: TextStyle(color: Colors.grey.shade500)),
                        ],
                     )
                  ],

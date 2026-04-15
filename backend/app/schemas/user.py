@@ -22,6 +22,11 @@ class UserBase(BaseModel):
     is_verified: bool = False
     verification_status: str = "unverified"
     verification_data: Optional[Any] = None
+    
+    # Expert profile details
+    hourly_rate: Optional[float] = None
+    rating: float = 0.0
+    review_count: int = 0
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
@@ -42,6 +47,9 @@ class UserInDBBase(UserBase):
 # Additional properties to return via API
 class User(UserInDBBase):
     pass
+
+class UserWithDistance(User):
+    distance: Optional[float] = None
 
 # Additional properties stored in DB
 class UserInDB(UserInDBBase):

@@ -155,5 +155,25 @@
     "p2": "Cheksiz portfolio/reels",
     "p3": "Olmos premium nishon",
     "p4": "Mijozlar tahlili"
+  },
+  "smart_map": {
+    "search_hint": "Qanday mutaxassis kerak?",
+    "searching": "Mutaxassis qidirilmoqda...",
+    "found": "{count} ta mutaxassis topildi",
+    "expand_radius": "Radius kengaytirilmoqda: {radius}m"
+  },
+  "settings": {
+    "logout_title": "Chiqish",
+    "logout_confirm": "Haqiqatan ham hisobingizdan chiqmoqchimisiz?",
+    "cancel": "Bekor qilish",
+    "logout": "Chiqish",
+    "account": "HISOB",
+    "personal_info": "Shaxsiy ma'lumotlar",
+    "payment_methods": "To'lov usullari",
+    "history": "Buyurtmalar tarixi",
+    "preferences": "SOZLAMALAR",
+    "language": "Til",
+    "notifications": "Bildirishnomalar",
+    "theme": "Mavzu"
   }
 }

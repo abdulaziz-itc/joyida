@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../core/theme.dart';
 
 class ReelsScreen extends StatelessWidget {
@@ -9,42 +8,89 @@ class ReelsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Background Placeholder Graphic
-          Center(
-             child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   Icon(Icons.video_collection_outlined, size: 80, color: Colors.grey.withOpacity(0.3)),
-                   const SizedBox(height: 20),
-                   Text("Reels (Koming Soon)", style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 20, fontWeight: FontWeight.bold)),
-                   const SizedBox(height: 10),
-                   Padding(
-                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                     child: Text("Mutaxassislarning qisqa videolari va ish jarayonlari shu yerda chiqadi.", 
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey.withOpacity(0.5))),
-                   )
-                ],
-             )
-          ),
-          
-          // Floating Top Bar
-          Positioned(
-             top: MediaQuery.of(context).padding.top + 20,
-             left: 20,
-             right: 20,
-             child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                   Text("Joyida Reels", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                   IconButton(icon: Icon(Icons.camera_alt_outlined, color: Colors.white), onPressed: (){})
-                ],
-             )
-          )
-        ],
+      body: PageView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              // Mock Video Background (Gradients)
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.primaries[index % Colors.primaries.length].withOpacity(0.4),
+                      Colors.black,
+                    ],
+                  ),
+                ),
+                child: Center(
+                  child: Icon(Icons.play_circle_outline, size: 80, color: Colors.white.withOpacity(0.2)),
+                ),
+              ),
+              
+              // Right side actions
+              Positioned(
+                right: 16,
+                bottom: 150,
+                child: Column(
+                  children: [
+                    _buildActionButton(Icons.favorite, "1.2k"),
+                    const SizedBox(height: 20),
+                    _buildActionButton(Icons.comment, "45"),
+                    const SizedBox(height: 20),
+                    _buildActionButton(Icons.share, "12"),
+                  ],
+                ),
+              ),
+              
+              // Bottom Progress & Info
+              Positioned(
+                left: 16,
+                bottom: 120,
+                right: 80,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const CircleAvatar(radius: 16, backgroundColor: AppTheme.primary, child: Icon(Icons.person, size: 16, color: Colors.white)),
+                        const SizedBox(width: 8),
+                        Text("@expert_user_$index", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 8),
+                        Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(4)), child: const Text("PRO", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold))),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text("Mening bugungi bajargan ishimdan lavha! Yaqin atrofdagi eng yaxshi santexnik xizmati. #joyida #uzbekistan", maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white70)),
+                  ],
+                ),
+              ),
+              
+              // Custom Linear Progress bar at the bottom
+              Positioned(
+                bottom: 100,
+                left: 0,
+                right: 0,
+                child: LinearProgressIndicator(value: 0.4, backgroundColor: Colors.white.withOpacity(0.1), valueColor: const AlwaysStoppedAnimation(AppTheme.primary), minHeight: 2),
+              ),
+            ],
+          );
+        },
       ),
+    );
+  }
+
+  Widget _buildActionButton(IconData icon, String label) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white, size: 30),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(color: Colors.white, fontSize: 12)),
+      ],
     );
   }
 }

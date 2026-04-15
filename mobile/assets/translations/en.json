@@ -155,5 +155,25 @@
     "p2": "Unlimited portfolio/reels",
     "p3": "Diamond premium badge",
     "p4": "Client analytics"
+  },
+  "smart_map": {
+    "search_hint": "What specialist do you need?",
+    "searching": "Searching for specialists...",
+    "found": "{count} specialists found",
+    "expand_radius": "Expanding radius: {radius}m"
+  },
+  "settings": {
+    "logout_title": "Logout",
+    "logout_confirm": "Are you sure you want to log out of your account?",
+    "cancel": "Cancel",
+    "logout": "Logout",
+    "account": "ACCOUNT",
+    "personal_info": "Personal Information",
+    "payment_methods": "Payment Methods",
+    "history": "Order History",
+    "preferences": "PREFERENCES",
+    "language": "Language",
+    "notifications": "Notifications",
+    "theme": "Theme"
   }
 }

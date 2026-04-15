@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "492033662946",
+    "project_id": "joida-96d9a",
+    "storage_bucket": "joida-96d9a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:492033662946:android:dceb9c3984b420442e63bb",
+        "android_client_info": {
+          "package_name": "com.joyida.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "492033662946-lbv7j6sm3bobjkv7hlhf7aa43jfpemgj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joyida.mobile",
+            "certificate_hash": "1ff429287f4c76c2c64fad1c884a0c056d56687b"
+          }
+        },
+        {
+          "client_id": "492033662946-ilfn30ltnllvasg8no0622ragvnlk86j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBU8LuL5nEuCWbyIIQ-ABopQbwp04_Lbhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "492033662946-ilfn30ltnllvasg8no0622ragvnlk86j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
