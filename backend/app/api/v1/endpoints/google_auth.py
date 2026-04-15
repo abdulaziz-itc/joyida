@@ -61,7 +61,9 @@ async def google_login(
 
         # Check if user exists, else create
         user = db.query(UserModel).filter(UserModel.email == email).first()
+        is_new_user = False
         if not user:
+            is_new_user = True
             user = UserModel(
                 email=email,
                 full_name=full_name,
@@ -79,6 +81,7 @@ async def google_login(
                 user.id, expires_delta=access_token_expires
             ),
             "token_type": "bearer",
+            "is_new_user": is_new_user,
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

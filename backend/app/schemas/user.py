@@ -28,6 +28,20 @@ class UserBase(BaseModel):
     rating: float = 0.0
     review_count: int = 0
 
+class UserImageBase(BaseModel):
+    url: str
+    is_main: bool = False
+
+class UserImageCreate(UserImageBase):
+    pass
+
+class UserImage(UserImageBase):
+    id: int
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
 # Properties to receive via API on creation
 class UserCreate(UserBase):
     email: EmailStr
@@ -46,7 +60,7 @@ class UserInDBBase(UserBase):
 
 # Additional properties to return via API
 class User(UserInDBBase):
-    pass
+    images: list[UserImage] = []
 
 class UserWithDistance(User):
     distance: Optional[float] = None
@@ -58,6 +72,7 @@ class UserInDB(UserInDBBase):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    is_new_user: bool = False
 
 class TokenPayload(BaseModel):
     sub: Optional[int] = None

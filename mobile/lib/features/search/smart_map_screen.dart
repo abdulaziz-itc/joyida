@@ -136,7 +136,8 @@ class _SmartMapScreenState extends State<SmartMapScreen> with TickerProviderStat
             break;
         }
         
-        await Future.delayed(const Duration(seconds: 1));
+        // Increased delay to 5 seconds as requested for better discovery feel
+        await Future.delayed(const Duration(seconds: 5));
     }
     
     if (mounted) setState(() => _isSearching = false);

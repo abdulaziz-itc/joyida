@@ -41,3 +41,4 @@ class User(Base):
     # Relationships
     projects = relationship("Project", back_populates="owner")
     services = relationship("ServiceCategory", secondary="user_services", back_populates="users")
+    images = relationship("UserImage", back_populates="user", cascade="all, delete-orphan")

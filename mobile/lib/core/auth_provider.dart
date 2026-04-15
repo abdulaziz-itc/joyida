@@ -153,17 +153,17 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<String?> signInWithGoogle() async {
+  Future<Map<String, dynamic>?> signInWithGoogle() async {
     try {
       await _googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return "User cancelled Google Sign-In";
+      if (googleUser == null) return {'error': 'User cancelled Google Sign-In'};
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
 
       if (idToken == null) {
-        return 'Google ID Token is null. Platform might not support it.';
+        return {'error': 'Google ID Token is null.'};
       }
 
       final response = await http.post(
@@ -175,21 +175,22 @@ class AuthProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _token = data['access_token'];
-        await _storage.write(key: 'token', value: _token);
+        final bool isNewUser = data['is_new_user'] ?? false;
         
+        await _storage.write(key: 'token', value: _token);
         await fetchUserInfo();
         
         _isAuthenticated = true;
-        _profileCompleted = true; // Assuming Google users proceed to home
+        _profileCompleted = !isNewUser; 
         notifyListeners();
-        return null; // Success
+        return {'is_new_user': isNewUser};
       } else {
         final errorData = json.decode(response.body);
-        return errorData['detail'] ?? 'Server error: ${response.statusCode}';
+        return {'error': errorData['detail'] ?? 'Server error: ${response.statusCode}'};
       }
     } catch (e) {
       print('Google Login error: $e');
-      return 'Google Provider Error: ${e.toString()}';
+      return {'error': e.toString()};
     }
   }
 
@@ -217,6 +218,81 @@ class AuthProvider with ChangeNotifier {
     }
     _isInitializing = false;
     notifyListeners();
+  }
+
+  Future<List<dynamic>> fetchUserImages() async {
+    if (_token == null) return [];
+    try {
+      final response = await http.get(
+        Uri.parse('https://backend.joida.uz/api/v1/user-assets/me/images'),
+        headers: {'Authorization': 'Bearer $_token'},
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+      return [];
+    } catch (e) {
+      print('Fetch User Images error: $e');
+      return [];
+    }
+  }
+
+  Future<bool> addUserImage(String url, {bool isMain = false}) async {
+    if (_token == null) return false;
+    try {
+      final response = await http.post(
+        Uri.parse('https://backend.joida.uz/api/v1/user-assets/me/images'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_token'
+        },
+        body: json.encode({'url': url, 'is_main': isMain}),
+      );
+      if (response.statusCode == 200) {
+        await fetchUserInfo(); // Refresh user main photo
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteUserImage(int imageId) async {
+    if (_token == null) return false;
+    try {
+      final response = await http.delete(
+        Uri.parse('https://backend.joida.uz/api/v1/user-assets/me/images/$imageId'),
+        headers: {'Authorization': 'Bearer $_token'},
+      );
+      if (response.statusCode == 200) {
+        await fetchUserInfo();
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> setMainImage(int imageId) async {
+    if (_token == null) return false;
+    try {
+      final response = await http.put(
+        Uri.parse('https://backend.joida.uz/api/v1/user-assets/me/images/$imageId/set-main'),
+        headers: {'Authorization': 'Bearer $_token'},
+      );
+      if (response.statusCode == 200) {
+        await fetchUserInfo();
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
   void completeProfile() {

@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../core/auth_provider.dart';
 import '../../core/theme.dart';
 import 'signup_screen.dart';
+import 'role_selection_screen.dart';
 import '../dashboard/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -166,12 +167,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: OutlinedButton.icon(
                                       onPressed: () async {
                                         setState(() => _isLoading = true);
-                                        final String? errorMsg = await Provider.of<AuthProvider>(context, listen: false).signInWithGoogle();
+                                        final Map<String, dynamic>? result = await Provider.of<AuthProvider>(context, listen: false).signInWithGoogle();
+                                        
                                         if (mounted) {
                                           setState(() => _isLoading = false);
-                                          if (errorMsg != null) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text('Google Login Error: $errorMsg', style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+                                          if (result != null && result.containsKey('is_new_user')) {
+                                            if (result['is_new_user'] == true) {
+                                              // New user -> Role selection
+                                              Navigator.of(context).pushAndRemoveUntil(
+                                                MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+                                                (route) => false,
+                                              );
+                                            } else {
+                                              // Existing user -> Home
+                                              Navigator.of(context).pushAndRemoveUntil(
+                                                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                                                (route) => false,
+                                              );
+                                            }
+                                          } else if (result != null && result.containsKey('error')) {
+                                             ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('Google Login Error: ${result['error']}', style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
                                             );
                                           }
                                         }

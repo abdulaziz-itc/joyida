@@ -14,7 +14,7 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(name)s %(message)s'
 )
 logger = logging.getLogger(__name__)
-from app.api.v1.endpoints import auth, google_auth, dashboard, projects, experts, chat, bookings, admin, payments, reviews, notifications, utils
+from app.api.v1.endpoints import auth, google_auth, dashboard, projects, experts, chat, bookings, admin, payments, reviews, notifications, utils, user_assets
 
 app = FastAPI(
     title="Joyida API",
@@ -58,6 +58,7 @@ api_router.include_router(payments.router, prefix="/payments", tags=["payments"]
 api_router.include_router(reviews.router, prefix="/reviews", tags=["reviews"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
 api_router.include_router(utils.router, prefix="/utils", tags=["utils"])
+api_router.include_router(user_assets.router, prefix="/user-assets", tags=["user-assets"])
 app.include_router(api_router, prefix="/api/v1")
 
 # Serve static files with robust path discovery
