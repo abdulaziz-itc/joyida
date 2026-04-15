@@ -164,8 +164,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: OutlinedButton.icon(
                                       onPressed: () async {
                                         setState(() => _isLoading = true);
-                                        await Provider.of<AuthProvider>(context, listen: false).signInWithGoogle();
-                                        if (mounted) setState(() => _isLoading = false);
+                                        final String? errorMsg = await Provider.of<AuthProvider>(context, listen: false).signInWithGoogle();
+                                        if (mounted) {
+                                          setState(() => _isLoading = false);
+                                          if (errorMsg != null) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('Google Login Error: $errorMsg', style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+                                            );
+                                          }
+                                        }
                                       },
                                       icon: Image.network('https://www.gstatic.com/images/branding/product/1x/gsuite_64dp.png', height: 20, errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata)),
                                       label: Text('auth.google'.tr()),

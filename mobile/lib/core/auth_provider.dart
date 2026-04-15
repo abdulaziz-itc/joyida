@@ -130,19 +130,17 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> signInWithGoogle() async {
+  Future<String?> signInWithGoogle() async {
     try {
-      // Sign out first to ensure account selection dialog shows up if needed
       await _googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return false;
+      if (googleUser == null) return "User cancelled Google Sign-In";
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
 
       if (idToken == null) {
-        print('Google ID Token is null');
-        return false;
+        return 'Google ID Token is null. Platform might not support it.';
       }
 
       final response = await http.post(
@@ -158,12 +156,12 @@ class AuthProvider with ChangeNotifier {
         _isAuthenticated = true;
         _profileCompleted = false;
         notifyListeners();
-        return true;
+        return null; // Success
       }
-      return false;
+      return 'Server error during Google auth: ${response.statusCode}';
     } catch (e) {
       print('Google Login error: $e');
-      return false;
+      return 'Google Provider Error: ${e.toString()}';
     }
   }
 

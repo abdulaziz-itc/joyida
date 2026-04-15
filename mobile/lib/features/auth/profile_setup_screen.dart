@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 import '../../core/theme.dart';
+import '../../core/auth_provider.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -260,8 +262,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       if (_step == 2 && _selectedProfession == null) return;
       setState(() => _step++);
     } else {
-      // Finish Setup
-      Navigator.of(context).pop();
+      // Finish Setup and update global state instead of popping the root navigator (which causes black screen)
+      Provider.of<AuthProvider>(context, listen: false).completeProfile();
     }
   }
 }
