@@ -176,13 +176,17 @@ class AuthProvider with ChangeNotifier {
         final data = json.decode(response.body);
         _token = data['access_token'];
         await _storage.write(key: 'token', value: _token);
+        
         await fetchUserInfo();
+        
         _isAuthenticated = true;
-        _profileCompleted = true; // Assuming Google users are also completed
+        _profileCompleted = true; // Assuming Google users proceed to home
         notifyListeners();
         return null; // Success
+      } else {
+        final errorData = json.decode(response.body);
+        return errorData['detail'] ?? 'Server error: ${response.statusCode}';
       }
-      return 'Server error during Google auth: ${response.statusCode}';
     } catch (e) {
       print('Google Login error: $e');
       return 'Google Provider Error: ${e.toString()}';
