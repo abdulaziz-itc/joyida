@@ -94,6 +94,13 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
     final authProvider = Provider.of<AuthProvider>(context);
     
+    if (authProvider.isInitializing) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator(color: AppTheme.primary)),
+      );
+    }
+    
     if (authProvider.isAuthenticated) {
       if (!authProvider.profileCompleted) {
         return ProfileSetupScreen();

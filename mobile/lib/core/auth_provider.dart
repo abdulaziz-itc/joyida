@@ -6,16 +6,20 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final _storage = const FlutterSecureStorage();
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    serverClientId: '596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com',
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   String? _token;
   bool _isAuthenticated = false;
   bool _profileCompleted = false;
+  bool _isInitializing = true;
 
   String? get token => _token;
   bool get isAuthenticated => _isAuthenticated;
   bool get profileCompleted => _profileCompleted;
+  bool get isInitializing => _isInitializing;
+
+  AuthProvider() {
+    tryAutoLogin();
+  }
 
   Future<String?> login(String email, String password) async {
     try {
@@ -180,8 +184,9 @@ class AuthProvider with ChangeNotifier {
       _isAuthenticated = true;
       // In a real app, we'd fetch the user profile here
       _profileCompleted = true; // For demo purposes, assuming auto-login users are completed
-      notifyListeners();
     }
+    _isInitializing = false;
+    notifyListeners();
   }
 
   void completeProfile() {
