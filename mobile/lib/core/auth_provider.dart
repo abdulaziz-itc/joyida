@@ -6,7 +6,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final _storage = const FlutterSecureStorage();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId: '492033662946-ilfn30ltnllvasg8no0622ragvnlk86j.apps.googleusercontent.com',
+  );
   String? _token;
   bool _isAuthenticated = false;
   bool _profileCompleted = false;
