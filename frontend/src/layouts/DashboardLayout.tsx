@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   LayoutDashboard, Briefcase, Settings, LogOut, 
-  ShieldCheck, MapPin, Zap, Users, PieChart 
+  ShieldCheck, MapPin, Zap, Users, PieChart, Film, MessageCircle, User 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
@@ -50,35 +50,36 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         </div>
 
         <nav className="flex-1 space-y-2">
-          <NavItem 
-            icon={LayoutDashboard} 
-            label="Dashboard" 
-            active={currentPage === 'dashboard'} 
-            onClick={() => onNavigate('dashboard')} 
-          />
+          {/* 1. ADMIN MENU */}
           {user?.is_superuser && (
-            <NavItem 
-              icon={ShieldCheck} 
-              label="Admin Console" 
-              active={currentPage === 'admin'} 
-              onClick={() => onNavigate('admin')} 
-            />
+            <>
+              <NavItem icon={ShieldCheck} label="Admin Console" active={currentPage === 'admin'} onClick={() => onNavigate('admin')} />
+              <NavItem icon={LayoutDashboard} label="Dashboard" active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
+              <NavItem icon={Users} label="Users" />
+              <NavItem icon={PieChart} label="Analytics" />
+              <NavItem icon={Settings} label="Settings" />
+            </>
           )}
-          <NavItem 
-            icon={Briefcase} 
-            label="Projects" 
-            active={currentPage === 'projects'} 
-            onClick={() => onNavigate('projects')} 
-          />
-          <NavItem 
-            icon={MapPin} 
-            label="Explore" 
-            active={currentPage === 'explore'} 
-            onClick={() => onNavigate('explore')} 
-          />
-          <NavItem icon={PieChart} label="Analytics" />
-          <NavItem icon={Users} label="Users" />
-          <NavItem icon={Settings} label="Settings" />
+
+          {/* 2. EXPERT / SPECIALIST MENU */}
+          {!user?.is_superuser && user?.is_expert && (
+            <>
+              <NavItem icon={LayoutDashboard} label="Dashboard" active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
+              <NavItem icon={Briefcase} label="Orders/Projects" active={currentPage === 'projects'} onClick={() => onNavigate('projects')} />
+              <NavItem icon={MessageCircle} label="Messages" active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
+              <NavItem icon={Settings} label="Settings" active={currentPage === 'settings'} onClick={() => onNavigate('settings')} />
+            </>
+          )}
+
+          {/* 3. ORDINARY USER / CLIENT MENU */}
+          {!user?.is_superuser && !user?.is_expert && (
+            <>
+              <NavItem icon={MapPin} label="Explore" active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
+              <NavItem icon={Film} label="Reels" active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
+              <NavItem icon={MessageCircle} label="Messages" active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
+              <NavItem icon={User} label="Profile & Settings" active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
+            </>
+          )}
         </nav>
 
         <div className="mt-auto space-y-4 pt-6 border-t border-white/5">

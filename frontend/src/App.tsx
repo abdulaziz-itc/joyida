@@ -7,7 +7,9 @@ import PreferenceSelection from './features/auth/PreferenceSelection';
 import ProfileSetup from './features/auth/ProfileSetup';
 import DashboardPage from './features/dashboard/DashboardPage';
 import ProjectsPage from './features/projects/ProjectsPage';
-import ExpertExplorer from './features/marketplace/ExpertExplorer';
+import ClientExplorePage from './features/client/ClientExplorePage';
+import ReelsFeedPage from './features/client/ReelsFeedPage';
+import ClientProfilePage from './features/client/ClientProfilePage';
 import AdminLayout from './layouts/AdminLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import ToastContainer from './features/notifications/ToastContainer';
@@ -40,12 +42,21 @@ function App() {
 
   // Check profile completion for authenticated users
   useEffect(() => {
-    if (isAuthenticated && user && !user.profile_completed) {
-      setShowProfileSetup(true);
-    } else {
-      setShowProfileSetup(false);
+    if (isAuthenticated && user) {
+      if (!user.profile_completed) {
+        setShowProfileSetup(true);
+      } else {
+        setShowProfileSetup(false);
+      }
+      
+      // Enforce default routing based on user role
+      if (!user.is_expert && !user.is_superuser && (currentPage === 'dashboard' || currentPage === 'admin')) {
+        setCurrentPage('explore');
+      } else if (user.is_superuser && currentPage === 'explore') {
+        setCurrentPage('admin');
+      }
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, currentPage]);
 
   const handleFinishPreferences = () => {
     localStorage.setItem('preferences_seen', 'true');
@@ -82,7 +93,9 @@ function App() {
           <DashboardLayout onNavigate={setCurrentPage} currentPage={currentPage}>
             {currentPage === 'dashboard' && <DashboardPage />}
             {currentPage === 'projects' && <ProjectsPage />}
-            {currentPage === 'explore' && <ExpertExplorer />}
+            {currentPage === 'explore' && <ClientExplorePage />}
+            {currentPage === 'reels' && <ReelsFeedPage />}
+            {currentPage === 'profile' && <ClientProfilePage />}
             {currentPage === 'admin' && <AdminLayout />}
           </DashboardLayout>
         ) : (
