@@ -43,16 +43,21 @@ function App() {
   // Check profile completion for authenticated users
   useEffect(() => {
     if (isAuthenticated && user) {
-      if (!user.profile_completed) {
+      const isDismissed = sessionStorage.getItem('profile_setup_dismissed');
+      if (!user.profile_completed && !isDismissed) {
         setShowProfileSetup(true);
       } else {
         setShowProfileSetup(false);
       }
+    }
+  }, [isAuthenticated, user]);
       
-      // Enforce default routing based on user role
+  // Enforce default routing based on user role when navigating
+  useEffect(() => {
+    if (isAuthenticated && user) {
       if (!user.is_expert && !user.is_superuser && (currentPage === 'dashboard' || currentPage === 'admin')) {
         setCurrentPage('explore');
-      } else if (user.is_superuser && currentPage === 'explore') {
+      } else if (user.is_superuser && (currentPage === 'explore' || currentPage === 'dashboard')) {
         setCurrentPage('admin');
       }
     }
@@ -70,6 +75,7 @@ function App() {
   };
 
   const handleFinishProfileSetup = () => {
+    sessionStorage.setItem('profile_setup_dismissed', 'true');
     setShowProfileSetup(false);
     // In a real app, the user object would be updated via API and store
   };
