@@ -1,7 +1,25 @@
-import React from 'react';
-import { MessageSquare, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MessageSquare, Search, User } from 'lucide-react';
+import apiClient from '../../api/apiClient';
 
 const MessagesPage = () => {
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await apiClient.get('/chat/rooms');
+        setRooms(response.data);
+      } catch (err) {
+        console.error("Error fetching rooms", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRooms();
+  }, []);
+
   return (
     <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-[#050505]">
       {/* Sidebar for chat list */}
@@ -17,8 +35,31 @@ const MessagesPage = () => {
             />
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center text-foreground/40 text-sm p-6 text-center">
-          Hozircha hech qanday xabarlar yo'q. Mutaxassislar bilan suhbatni boshlang.
+        
+        <div className="flex-1 overflow-y-auto">
+          {loading ? (
+             <div className="flex items-center justify-center p-6 bg-transparent">
+               <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+             </div>
+          ) : rooms.length === 0 ? (
+            <div className="flex items-center justify-center text-foreground/40 text-sm p-6 text-center h-full">
+              Hozircha hech qanday xabarlar yo'q. Mutaxassislar bilan suhbatni boshlang.
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              {rooms.map((room) => (
+                <div key={room.id} className="flex items-center gap-4 p-4 border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors">
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                     <User className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 truncate">
+                     <h4 className="text-white font-bold text-sm truncate">{room.other_user?.full_name || 'Foydalanuvchi'}</h4>
+                     <p className="text-xs text-foreground/50 truncate w-full">{room.other_user?.profession || 'Mijoz'}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       

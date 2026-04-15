@@ -4,6 +4,7 @@ import { Search, MapPin, Star, Filter, ArrowRight } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import apiClient from '../../api/apiClient';
 
 // Fix for default marker icons in Leaflet with React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -13,18 +14,27 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Mock Data for Map
-const MOCK_SPECIALISTS = [
-  { id: 1, name: "Aziz Rakhimov", role: "Interior Designer", rating: 4.9, lat: 41.311081, lng: 69.240562, image: "https://i.pravatar.cc/150?u=a" },
-  { id: 2, name: "Dilshod Karimov", role: "Architect", rating: 4.7, lat: 41.315000, lng: 69.250000, image: "https://i.pravatar.cc/150?u=b" },
-  { id: 3, name: "Zarina Alieva", role: "Landscape Master", rating: 5.0, lat: 41.300000, lng: 69.260000, image: "https://i.pravatar.cc/150?u=c" }
-];
-
 const ClientExplorePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [showRealMap, setShowRealMap] = useState(false);
   const [selectedSpecialist, setSelectedSpecialist] = useState<any>(null);
+  const [specialists, setSpecialists] = useState<any[]>([]);
+
+  // Real backend call to fetch nearby experts (default to Tashkent center or user's location)
+  useEffect(() => {
+    const fetchExperts = async () => {
+      try {
+        const response = await apiClient.get('/experts/nearby', {
+           params: { lat: 41.311081, lon: 69.240562, radius: 50 }
+        });
+        setSpecialists(response.data);
+      } catch (error) {
+        console.error("Error fetching experts", error);
+      }
+    };
+    fetchExperts();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,10 +103,10 @@ const ClientExplorePage = () => {
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                 attribution='&copy; <a href="https://carto.com/">CARTO</a>'
               />
-              {MOCK_SPECIALISTS.map(spec => (
+              {specialists.map(spec => (
                 <Marker 
                   key={spec.id} 
-                  position={[spec.lat, spec.lng]}
+                  position={[spec.latitude || 41.311, spec.longitude || 69.24]}
                   eventHandlers={{
                     click: () => setSelectedSpecialist(spec),
                   }}
@@ -181,18 +191,20 @@ const ClientExplorePage = () => {
                   &times;
                 </button>
                 <div className="flex gap-4 items-center mb-4">
-                  <img src={selectedSpecialist.image} alt="Avatar" className="w-16 h-16 rounded-2xl object-cover border border-white/10" />
+                  <div className="w-16 h-16 rounded-2xl border border-white/10 bg-primary/20 flex items-center justify-center text-xl font-bold">
+                     {selectedSpecialist.full_name?.charAt(0) || 'U'}
+                  </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">{selectedSpecialist.name}</h3>
-                    <p className="text-primary text-sm font-medium">{selectedSpecialist.role}</p>
+                    <h3 className="text-xl font-bold text-white">{selectedSpecialist.full_name || 'Mutaxassis'}</h3>
+                    <p className="text-primary text-sm font-medium">{selectedSpecialist.profession || 'Usta'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="flex items-center gap-1 text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg text-sm font-bold">
-                    <Star className="w-4 h-4 fill-current" /> {selectedSpecialist.rating}
+                    <Star className="w-4 h-4 fill-current" /> {selectedSpecialist.rating || 'Yangi'}
                   </div>
                   <div className="text-foreground/40 text-sm flex items-center gap-1">
-                    <MapPin className="w-4 h-4" /> 2.4 km masofada
+                    <MapPin className="w-4 h-4" /> Yaqin atrofda
                   </div>
                 </div>
                 <button className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground">

@@ -5,6 +5,7 @@ from app.db.session import get_db
 from app.models.marketplace_transaction import ChatRoom, ChatMessage, Booking
 from app.api import deps
 from app.schemas.user import User as UserSchema
+from app.models.user import User as UserModel
 
 router = APIRouter()
 
@@ -17,7 +18,22 @@ def get_chat_rooms(
     rooms = db.query(ChatRoom).filter(
         (ChatRoom.user1_id == current_user.id) | (ChatRoom.user2_id == current_user.id)
     ).all()
-    return rooms
+    
+    result = []
+    for room in rooms:
+        other_user_id = room.user2_id if room.user1_id == current_user.id else room.user1_id
+        other_user = db.query(UserModel).filter(UserModel.id == other_user_id).first()
+        
+        result.append({
+            "id": room.id,
+            "created_at": room.created_at,
+            "other_user": {
+                "id": other_user.id if other_user else None,
+                "full_name": other_user.full_name if other_user else "Noma'lum",
+                "profession": other_user.profession if other_user else "Mijoz"
+            }
+        })
+    return result
 
 @router.post("/rooms/{user_id}", response_model=Any)
 def create_chat_room(

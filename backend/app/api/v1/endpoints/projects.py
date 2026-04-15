@@ -20,6 +20,16 @@ def read_projects(
     projects = db.query(ProjectModel).filter(ProjectModel.owner_id == current_user.id).offset(skip).limit(limit).all()
     return projects
 
+@router.get("/public", response_model=List[Project])
+def read_public_projects(
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 100,
+) -> Any:
+    """Retrieve all public projects (for Reels)."""
+    projects = db.query(ProjectModel).offset(skip).limit(limit).all()
+    return projects
+
 @router.post("/", response_model=Project)
 def create_project(
     *,
