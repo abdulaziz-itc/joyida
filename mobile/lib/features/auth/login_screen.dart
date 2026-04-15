@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../core/auth_provider.dart';
 import '../../core/theme.dart';
 import 'signup_screen.dart';
+import '../dashboard/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,8 +27,9 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = false);
     if (errorMessage == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('auth.login_success'.tr())),
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false,
         );
       }
     } else {
