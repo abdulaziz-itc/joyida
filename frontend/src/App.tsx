@@ -10,6 +10,7 @@ import ProjectsPage from './features/projects/ProjectsPage';
 import ClientExplorePage from './features/client/ClientExplorePage';
 import ReelsFeedPage from './features/client/ReelsFeedPage';
 import ClientProfilePage from './features/client/ClientProfilePage';
+import MessagesPage from './features/client/MessagesPage';
 import AdminLayout from './layouts/AdminLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import ToastContainer from './features/notifications/ToastContainer';
@@ -101,6 +102,7 @@ function App() {
             {currentPage === 'projects' && <ProjectsPage />}
             {currentPage === 'explore' && <ClientExplorePage />}
             {currentPage === 'reels' && <ReelsFeedPage />}
+            {currentPage === 'messages' && <MessagesPage />}
             {currentPage === 'profile' && <ClientProfilePage />}
             {currentPage === 'admin' && <AdminLayout />}
           </DashboardLayout>

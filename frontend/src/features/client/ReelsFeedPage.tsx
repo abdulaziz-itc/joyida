@@ -4,19 +4,19 @@ import { Play, Heart, MessageCircle, Share2, MapPin } from 'lucide-react';
 const MOCK_REELS = [
   {
     id: 1,
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-modern-architecture-building-4161-large.mp4',
+    videoUrl: 'https://vjs.zencdn.net/v/oceans.mp4',
     author: 'Aziz Rakhimov',
-    role: 'Architect',
-    description: 'Modern villa project in Tashkent. #architecture #design',
+    role: 'Arxitektor',
+    description: 'Toshkentdagi zamonaviy villa loyihasi. #arxitektura #dizayn',
     likes: 1245,
     comments: 89
   },
   {
     id: 2,
-    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-construction-site-of-a-house-4264-large.mp4',
+    videoUrl: 'https://media.w3.org/2010/05/sintel/trailer_hd.mp4',
     author: 'Dilshod Karimov',
-    role: 'Construction Master',
-    description: 'House foundation phase 2. Building solid structures. 🏗️',
+    role: 'Quruvchi Usta',
+    description: 'Uy poydevorining 2-bosqichi. Mustahkam binolar. 🏗️',
     likes: 856,
     comments: 42
   }
@@ -56,7 +56,7 @@ const ReelsFeedPage = () => {
                </h3>
                <p className="text-sm text-gray-200 mb-3">{reel.description}</p>
                <div className="flex items-center gap-2 text-xs font-medium text-white/70 bg-white/10 w-fit px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/10">
-                 <MapPin className="w-3.5 h-3.5" /> Tashkent, UZ
+                 <MapPin className="w-3.5 h-3.5" /> Toshkent, UZ
                </div>
             </div>
 
@@ -80,7 +80,7 @@ const ReelsFeedPage = () => {
                  <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors">
                    <Share2 className="w-6 h-6 text-white" />
                  </div>
-                 <span className="text-white text-xs font-bold">Share</span>
+                 <span className="text-white text-xs font-bold">Ulashish</span>
                </button>
             </div>
 

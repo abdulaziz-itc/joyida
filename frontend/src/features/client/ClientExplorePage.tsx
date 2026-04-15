@@ -123,13 +123,13 @@ const ClientExplorePage = () => {
                  animate={{ y: 0, opacity: 1 }}
                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-blue-400 font-bold text-xs uppercase tracking-widest mb-6 backdrop-blur-md"
                >
-                 <MapPin className="w-3.5 h-3.5" /> Discovery Mode
+                 <MapPin className="w-3.5 h-3.5" /> Qidiruv Rejimi
                </motion.div>
                <h1 className="text-5xl font-black text-white font-display tracking-tight mb-4 text-gradient">
-                 Find Your Specialist.
+                 O'z Ustangizni Toping.
                </h1>
                <p className="text-foreground/60 text-lg">
-                 Search across thousands of verified experts nearby.
+                 Yaqin atrofingizdagi minglab tasdiqlangan mutaxassislarni qidiring.
                </p>
              </div>
           )}
@@ -144,7 +144,7 @@ const ClientExplorePage = () => {
                 type="text" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by specialty, name, or location..."
+                placeholder="Kasb, ism yoki manzil bo'yicha qidirish..."
                 className="flex-1 bg-transparent border-none outline-none text-white px-4 py-4 text-lg placeholder:text-foreground/30"
               />
               <button 
@@ -158,7 +158,7 @@ const ClientExplorePage = () => {
                 disabled={isSearching}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-bold transition-all disabled:opacity-50"
               >
-                {isSearching ? 'Scanning...' : 'Explore'}
+                {isSearching ? 'Qidirilmoqda...' : 'Qidirish'}
               </button>
             </div>
           </form>
@@ -192,11 +192,11 @@ const ClientExplorePage = () => {
                     <Star className="w-4 h-4 fill-current" /> {selectedSpecialist.rating}
                   </div>
                   <div className="text-foreground/40 text-sm flex items-center gap-1">
-                    <MapPin className="w-4 h-4" /> 2.4 km away
+                    <MapPin className="w-4 h-4" /> 2.4 km masofada
                   </div>
                 </div>
                 <button className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground">
-                  View Profile <ArrowRight className="w-4 h-4" />
+                  Profilni Ko'rish <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>

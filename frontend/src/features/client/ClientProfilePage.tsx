@@ -20,8 +20,8 @@ const ClientProfilePage = () => {
   return (
     <div className="w-full max-w-4xl mx-auto p-8 relative">
       <div className="mb-12">
-        <h1 className="text-4xl font-black text-foreground font-display tracking-tight mb-2">Settings & Profile</h1>
-        <p className="text-foreground/50">Manage your account preferences and application settings.</p>
+        <h1 className="text-4xl font-black text-foreground font-display tracking-tight mb-2">Sozlamalar va Profil</h1>
+        <p className="text-foreground/50">Profilingiz va ilova sozlamalarini boshqaring.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -34,10 +34,10 @@ const ClientProfilePage = () => {
                 <User className="w-10 h-10 text-foreground/50" />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-foreground mb-1">{user?.full_name || 'Joyida User'}</h2>
+            <h2 className="text-xl font-bold text-foreground mb-1">{user?.full_name || 'Joyida Foydalanuvchisi'}</h2>
             <p className="text-foreground/50 text-sm mb-6">{user?.email}</p>
             <div className="inline-flex px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase tracking-wider">
-              {user?.is_expert ? 'Specialist' : 'Client'}
+              {user?.is_expert ? 'Mutaxassis' : 'Mijoz'}
             </div>
           </div>
         </div>
@@ -51,8 +51,8 @@ const ClientProfilePage = () => {
                 {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               </div>
               <div>
-                <h3 className="font-bold text-foreground text-lg">Appearance</h3>
-                <p className="text-foreground/50 text-sm">Toggle between light and dark mode</p>
+                <h3 className="font-bold text-foreground text-lg">Tashqi ko'rinish</h3>
+                <p className="text-foreground/50 text-sm">Tungi yoki kunduzgi rejimni tanlang</p>
               </div>
               <div className="ml-auto">
                 <button 
@@ -73,8 +73,8 @@ const ClientProfilePage = () => {
                 <Globe className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-foreground text-lg">Language</h3>
-                <p className="text-foreground/50 text-sm">Select your preferred platform language</p>
+                <h3 className="font-bold text-foreground text-lg">Til (Language)</h3>
+                <p className="text-foreground/50 text-sm">Platforma uchun asosiy tilini tanlang</p>
               </div>
               <div className="ml-auto">
                 <select 
@@ -94,12 +94,12 @@ const ClientProfilePage = () => {
                 <LogOut className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-rose-500 text-lg">Log Out</h3>
-                <p className="text-foreground/50 text-sm">End your current session</p>
+                <h3 className="font-bold text-rose-500 text-lg">Tizimdan chiqish</h3>
+                <p className="text-foreground/50 text-sm">Joriy sessiyani tugatish</p>
               </div>
               <div className="ml-auto">
                 <button onClick={logout} className="px-6 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl font-bold transition-colors">
-                  Log Out
+                  Chiqish
                 </button>
               </div>
             </div>
