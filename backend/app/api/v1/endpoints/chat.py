@@ -24,13 +24,21 @@ def get_chat_rooms(
         other_user_id = room.user2_id if room.user1_id == current_user.id else room.user1_id
         other_user = db.query(UserModel).filter(UserModel.id == other_user_id).first()
         
+        last_msg = db.query(ChatMessage).filter(ChatMessage.room_id == room.id).order_by(ChatMessage.created_at.desc()).first()
+        
         result.append({
             "id": room.id,
             "created_at": room.created_at,
+            "last_message": {
+                "text": last_msg.text if last_msg else "Hali xabarlar yo'q",
+                "created_at": last_msg.created_at if last_msg else room.created_at,
+                "sender_id": last_msg.sender_id if last_msg else None
+            },
             "other_user": {
                 "id": other_user.id if other_user else None,
                 "full_name": other_user.full_name if other_user else "Noma'lum",
-                "profession": other_user.profession if other_user else "Mijoz"
+                "profession": other_user.profession if other_user else "Mijoz",
+                "profile_picture_url": other_user.profile_picture_url if other_user else None
             }
         })
     return result

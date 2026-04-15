@@ -25,6 +25,7 @@ class _SmartMapScreenState extends State<SmartMapScreen> with TickerProviderStat
   bool _isSearching = false;
   bool _hasSearched = false;
   double _currentSearchRadius = 500; // in meters
+  String _searchStatusText = "";
   List<Marker> _expertMarkers = [];
   
   late AnimationController _pulseController;
@@ -110,17 +111,18 @@ class _SmartMapScreenState extends State<SmartMapScreen> with TickerProviderStat
     await _getCurrentLocation();
     
     if (_currentPosition != null) {
-      _mapController.move(_currentPosition!, 15.0);
+      _mapController.move(_currentPosition!, 15.5);
     }
 
-    final thresholds = [500.0, 1000.0, 3000.0, 5000.0, 10000.0];
-    final zooms = [15.0, 14.0, 12.5, 11.5, 10.5];
+    final thresholds = [500.0, 1000.0, 5000.0, 10000.0];
+    final zooms = [15.5, 14.5, 12.0, 10.5];
     
     for (int i = 0; i < thresholds.length; i++) {
         if (!mounted || !_isSearching) break;
         
         setState(() {
           _currentSearchRadius = thresholds[i];
+          _searchStatusText = "Searching in ${thresholds[i] >= 1000 ? (thresholds[i]/1000).toInt() : thresholds[i].toInt()}${thresholds[i] >= 1000 ? 'km' : 'm'}...";
         });
         
         if (_currentPosition != null) {
@@ -321,9 +323,9 @@ class _SmartMapScreenState extends State<SmartMapScreen> with TickerProviderStat
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withOpacity(0.7),
-                      Colors.black.withOpacity(0.4),
-                      Colors.black.withOpacity(0.9),
+                      Colors.black.withOpacity(0.5),
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.6),
                     ],
                   ),
                 ),
@@ -394,6 +396,10 @@ class _SmartMapScreenState extends State<SmartMapScreen> with TickerProviderStat
                       ),
                     ),
                   ),
+                  if (_isSearching) ...[
+                    const SizedBox(height: 20),
+                    Text(_searchStatusText, style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold)),
+                  ],
                 ],
               ),
             ),

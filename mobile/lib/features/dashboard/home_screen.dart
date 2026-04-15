@@ -5,6 +5,7 @@ import '../search/smart_map_screen.dart';
 import '../reels/reels_screen.dart';
 import '../projects/projects_screen.dart';
 import '../profile/profile_settings_screen.dart';
+import '../chat/chat_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,13 +15,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2; // Start with Search/Map in the center
 
   final List<Widget> _pages = [
-    const SmartMapScreen(),         // Index 0: Animated 3D Radar Map
-    const ReelsScreen(),            // Index 1: Reels
-    const Center(child: Text('Add Post Screen', style: TextStyle(color: Colors.white))), // Index 2: Add Task
-    const ProjectsScreen(),         // Index 3: My Tasks/Projects
+    const ReelsScreen(),            // Index 0: Reels
+    const ProjectsScreen(),         // Index 1: My Tasks/Projects
+    const SmartMapScreen(),         // Index 2: Animated Search Map (CENTRAL)
+    const ChatListScreen(),         // Index 3: Real Chat System
     const ProfileSettingsScreen(),  // Index 4: Profile / Logout
   ];
 
@@ -62,10 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
           type: BottomNavigationBarType.fixed,
           elevation: 0,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.map_outlined), activeIcon: Icon(Icons.map), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.video_collection_outlined), activeIcon: Icon(Icons.video_collection), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.add_circle, size: 45, color: AppTheme.primary), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.assignment_outlined), activeIcon: Icon(Icons.assignment), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.search, size: 45, color: AppTheme.primary), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), activeIcon: Icon(Icons.chat_bubble), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: ''),
           ],
         ),
