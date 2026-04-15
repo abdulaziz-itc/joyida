@@ -14,9 +14,11 @@ router = APIRouter()
 
 # Replace this with your Google Client IDs (Mobile and Web)
 GOOGLE_CLIENT_IDS = [
-    "596799584146-jjskref39n0lr9h3lcn26fre9kifmgje.apps.googleusercontent.com", # Android
-    "596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com", # Web
+    "596799584146-jjskref39n0lr9h3lcn26fre9kifmgje.apps.googleusercontent.com", # Old Android
+    "596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com", # Old Web
     "596799584146-dpfasrdl6nh1km2ifma4k3ko7hqrlbds.apps.googleusercontent.com", # iOS
+    "492033662946-lbv7j6sm3bobjkv7hlhf7aa43jfpemgj.apps.googleusercontent.com", # New Android
+    "492033662946-ilfn30ltnllvasg8no0622ragvnlk86j.apps.googleusercontent.com", # New Web/Server
 ]
 
 @router.post("/google", response_model=Token)
