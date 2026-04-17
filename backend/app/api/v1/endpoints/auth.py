@@ -67,6 +67,12 @@ def register_user(
         longitude=user_in.longitude,
         service_location_name=user_in.service_location_name,
         profile_picture_url=user_in.profile_picture_url,
+        phone_number=user_in.phone_number,
+        bio=user_in.bio,
+        headline=user_in.headline,
+        skills=user_in.skills,
+        languages=[item.dict() for item in user_in.languages] if user_in.languages else None,
+        social_links=[item.dict() for item in user_in.social_links] if user_in.social_links else None,
     )
     
     # Handle service associations
@@ -107,6 +113,10 @@ def update_user_me(
         update_data["education_info"] = [item if isinstance(item, dict) else item.dict() for item in update_data["education_info"]]
     if "experience_info" in update_data and update_data["experience_info"]:
         update_data["experience_info"] = [item if isinstance(item, dict) else item.dict() for item in update_data["experience_info"]]
+    if "languages" in update_data and update_data["languages"]:
+        update_data["languages"] = [item if isinstance(item, dict) else item.dict() for item in update_data["languages"]]
+    if "social_links" in update_data and update_data["social_links"]:
+        update_data["social_links"] = [item if isinstance(item, dict) else item.dict() for item in update_data["social_links"]]
         
     for field, value in update_data.items():
         setattr(current_user, field, value)

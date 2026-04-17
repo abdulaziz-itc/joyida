@@ -20,7 +20,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _isLoading = false;
 
   // Step 1: Basic Info
-  final _fullNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _patronymicController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -96,11 +98,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     String? diplomaUrl;
     if (_diplomaPath != null) {
        diplomaUrl = await Provider.of<AuthProvider>(context, listen: false).uploadFile(_diplomaPath!);
-       // Note: In a real app, we'd store the diploma URL in verification_data
     }
 
+    final fullName = "${_lastNameController.text} ${_firstNameController.text} ${_patronymicController.text}".trim();
+
     final errorMessage = await Provider.of<AuthProvider>(context, listen: false).register(
-      fullName: _fullNameController.text,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      patronymic: _patronymicController.text,
+      fullName: fullName,
       email: _emailController.text,
       password: _passwordController.text,
       isExpert: _isExpert,
@@ -114,6 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       locationName: _locationName,
       profilePictureUrl: profileUrl,
     );
+
     
     if (mounted) setState(() => _isLoading = false);
     
@@ -214,7 +221,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildStep1Basic() {
     return Column(
       children: [
-        _buildGlassField(_fullNameController, 'auth.full_name'.tr(), Icons.person_outline),
+        _buildGlassField(_lastNameController, 'Familiyangiz', Icons.person_outline),
+        const SizedBox(height: 16),
+        _buildGlassField(_firstNameController, 'Ismingiz', Icons.person_outline),
+        const SizedBox(height: 16),
+        _buildGlassField(_patronymicController, 'Otasining ismi', Icons.person_outline),
         const SizedBox(height: 16),
         _buildGlassField(_emailController, 'auth.email_hint'.tr(), Icons.mail_outline),
         const SizedBox(height: 16),

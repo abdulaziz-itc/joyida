@@ -4,9 +4,6 @@ const baseURL = import.meta.env.VITE_API_URL;
 
 const apiClient = axios.create({
   baseURL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Automatically add the auth token to every request if available

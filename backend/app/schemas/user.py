@@ -15,6 +15,14 @@ class ExperienceItem(BaseModel):
     duration: str
     description: Optional[str] = None
 
+class LanguageItem(BaseModel):
+    language: str
+    level: str # Native, Fluent, Intermediate, Basic
+
+class SocialLinkItem(BaseModel):
+    platform: str # LinkedIn, GitHub, Portfolio, Telegram, Instagram
+    url: str
+
 # Shared properties
 class UserBase(BaseModel):
     email: Optional[EmailStr] = None
@@ -33,6 +41,15 @@ class UserBase(BaseModel):
     education_info: Optional[List[EducationItem]] = None
     workplace: Optional[str] = None
     experience_info: Optional[List[ExperienceItem]] = None
+    
+    # New Professional Fields
+    phone_number: Optional[str] = None
+    bio: Optional[str] = None
+    headline: Optional[str] = None
+    skills: Optional[List[str]] = None
+    languages: Optional[List[LanguageItem]] = None
+    social_links: Optional[List[SocialLinkItem]] = None
+
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     service_location_name: Optional[str] = None

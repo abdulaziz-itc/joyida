@@ -34,6 +34,13 @@ class User(Base):
     service_location_name = Column(String, nullable=True)
     
     # Expert profile details
+    phone_number = Column(String, nullable=True)
+    bio = Column(Text, nullable=True)
+    headline = Column(String, nullable=True)
+    skills = Column(JSON, nullable=True) # List of strings
+    languages = Column(JSON, nullable=True) # List of {lang, level}
+    social_links = Column(JSON, nullable=True) # List of {platform, url}
+    
     hourly_rate = Column(Float, nullable=True) # Price per hour
     rating = Column(Float, default=0.0)
     review_count = Column(Integer, default=0)
