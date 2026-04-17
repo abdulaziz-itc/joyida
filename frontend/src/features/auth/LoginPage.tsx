@@ -23,8 +23,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
       const response = await apiClient.post('/google-auth/google', {
         idToken: credentialResponse.credential 
       });
-      const { access_token } = response.data;
-      setAuth({ id: 1, email: 'google-user@joyida.com', full_name: 'Google User', is_active: true }, access_token);
+      const { access_token, user } = response.data;
+      setAuth(user || { id: 1, email: 'google-user@joyida.com', full_name: 'Google User', is_active: true }, access_token);
     } catch (error) {
       console.error('Google Login failed', error);
     } finally {
@@ -43,8 +43,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
       const response = await apiClient.post('/auth/login/access-token', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      const { access_token } = response.data;
-      setAuth({ id: 1, email, full_name: 'Test User', is_active: true }, access_token);
+      const { access_token, user } = response.data;
+      setAuth(user || { id: 1, email, full_name: 'User', is_active: true }, access_token);
     } catch (error) {
       console.error('Login failed', error);
     } finally {
