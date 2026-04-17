@@ -1,3 +1,5 @@
+import os
+import traceback
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -112,27 +114,32 @@ def update_user_me(
     current_user: UserModel = Depends(deps.get_current_user),
 ) -> Any:
     """Update own user profile."""
-    update_data = user_in.dict(exclude_unset=True)
-    if "password" in update_data:
-        hashed_password = security.get_password_hash(update_data["password"])
-        del update_data["password"]
-        update_data["hashed_password"] = hashed_password
-    
-    # Handle JSON fields serialization
-    if "education_info" in update_data and update_data["education_info"]:
-        update_data["education_info"] = [item if isinstance(item, dict) else item.dict() for item in update_data["education_info"]]
-    if "experience_info" in update_data and update_data["experience_info"]:
-        update_data["experience_info"] = [item if isinstance(item, dict) else item.dict() for item in update_data["experience_info"]]
-    if "languages" in update_data and update_data["languages"]:
-        update_data["languages"] = [item if isinstance(item, dict) else item.dict() for item in update_data["languages"]]
-    if "social_links" in update_data and update_data["social_links"]:
-        update_data["social_links"] = [item if isinstance(item, dict) else item.dict() for item in update_data["social_links"]]
+    try:
+        update_data = user_in.model_dump(exclude_unset=True)
+        if "password" in update_data:
+            hashed_password = security.get_password_hash(update_data["password"])
+            del update_data["password"]
+            update_data["hashed_password"] = hashed_password
         
-    for field, value in update_data.items():
-        setattr(current_user, field, value)
-    
-    db.add(current_user)
-    db.commit()
-    db.refresh(current_user)
-    return current_user
+        # Handle JSON fields serialization
+        if "education_info" in update_data and update_data["education_info"]:
+            update_data["education_info"] = [item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) for item in update_data["education_info"]]
+        if "experience_info" in update_data and update_data["experience_info"]:
+            update_data["experience_info"] = [item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) for item in update_data["experience_info"]]
+        if "languages" in update_data and update_data["languages"]:
+            update_data["languages"] = [item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) for item in update_data["languages"]]
+        if "social_links" in update_data and update_data["social_links"]:
+            update_data["social_links"] = [item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) for item in update_data["social_links"]]
+            
+        for field, value in update_data.items():
+            setattr(current_user, field, value)
+        
+        db.add(current_user)
+        db.commit()
+        db.refresh(current_user)
+        return current_user
+    except Exception as e:
+        error_msg = f"Profile Update Error: {str(e)}\n{traceback.format_exc()}"
+        print(error_msg)
+        raise HTTPException(status_code=500, detail=error_msg)
 
