@@ -54,6 +54,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row relative overflow-hidden font-main">
+      <div className="absolute top-4 right-4 text-[8px] text-white/10 font-black uppercase tracking-widest z-50">Build: v1.0.1 (Stable)</div>
       {/* Background Graphic Elements */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full" />
