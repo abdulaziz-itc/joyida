@@ -1,6 +1,7 @@
 import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from datetime import timedelta
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from app.core import security
@@ -75,7 +76,7 @@ async def google_login(
             db.refresh(user)
 
         # Generate JWT
-        access_token_expires = security.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         return {
             "access_token": security.create_access_token(
                 user.id, expires_delta=access_token_expires
