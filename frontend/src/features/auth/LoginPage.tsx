@@ -70,15 +70,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-primary font-bold text-xs uppercase tracking-widest mb-12 backdrop-blur-md">
             <Sparkles className="w-3.5 h-3.5" /> 
-            {t('login.digital_evo', 'Transforming Architecture')}
+            {t('login.digital_evo', 'Professional Ecosystem')}
           </div>
 
           <h1 className="text-6xl xl:text-8xl font-black font-display leading-[0.9] tracking-tighter text-white mb-10 text-gradient">
-            {t('login.hero_title', 'Design your dream space.')}
+            {t('login.hero_title', 'Find your expert team.')}
           </h1>
 
           <p className="text-xl text-foreground/60 max-w-xl leading-relaxed mb-16 font-medium">
-            {t('login.hero_p', 'Joyida brings together visionary planners and expert specialists. Built for growth, designed for clarity.')}
+            {t('login.hero_p', 'Joyida brings together visionary clients and top-tier experts. Built for scale, designed for excellence.')}
           </p>
 
           <div className="grid grid-cols-2 gap-12 max-w-xl">

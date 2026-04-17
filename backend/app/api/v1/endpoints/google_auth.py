@@ -1,5 +1,4 @@
 import os
-import traceback
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import timedelta
@@ -86,9 +85,4 @@ async def google_login(
             "is_new_user": is_new_user,
         }
     except Exception as e:
-        error_msg = f"Google Login Error: {str(e)}\n{traceback.format_exc()}"
-        print(error_msg) # This will go to server logs
-        raise HTTPException(
-            status_code=500, 
-            detail=error_msg
-        )
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

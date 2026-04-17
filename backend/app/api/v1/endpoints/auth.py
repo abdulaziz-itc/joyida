@@ -44,10 +44,6 @@ def check_email_availability(
     user = db.query(UserModel).filter(UserModel.email == email).first()
     return {"available": user is None}
 
-@router.get("/ping")
-def ping_auth():
-    return {"status": "auth router is alive"}
-
 @router.post("/register", response_model=UserSchema)
 def register_user(
     *,

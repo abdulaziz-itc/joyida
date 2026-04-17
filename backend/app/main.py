@@ -79,23 +79,6 @@ def read_root():
 def health_check():
     return {"status": "healthy"}
 
-@app.get("/api/v1/diagnostics")
-def debug_database(db: Session = Depends(get_db)):
-    """Diagnostic endpoint to verify database schema matches expectation."""
-    from sqlalchemy import inspect
-    inspector = inspect(db.bind)
-    columns = inspector.get_columns("users")
-    column_names = [c["name"] for c in columns]
-    expected_new_fields = ["phone_number", "bio", "headline", "skills", "languages", "social_links"]
-    missing_fields = [f for f in expected_new_fields if f not in column_names]
-    
-    return {
-        "status": "ready" if not missing_fields else "incomplete_migration",
-        "current_columns": column_names,
-        "missing_new_fields": missing_fields,
-        "sqlite_db_path": str(db.bind.url)
-    }
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
