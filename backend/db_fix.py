@@ -16,13 +16,21 @@ def fix_database():
                 continue
         
         found_any = True
-        print(f"\n--- Checking database: {db_path} ---")
+        print(f"\n==========================================")
+        print(f"DATABASE DETECTED: {db_path}")
+        print(f"==========================================")
+        
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        # Define all expected columns
+        # Step 1: List current columns
+        cursor.execute("PRAGMA table_info(users)")
+        rows = cursor.fetchall()
+        current_columns = [row[1] for row in rows]
+        print(f"Current columns ({len(current_columns)}): {', '.join(current_columns)}")
+
+        # Step 2: Define expected columns
         expected_columns = [
-            ("name", "TEXT"),
             ("first_name", "TEXT"),
             ("last_name", "TEXT"),
             ("patronymic", "TEXT"),
@@ -44,26 +52,31 @@ def fix_database():
             ("verification_data", "JSON")
         ]
 
-        # Get current columns
-        cursor.execute("PRAGMA table_info(users)")
-        current_columns = [row[1] for row in cursor.fetchall()]
-
+        # Step 3: Add missing columns
         added_count = 0
         for col_name, col_type in expected_columns:
             if col_name not in current_columns:
-                print(f"Adding column: {col_name} ({col_type})")
+                print(f"-> Adding missing column: {col_name}...")
                 try:
                     cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
                     added_count += 1
                 except Exception as e:
-                    print(f"Error adding {col_name}: {e}")
+                    print(f"   [!] Error adding {col_name}: {e}")
 
         conn.commit()
+        
+        # Step 4: Final verification
+        cursor.execute("PRAGMA table_info(users)")
+        new_columns = [row[1] for row in cursor.fetchall()]
         conn.close()
-        print(f"Done. Added {added_count} columns to {name}.")
+        
+        print(f"\nRepair complete for {name}!")
+        print(f"Total columns now: {len(new_columns)}")
+        print(f"Added columns: {added_count}")
+        print(f"==========================================\n")
 
     if not found_any:
-        print("Error: No database files found (.db)")
+        print("CRITICAL ERROR: No database files (.db) found in current directory or /home/joidauz/backend/")
 
 if __name__ == "__main__":
     fix_database()
