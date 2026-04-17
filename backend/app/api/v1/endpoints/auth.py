@@ -51,12 +51,18 @@ def register_user(
         email=user_in.email,
         hashed_password=security.get_password_hash(user_in.password),
         full_name=user_in.full_name,
+        first_name=user_in.first_name,
+        last_name=user_in.last_name,
+        patronymic=user_in.patronymic,
         is_expert=user_in.is_expert,
         profession=user_in.profession,
         birth_year=user_in.birth_year,
+        birth_date=user_in.birth_date,
         gender=user_in.gender,
         education_level=user_in.education_level,
+        education_info=[item.dict() for item in user_in.education_info] if user_in.education_info else None,
         workplace=user_in.workplace,
+        experience_info=[item.dict() for item in user_in.experience_info] if user_in.experience_info else None,
         latitude=user_in.latitude,
         longitude=user_in.longitude,
         service_location_name=user_in.service_location_name,
@@ -73,6 +79,7 @@ def register_user(
     db.commit()
     db.refresh(db_user)
     return db_user
+
 
 @router.get("/me", response_model=UserSchema)
 def read_user_me(
@@ -95,6 +102,12 @@ def update_user_me(
         del update_data["password"]
         update_data["hashed_password"] = hashed_password
     
+    # Handle JSON fields serialization
+    if "education_info" in update_data and update_data["education_info"]:
+        update_data["education_info"] = [item if isinstance(item, dict) else item.dict() for item in update_data["education_info"]]
+    if "experience_info" in update_data and update_data["experience_info"]:
+        update_data["experience_info"] = [item if isinstance(item, dict) else item.dict() for item in update_data["experience_info"]]
+        
     for field, value in update_data.items():
         setattr(current_user, field, value)
     
@@ -102,3 +115,4 @@ def update_user_me(
     db.commit()
     db.refresh(current_user)
     return current_user
+

@@ -81,6 +81,22 @@ function App() {
     // In a real app, the user object would be updated via API and store
   };
 
+  if (!isAuthenticated) {
+    return (
+      <GoogleOAuthProvider clientId="596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com">
+        <div className="App">
+          {showRegister ? (
+            <RegisterPage onBackToLogin={() => setShowRegister(false)} />
+          ) : (
+            <LoginPage onRegister={() => setShowRegister(true)} />
+          )}
+          <ToastContainer />
+        </div>
+      </GoogleOAuthProvider>
+    );
+  }
+
+  // Authenticated user flows
   if (showPreferences) {
     return <PreferenceSelection onFinish={handleFinishPreferences} />;
   }
@@ -96,27 +112,20 @@ function App() {
   return (
     <GoogleOAuthProvider clientId="596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com">
       <div className="App">
-        {isAuthenticated ? (
-          <DashboardLayout onNavigate={setCurrentPage} currentPage={currentPage}>
-            {currentPage === 'dashboard' && <DashboardPage />}
-            {currentPage === 'projects' && <ProjectsPage />}
-            {currentPage === 'explore' && <ClientExplorePage />}
-            {currentPage === 'reels' && <ReelsFeedPage />}
-            {currentPage === 'messages' && <MessagesPage />}
-            {currentPage === 'profile' && <ClientProfilePage />}
-            {currentPage === 'admin' && <AdminLayout />}
-          </DashboardLayout>
-        ) : (
-          showRegister ? (
-            <RegisterPage onBackToLogin={() => setShowRegister(false)} />
-          ) : (
-            <LoginPage onRegister={() => setShowRegister(true)} />
-          )
-        )}
+        <DashboardLayout onNavigate={setCurrentPage} currentPage={currentPage}>
+          {currentPage === 'dashboard' && <DashboardPage />}
+          {currentPage === 'projects' && <ProjectsPage />}
+          {currentPage === 'explore' && <ClientExplorePage />}
+          {currentPage === 'reels' && <ReelsFeedPage />}
+          {currentPage === 'messages' && <MessagesPage />}
+          {currentPage === 'profile' && <ClientProfilePage />}
+          {currentPage === 'admin' && <AdminLayout />}
+        </DashboardLayout>
         <ToastContainer />
       </div>
     </GoogleOAuthProvider>
   );
+
 }
 
 export default App;

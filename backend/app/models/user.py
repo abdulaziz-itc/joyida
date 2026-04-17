@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, Text, JSON, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, Float, Text, JSON, DateTime, Date
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 
@@ -7,6 +7,9 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     full_name = Column(String, index=True)
+    first_name = Column(String, index=True, nullable=True)
+    last_name = Column(String, index=True, nullable=True)
+    patronymic = Column(String, index=True, nullable=True)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean(), default=True)
@@ -16,9 +19,14 @@ class User(Base):
     is_expert = Column(Boolean(), default=False)
     profession = Column(String, nullable=True) # Unified with specialization/direction
     birth_year = Column(Integer, nullable=True)
+    birth_date = Column(Date, nullable=True)
     gender = Column(String, nullable=True)
+    
+    # Professional details
     education_level = Column(String, nullable=True)
+    education_info = Column(JSON, nullable=True) # List of {type, institution, specialization, year}
     workplace = Column(String, nullable=True)
+    experience_info = Column(JSON, nullable=True) # List of {workplace, position, duration, description}
     
     # Location fields
     latitude = Column(Float, nullable=True)
@@ -42,3 +50,4 @@ class User(Base):
     projects = relationship("Project", back_populates="owner")
     services = relationship("ServiceCategory", secondary="user_services", back_populates="users")
     images = relationship("UserImage", back_populates="user", cascade="all, delete-orphan")
+

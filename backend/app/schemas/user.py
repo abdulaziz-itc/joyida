@@ -1,6 +1,19 @@
-from typing import Optional, Any
+from typing import Optional, Any, List
 from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from datetime import datetime, date
+
+# Professional profile structures
+class EducationItem(BaseModel):
+    type: str # bakalavr, kolledj, litsey
+    institution: str
+    specialization: str
+    year: Optional[int] = None
+
+class ExperienceItem(BaseModel):
+    workplace: str
+    position: str
+    duration: str
+    description: Optional[str] = None
 
 # Shared properties
 class UserBase(BaseModel):
@@ -8,12 +21,18 @@ class UserBase(BaseModel):
     is_active: Optional[bool] = True
     is_superuser: bool = False
     full_name: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    patronymic: Optional[str] = None
     is_expert: bool = False
     profession: Optional[str] = None
     birth_year: Optional[int] = None
+    birth_date: Optional[date] = None
     gender: Optional[str] = None
     education_level: Optional[str] = None
+    education_info: Optional[List[EducationItem]] = None
     workplace: Optional[str] = None
+    experience_info: Optional[List[ExperienceItem]] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     service_location_name: Optional[str] = None
@@ -27,6 +46,7 @@ class UserBase(BaseModel):
     hourly_rate: Optional[float] = None
     rating: float = 0.0
     review_count: int = 0
+
 
 class UserImageBase(BaseModel):
     url: str

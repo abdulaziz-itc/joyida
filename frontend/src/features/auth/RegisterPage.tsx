@@ -18,13 +18,18 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
   const { setAuth } = useAuthStore();
 
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
+    patronymic: '',
     email: '',
     password: '',
-    birthYear: 2000,
+    birthDay: '01',
+    birthMonth: '01',
+    birthYear: '1995',
     gender: 'Male',
     educationLevel: 'Bachelor',
-    workplace: '',
+    educationInfo: [] as any[],
+    experienceInfo: [] as any[],
     serviceIds: [] as number[],
     latitude: null as number | null,
     longitude: null as number | null,
@@ -32,6 +37,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
     profilePictureUrl: '',
     diplomaUrl: '',
   });
+
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -66,15 +72,22 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
   const handleRegister = async () => {
     setIsLoading(true);
     try {
+      const birthDate = `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`;
+      const fullName = `${formData.lastName} ${formData.firstName} ${formData.patronymic}`.trim();
+      
       const response = await apiClient.post('/auth/register', {
         email: formData.email,
         password: formData.password,
-        full_name: formData.fullName,
+        full_name: fullName,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        patronymic: formData.patronymic,
         is_expert: isExpert,
-        birth_year: formData.birthYear,
+        birth_date: birthDate,
         gender: formData.gender,
         education_level: formData.educationLevel,
-        workplace: formData.workplace,
+        education_info: formData.educationInfo,
+        experience_info: formData.experienceInfo,
         service_ids: formData.serviceIds,
         latitude: formData.latitude,
         longitude: formData.longitude,
@@ -94,6 +107,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
       setIsLoading(false);
     }
   };
+
 
   const nextStep = () => setStep(s => s + 1);
   const prevStep = () => setStep(s => s - 1);
@@ -171,13 +185,30 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
 
             {step === 1 && (
               <motion.div key="step1" variants={stepVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="relative group px-1">
+                    <User className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
+                    <input 
+                      type="text" placeholder={t('register.lastname_placeholder', 'Familiya')} className="premium-input pl-14" 
+                      value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})}
+                    />
+                  </div>
+                  <div className="relative group px-1">
+                    <User className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
+                    <input 
+                      type="text" placeholder={t('register.firstname_placeholder', 'Ism')} className="premium-input pl-14" 
+                      value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})}
+                    />
+                  </div>
+                </div>
                 <div className="relative group px-1">
                   <User className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
                   <input 
-                    type="text" placeholder={t('register.fullname_placeholder', 'Full Name')} className="premium-input pl-14" 
-                    value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})}
+                    type="text" placeholder={t('register.patronymic_placeholder', 'Otasining ismi')} className="premium-input pl-14" 
+                    value={formData.patronymic} onChange={e => setFormData({...formData, patronymic: e.target.value})}
                   />
                 </div>
+
                 <div className="relative group px-1">
                   <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
                   <input 
@@ -225,51 +256,141 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-6 px-1">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.birth_year', 'Birth Year')}</label>
+                <div className="space-y-4 px-1">
+                  <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.birth_date', 'Tug\'ilgan sana')}</label>
+                  <div className="grid grid-cols-3 gap-3">
                     <select 
-                      className="premium-input py-4 text-sm" 
-                      value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: parseInt(e.target.value)})}
+                      className="premium-input py-4 text-xs" 
+                      value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: e.target.value})}
                     >
-                      {Array.from({length: 50}, (_, i) => 2010 - i).map(y => <option key={y} value={y} className="bg-background">{y}</option>)}
+                      {Array.from({length: 60}, (_, i) => 2010 - i).map(y => <option key={y} value={y.toString()} className="bg-background">{y}</option>)}
                     </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.gender', 'Gender')}</label>
                     <select 
-                      className="premium-input py-4 text-sm"
-                      value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})}
+                      className="premium-input py-4 text-xs" 
+                      value={formData.birthMonth} onChange={e => setFormData({...formData, birthMonth: e.target.value})}
                     >
-                      <option value="Male" className="bg-background">{t('auth.male', 'Male')}</option>
-                      <option value="Female" className="bg-background">{t('auth.female', 'Female')}</option>
+                      {Array.from({length: 12}, (_, i) => (i + 1).toString().padStart(2, '0')).map(m => <option key={m} value={m} className="bg-background">{m}</option>)}
+                    </select>
+                    <select 
+                      className="premium-input py-4 text-xs" 
+                      value={formData.birthDay} onChange={e => setFormData({...formData, birthDay: e.target.value})}
+                    >
+                      {Array.from({length: 31}, (_, i) => (i + 1).toString().padStart(2, '0')).map(d => <option key={d} value={d} className="bg-background">{d}</option>)}
                     </select>
                   </div>
                 </div>
 
-                <div className="space-y-2 px-1">
-                  <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.education', 'Qualification')}</label>
-                  <div className="relative group">
-                    <GraduationCap className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
-                    <select className="premium-input pl-14 py-4 text-sm" value={formData.educationLevel} onChange={e => setFormData({...formData, educationLevel: e.target.value})}>
-                      <option value="Bachelor" className="bg-background">{t('register.bachelor', 'Bachelor')}</option>
-                      <option value="Master" className="bg-background">{t('register.master', 'Master')}</option>
-                      <option value="PhD" className="bg-background">{t('register.phd', 'PhD')}</option>
-                      <option value="DS" className="bg-background">{t('register.professor', 'Doctor Science')}</option>
-                    </select>
-                  </div>
+                <div className="space-y-4 px-1">
+                  <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.gender', 'Gender')}</label>
+                  <select 
+                    className="premium-input py-4 text-sm"
+                    value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})}
+                  >
+                    <option value="Male" className="bg-background">{t('auth.male', 'Male')}</option>
+                    <option value="Female" className="bg-background">{t('auth.female', 'Female')}</option>
+                  </select>
                 </div>
 
-                <div className="space-y-2 px-1">
-                  <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">{t('auth.workplace', 'Organization')}</label>
-                  <div className="relative group">
-                    <Briefcase className="absolute left-6 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-5 h-5 transition-colors" />
-                    <input 
-                      type="text" placeholder={t('register.workplace_hint', 'Company Name')} className="premium-input pl-14" 
-                      value={formData.workplace} onChange={e => setFormData({...formData, workplace: e.target.value})}
-                    />
+
+                {/* Education Section */}
+                <div className="space-y-4 px-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">Ta'lim</label>
+                    <button 
+                      onClick={() => setFormData({...formData, educationInfo: [...formData.educationInfo, {type: 'Bakalavr', institution: '', specialization: '', year: 2020}]})}
+                      className="text-[10px] text-primary font-black uppercase hover:underline"
+                    >
+                      + Qo'shish
+                    </button>
                   </div>
+                  {formData.educationInfo.map((edu, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-3 relative">
+                      <select 
+                        className="premium-input py-2 text-xs"
+                        value={edu.type}
+                        onChange={e => {
+                          const newEdu = [...formData.educationInfo];
+                          newEdu[idx].type = e.target.value;
+                          setFormData({...formData, educationInfo: newEdu});
+                        }}
+                      >
+                        <option value="Bakalavr">Bakalavr</option>
+                        <option value="Kolledj">Kolledj</option>
+                        <option value="Litsey">Litsey</option>
+                      </select>
+                      <input 
+                        type="text" placeholder="Muassasa nomi" className="premium-input py-2 text-xs"
+                        value={edu.institution} onChange={e => {
+                          const newEdu = [...formData.educationInfo];
+                          newEdu[idx].institution = e.target.value;
+                          setFormData({...formData, educationInfo: newEdu});
+                        }}
+                      />
+                      <input 
+                        type="text" placeholder="Mutaxassislik" className="premium-input py-2 text-xs"
+                        value={edu.specialization} onChange={e => {
+                          const newEdu = [...formData.educationInfo];
+                          newEdu[idx].specialization = e.target.value;
+                          setFormData({...formData, educationInfo: newEdu});
+                        }}
+                      />
+                      <button 
+                        onClick={() => setFormData({...formData, educationInfo: formData.educationInfo.filter((_, i) => i !== idx)})}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 rounded-full text-white text-[10px] flex items-center justify-center"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
                 </div>
+
+                {/* Experience Section */}
+                <div className="space-y-4 px-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2 leading-none">Ish tajribasi</label>
+                    <button 
+                      onClick={() => setFormData({...formData, experienceInfo: [...formData.experienceInfo, {workplace: '', position: '', duration: '', description: ''}]})}
+                      className="text-[10px] text-primary font-black uppercase hover:underline"
+                    >
+                      + Qo'shish
+                    </button>
+                  </div>
+                  {formData.experienceInfo.map((exp, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-3 relative">
+                      <input 
+                        type="text" placeholder="Ish joyi" className="premium-input py-2 text-xs"
+                        value={exp.workplace} onChange={e => {
+                          const newExp = [...formData.experienceInfo];
+                          newExp[idx].workplace = e.target.value;
+                          setFormData({...formData, experienceInfo: newExp});
+                        }}
+                      />
+                      <input 
+                        type="text" placeholder="Lavozim" className="premium-input py-2 text-xs"
+                        value={exp.position} onChange={e => {
+                          const newExp = [...formData.experienceInfo];
+                          newExp[idx].position = e.target.value;
+                          setFormData({...formData, experienceInfo: newExp});
+                        }}
+                      />
+                      <input 
+                        type="text" placeholder="Davomiyligi (masalan: 2 yil)" className="premium-input py-2 text-xs"
+                        value={exp.duration} onChange={e => {
+                          const newExp = [...formData.experienceInfo];
+                          newExp[idx].duration = e.target.value;
+                          setFormData({...formData, experienceInfo: newExp});
+                        }}
+                      />
+                      <button 
+                        onClick={() => setFormData({...formData, experienceInfo: formData.experienceInfo.filter((_, i) => i !== idx)})}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 rounded-full text-white text-[10px] flex items-center justify-center"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
 
                 <div className="flex gap-4 pt-4 px-1">
                   <button onClick={prevStep} className="flex-1 py-5 border border-white/10 rounded-2xl hover:bg-white/5 transition-all text-foreground/40 flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest">

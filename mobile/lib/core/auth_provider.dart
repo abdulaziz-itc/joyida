@@ -25,6 +25,13 @@ class AuthProvider with ChangeNotifier {
     tryAutoLogin();
   }
 
+  String _normalizeUrl(String? url) {
+    if (url == null || url.isEmpty) return "";
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('/')) return 'https://backend.joida.uz$url';
+    return 'https://backend.joida.uz/$url';
+  }
+
   Future<String?> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -79,7 +86,11 @@ class AuthProvider with ChangeNotifier {
         headers: {'Authorization': 'Bearer $_token'},
       );
       if (response.statusCode == 200) {
-        _currentUser = json.decode(response.body);
+        final data = json.decode(response.body);
+        if (data['profile_picture_url'] != null) {
+          data['profile_picture_url'] = _normalizeUrl(data['profile_picture_url']);
+        }
+        _currentUser = data;
       }
     } catch (e) {
       print('Fetch User Info error: $e');
@@ -89,30 +100,46 @@ class AuthProvider with ChangeNotifier {
   Future<String?> uploadFile(String filePath) async {
     try {
       var request = http.MultipartRequest('POST', Uri.parse('https://backend.joida.uz/api/v1/utils/upload'));
-      request.files.add(await http.MultipartFile.fromPath('file', filePath));
       
+      // Ensure file exists and is readable
+      request.files.add(await http.MultipartFile.fromPath(
+        'file', 
+        filePath,
+      ));
+      
+      print('Uploading file to: ${request.url}');
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
       
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('Upload success: ${data['url']}');
         return data['url'];
+      } else {
+        print('Upload failed with status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        return null;
       }
-      return null;
     } catch (e) {
-      print('Upload error: $e');
+      print('Upload error detailed: $e');
       return null;
     }
   }
 
   Future<String?> register({
+    String? firstName,
+    String? lastName,
+    String? patronymic,
     required String fullName,
     required String email,
     required String password,
     bool isExpert = false,
+    String? birthDate,
     int? birthYear,
     String? gender,
     String? educationLevel,
+    List<dynamic>? educationInfo,
+    List<dynamic>? experienceInfo,
     String? workplace,
     List<int>? serviceIds,
     double? latitude,
@@ -128,10 +155,16 @@ class AuthProvider with ChangeNotifier {
           'email': email,
           'password': password,
           'full_name': fullName,
+          'first_name': firstName,
+          'last_name': lastName,
+          'patronymic': patronymic,
           'is_expert': isExpert,
+          'birth_date': birthDate,
           'birth_year': birthYear,
           'gender': gender,
           'education_level': educationLevel,
+          'education_info': educationInfo,
+          'experience_info': experienceInfo,
           'workplace': workplace,
           'service_ids': serviceIds ?? [],
           'latitude': latitude,
@@ -145,13 +178,14 @@ class AuthProvider with ChangeNotifier {
         return await login(email, password);
       } else {
         final data = json.decode(response.body);
-        return data['detail'] ?? 'Registration failed with status: ${response.statusCode}';
+        return data['detail'] is String ? data['detail'] : 'Registration failed: ${response.statusCode}';
       }
     } catch (e) {
       print('Registration detailed error: $e');
-      return 'Registration Error: ${e.toString().split(':').last.trim()}';
+      return 'Registration Error: ${e.toString()}';
     }
   }
+
 
   Future<Map<String, dynamic>?> signInWithGoogle() async {
     try {
@@ -228,7 +262,11 @@ class AuthProvider with ChangeNotifier {
         headers: {'Authorization': 'Bearer $_token'},
       );
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((img) {
+          img['url'] = _normalizeUrl(img['url'] as String?);
+          return img;
+        }).toList();
       }
       return [];
     } catch (e) {

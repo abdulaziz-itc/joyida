@@ -5,12 +5,20 @@ export interface User {
     id: number;
     email: string;
     full_name?: string;
+    first_name?: string;
+    last_name?: string;
+    patronymic?: string;
+    birth_date?: string;
+    education_info?: any[];
+    experience_info?: any[];
     is_active: boolean;
     is_superuser?: boolean;
     is_expert?: boolean;
     subscription_tier?: string;
     profile_completed?: boolean;
+    profile_picture_url?: string;
 }
+
 
 interface AuthState {
     user: User | null;
