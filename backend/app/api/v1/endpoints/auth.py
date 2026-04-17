@@ -34,6 +34,15 @@ def login_access_token(
         "token_type": "bearer",
     }
 
+@router.get("/check-email")
+def check_email_availability(
+    email: str,
+    db: Session = Depends(get_db)
+) -> Any:
+    """Check if an email is already registered."""
+    user = db.query(UserModel).filter(UserModel.email == email).first()
+    return {"available": user is None}
+
 @router.post("/register", response_model=UserSchema)
 def register_user(
     *,

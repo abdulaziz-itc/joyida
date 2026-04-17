@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import apiClient from '../../api/apiClient';
 import { useAuthStore } from '../../store/authStore';
+import { AlertCircle } from 'lucide-react';
 
 interface RegisterPageProps {
   onBackToLogin: () => void;
@@ -20,6 +21,9 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [services, setServices] = useState<any[]>([]);
   const { setAuth } = useAuthStore();
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [generalError, setGeneralError] = useState<string | null>(null);
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -61,6 +65,26 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
     };
     fetchServices();
   }, []);
+
+  // Email availability check with debounce
+  useEffect(() => {
+    if (!formData.email || !formData.email.includes('@')) {
+      setEmailStatus('idle');
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setEmailStatus('checking');
+      try {
+        const res = await apiClient.get(`/auth/check-email?email=${encodeURIComponent(formData.email)}`);
+        setEmailStatus(res.data.available ? 'available' : 'taken');
+      } catch (e) {
+        setEmailStatus('idle');
+      }
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [formData.email]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'profilePictureUrl' | 'diplomaUrl') => {
     const file = e.target.files?.[0];
@@ -124,8 +148,17 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
       setAuth(response.data, loginResponse.data.access_token);
     } catch (error: any) {
        console.error('Registration failed', error);
+       const detail = error.response?.data?.detail;
+       if (typeof detail === 'string') {
+         setGeneralError(detail);
+       } else if (Array.isArray(detail)) {
+         setGeneralError(detail[0]?.msg || 'Ma\'lumotlar xato kiritildi');
+       } else {
+         setGeneralError('Ro\'yxatdan o\'tishda kutilmagan xatolik yuz berdi');
+       }
     } finally {
       setIsLoading(false);
+      setIsRegistering(false);
     }
   };
 
@@ -175,6 +208,27 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
               ))}
             </div>
           </div>
+
+          <AnimatePresence>
+            {generalError && (
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3 relative overflow-hidden group"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-rose-500/0 via-rose-500/5 to-rose-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+                <div className="flex-1 space-y-1">
+                  <p className="text-xs font-black text-rose-500 uppercase tracking-widest">Xatolik yuz berdi</p>
+                  <p className="text-sm font-medium text-white/80">{generalError}</p>
+                </div>
+                <button onClick={() => setGeneralError(null)} className="p-1 hover:bg-rose-500/10 rounded-lg text-rose-500 transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <motion.div layout className="glass-card p-6 md:p-10 border-white/5 shadow-2xl overflow-visible">
             <AnimatePresence mode="wait">
@@ -235,9 +289,33 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2">Email manzil</label>
                     <div className="relative group">
-                      <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-foreground/20 group-focus-within:text-primary w-4 h-4 transition-colors" />
-                      <input type="email" placeholder="example@joida.uz" className="premium-input w-full pl-12" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+                      <Mail className={`absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${emailStatus === 'taken' ? 'text-rose-500' : 'text-foreground/20 group-focus-within:text-primary'}`} />
+                      <input 
+                        type="email" 
+                        placeholder="example@joida.uz" 
+                        className={`premium-input w-full pl-12 ${emailStatus === 'taken' ? 'border-rose-500/50 bg-rose-500/5 focus:border-rose-500' : ''}`} 
+                        value={formData.email} 
+                        onChange={e => { setFormData({...formData, email: e.target.value}); setGeneralError(null); }} 
+                      />
+                      {emailStatus === 'checking' && (
+                        <div className="absolute right-5 top-1/2 -translate-y-1/2">
+                          <div className="w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                        </div>
+                      )}
+                      {emailStatus === 'available' && formData.email && (
+                        <CheckCircle2 className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
+                      )}
+                      {emailStatus === 'taken' && (
+                        <X className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-rose-500" />
+                      )}
                     </div>
+                    <AnimatePresence>
+                      {emailStatus === 'taken' && (
+                        <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="text-[10px] font-bold text-rose-500 ml-2 mt-1 uppercase tracking-wider">
+                          Bu email manzili allaqachon band
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2">Maxfiy so'z</label>
@@ -246,9 +324,9 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
                       <input type="password" placeholder="********" className="premium-input w-full pl-12" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                     </div>
                   </div>
-                  <div className="flex gap-4 pt-6">
+                   <div className="flex gap-4 pt-6">
                     <button onClick={prevStep} className="flex-1 py-4 border border-white/10 rounded-2xl hover:bg-white/5 text-foreground/40 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"><ArrowLeft className="w-4 h-4" /> Ortga</button>
-                    <button onClick={nextStep} className="flex-[2] glow-button">Keyingisi <ArrowRight className="w-5 h-5" /></button>
+                    <button onClick={nextStep} disabled={emailStatus === 'taken' || emailStatus === 'checking'} className="flex-[2] glow-button disabled:opacity-50 disabled:cursor-not-allowed">Keyingisi <ArrowRight className="w-5 h-5" /></button>
                   </div>
                 </motion.div>
               )}
