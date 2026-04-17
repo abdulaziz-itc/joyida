@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   User as UserIcon, Moon, Sun, Globe, Bell, Shield, LogOut, 
   Lock, Edit3, Camera, Plus, Trash2, GraduationCap, Briefcase, 
-  Calendar, Check, AlertCircle, Loader2, Phone, Tag, Globe2, Award, X
+  Calendar, Check, AlertCircle, Loader2, Phone, Tag, Globe2, Award, X, CheckCircle2
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import apiClient from '../../api/apiClient';

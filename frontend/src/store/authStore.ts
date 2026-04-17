@@ -11,6 +11,12 @@ export interface User {
     birth_date?: string;
     education_info?: any[];
     experience_info?: any[];
+    phone_number?: string;
+    headline?: string;
+    bio?: string;
+    skills?: string[];
+    languages?: any[];
+    social_links?: any[];
     is_active: boolean;
     is_superuser?: boolean;
     is_expert?: boolean;
