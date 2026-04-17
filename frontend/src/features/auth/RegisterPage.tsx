@@ -76,7 +76,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onBackToLogin }) => {
     const timer = setTimeout(async () => {
       setEmailStatus('checking');
       try {
-        const res = await apiClient.get(`/auth/check-email?email=${encodeURIComponent(formData.email)}`);
+        const res = await apiClient.get(`/utils/check-email?email=${encodeURIComponent(formData.email)}`);
         setEmailStatus(res.data.available ? 'available' : 'taken');
       } catch (e: any) {
         // If 404, the endpoint might not be deployed yet. We skip the check but don't block.

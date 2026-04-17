@@ -6,10 +6,19 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.db.session import get_db
-from app.models.service import ServiceCategory
+from app.models.user import User as UserModel
 from app.schemas.user import ServiceCategory as ServiceCategorySchema
 
 router = APIRouter()
+
+@router.get("/check-email")
+def check_email_availability(
+    email: str,
+    db: Session = Depends(get_db)
+) -> Any:
+    """Check if an email is already registered."""
+    user = db.query(UserModel).filter(UserModel.email == email).first()
+    return {"available": user is None}
 
 UPLOAD_DIR = "static/uploads"
 
