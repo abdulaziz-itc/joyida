@@ -29,8 +29,9 @@ async def catch_exceptions_middleware(request: Request, call_next):
     try:
         return await call_next(request)
     except Exception as e:
-        logger.error(f"Unhandled Exception: {e}\n{traceback.format_exc()}")
-        return Response("Internal Server Error", status_code=500)
+        error_trace = traceback.format_exc()
+        logger.error(f"Unhandled Exception: {e}\n{error_trace}")
+        return Response(f"Internal Server Error: {str(e)}\n{error_trace}", status_code=500)
 
 # Set all CORS enabled origins
 app.add_middleware(
@@ -78,6 +79,23 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+@app.get("/api/v1/diagnostics")
+def debug_database(db: Session = Depends(get_db)):
+    """Diagnostic endpoint to verify database schema matches expectation."""
+    from sqlalchemy import inspect
+    inspector = inspect(db.bind)
+    columns = inspector.get_columns("users")
+    column_names = [c["name"] for c in columns]
+    expected_new_fields = ["first_name", "last_name", "phone_number", "bio", "headline", "skills"]
+    missing_fields = [f for f in expected_new_fields if f not in column_names]
+    
+    return {
+        "status": "ready" if not missing_fields else "incomplete_migration",
+        "current_columns": column_names,
+        "missing_new_fields": missing_fields,
+        "sqlite_db_path": str(db.bind.url)
+    }
 
 if __name__ == "__main__":
     import uvicorn
