@@ -1,6 +1,8 @@
 from fastapi import FastAPI, APIRouter, Request, Response, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from app.db.session import get_db
 import os
 import traceback
 import logging
