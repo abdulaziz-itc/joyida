@@ -17,6 +17,9 @@ def fix_database():
     # Define columns to add
     # Format: (name, type)
     new_columns = [
+        ("first_name", "TEXT"),
+        ("last_name", "TEXT"),
+        ("patronymic", "TEXT"),
         ("phone_number", "TEXT"),
         ("bio", "TEXT"),
         ("headline", "TEXT"),
