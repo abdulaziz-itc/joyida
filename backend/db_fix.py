@@ -14,9 +14,9 @@ def fix_database():
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    # Define columns to add
-    # Format: (name, type)
-    new_columns = [
+    # Define all expected columns based on the current model
+    # (Including those that might have been missed in previous runs)
+    expected_columns = [
         ("first_name", "TEXT"),
         ("last_name", "TEXT"),
         ("patronymic", "TEXT"),
@@ -28,7 +28,14 @@ def fix_database():
         ("social_links", "JSON"),
         ("birth_date", "DATE"),
         ("education_info", "JSON"),
-        ("experience_info", "JSON")
+        ("experience_info", "JSON"),
+        ("hourly_rate", "FLOAT"),
+        ("rating", "FLOAT DEFAULT 0.0"),
+        ("review_count", "INTEGER DEFAULT 0"),
+        ("profile_completed", "BOOLEAN DEFAULT 0"),
+        ("is_verified", "BOOLEAN DEFAULT 0"),
+        ("verification_status", "TEXT DEFAULT 'unverified'"),
+        ("verification_data", "JSON")
     ]
 
     # Get current columns
@@ -36,7 +43,7 @@ def fix_database():
     current_columns = [row[1] for row in cursor.fetchall()]
 
     added_count = 0
-    for col_name, col_type in new_columns:
+    for col_name, col_type in expected_columns:
         if col_name not in current_columns:
             print(f"Adding column: {col_name} ({col_type})")
             try:
