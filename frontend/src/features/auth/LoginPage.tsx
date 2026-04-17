@@ -24,7 +24,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onRegister }) => {
         idToken: credentialResponse.credential 
       });
       const { access_token, user } = response.data;
-      setAuth(user || { id: 1, email: 'google-user@joyida.com', full_name: 'Google User', is_active: true }, access_token);
+      setAuth(user || { id: 1, email: 'Google User', full_name: 'Google User', is_active: true }, access_token);
     } catch (error) {
       console.error('Google Login failed', error);
     } finally {
