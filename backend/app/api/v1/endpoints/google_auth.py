@@ -58,31 +58,53 @@ async def google_login(
     try:
         # ID token is valid. Get user info
         email = id_info.get("email")
-        full_name = id_info.get("name")
+        name = id_info.get("name")
+        picture = id_info.get("picture")
 
         # Check if user exists, else create
         user = db.query(UserModel).filter(UserModel.email == email).first()
         is_new_user = False
+        
         if not user:
+            print(f"Creating NEW Google user for: {email}")
             is_new_user = True
             user = UserModel(
                 email=email,
-                full_name=full_name,
-                hashed_password=security.get_password_hash(os.urandom(24).hex()), # Secure random dummy password for social users
+                full_name=name,
+                first_name=name.split()[0] if name else "Google",
+                last_name=name.split()[-1] if name and len(name.split()) > 1 else "User",
+                hashed_password=security.get_password_hash(os.urandom(24).hex()),
                 is_active=True,
+                profile_picture_url=picture,
+                is_verified=True,
+                verification_status="verified"
             )
             db.add(user)
             db.commit()
             db.refresh(user)
-
-        # Generate JWT
+            print(f"User created with ID: {user.id}")
+        else:
+            print(f"Existing Google user found: {email} (ID: {user.id})")
+            # Update profile picture if version is changed
+            if picture and user.profile_picture_url != picture:
+                user.profile_picture_url = picture
+                db.commit()
+        
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = security.create_access_token(
+            user.id, expires_delta=access_token_expires
+        )
+        
         return {
-            "access_token": security.create_access_token(
-                user.id, expires_delta=access_token_expires
-            ),
+            "access_token": access_token,
             "token_type": "bearer",
             "is_new_user": is_new_user,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "full_name": user.full_name,
+                "profile_picture_url": user.profile_picture_url
+            }
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
