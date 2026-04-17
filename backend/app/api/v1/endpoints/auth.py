@@ -34,6 +34,7 @@ def login_access_token(
         "token_type": "bearer",
     }
 
+@router.get("/check-email/")
 @router.get("/check-email")
 def check_email_availability(
     email: str,
@@ -42,6 +43,10 @@ def check_email_availability(
     """Check if an email is already registered."""
     user = db.query(UserModel).filter(UserModel.email == email).first()
     return {"available": user is None}
+
+@router.get("/ping")
+def ping_auth():
+    return {"status": "auth router is alive"}
 
 @router.post("/register", response_model=UserSchema)
 def register_user(
