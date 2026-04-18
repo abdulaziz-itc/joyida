@@ -102,22 +102,38 @@ const ClientExplorePage = () => {
   return (
     <div className="relative w-full h-[calc(100vh-theme(spacing.16))] md:h-screen overflow-hidden bg-[#050505]">
       
-      {/* Background Layer (Blurred/Glassy when centered) */}
+      {/* Background Layer with Rotating Globe */}
       <AnimatePresence>
         {!showRealMap && (
            <motion.div 
-           initial={{ opacity: 1 }}
-           exit={{ opacity: 0 }}
-           className="absolute inset-0 z-0 pointer-events-none"
-         >
-           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black z-10" />
-           <div className="absolute inset-[-5%] opacity-30 grayscale blur-[2px]" 
-                style={{ 
-                  backgroundImage: 'url("https://www.transparenttextures.com/patterns/cubes.png"), radial-gradient(circle at 50% 50%, #1e3a8a 0%, #000 70%)',
-                  backgroundSize: '100px 100px, cover'
-                }} 
-           />
-         </motion.div>
+             initial={{ opacity: 0 }}
+             animate={{ opacity: 1 }}
+             exit={{ opacity: 0 }}
+             className="absolute inset-0 z-0 pointer-events-none"
+           >
+             {/* Base Gradient Overlay */}
+             <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-black z-10" />
+             
+             {/* Rotating Globe Container */}
+             <div className="absolute bottom-[-40%] left-1/2 -translate-x-1/2 w-[120%] md:w-[80%] aspect-square">
+               <motion.div 
+                 animate={{ rotate: 360 }}
+                 transition={{ repeat: Infinity, duration: 180, ease: "linear" }}
+                 className="w-full h-full opacity-40 blur-[1px]"
+                 style={{ 
+                   backgroundImage: 'url("/assets/globe-half.png")',
+                   backgroundSize: 'contain',
+                   backgroundRepeat: 'no-repeat',
+                   backgroundPosition: 'center',
+                   maskImage: 'radial-gradient(circle at center, black 40%, transparent 70%)',
+                   WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 70%)'
+                 }} 
+               />
+               
+               {/* Globe Glow Effect */}
+               <div className="absolute inset-0 bg-primary/20 blur-[120px] rounded-full scale-75 opacity-30" />
+             </div>
+           </motion.div>
         )}
       </AnimatePresence>
 
