@@ -110,6 +110,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     is_new_user: bool = False
+    user: Optional[User] = None
 
 class TokenPayload(BaseModel):
     sub: Optional[int] = None
