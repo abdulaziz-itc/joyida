@@ -121,7 +121,7 @@ const ClientExplorePage = () => {
                  transition={{ repeat: Infinity, duration: 240, ease: "linear" }}
                  className="w-full h-full opacity-70"
                  style={{ 
-                   backgroundImage: 'url("/assets/globe-half.png")',
+                   backgroundImage: 'url("/assets/globe-realistic.png")',
                    backgroundSize: 'contain',
                    backgroundRepeat: 'no-repeat',
                    backgroundPosition: 'center',
