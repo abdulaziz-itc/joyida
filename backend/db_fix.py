@@ -12,7 +12,8 @@ from app.models.user_image import UserImage
 from app.models.project import Project
 from app.models.service import ServiceCategory
 from app.models.notification import Notification
-from app.models.marketplace import NFTItem
+from app.models.marketplace import PortfolioItem
+from app.models.marketplace_transaction import ChatRoom, ChatMessage, Booking, Review
 
 def fix_database():
     print("\n" + "="*50)
@@ -22,13 +23,13 @@ def fix_database():
     # Step 1: Create missing tables using SQLAlchemy
     print("\n[STEP 1] Checking for missing tables...")
     try:
+        # This will create any tables that don't exist yet
         Base.metadata.create_all(bind=engine)
         print("-> Table creation/verification complete.")
     except Exception as e:
         print(f"   [!] Error creating tables: {e}")
 
-    # Step 2: Manually fix missing columns in the 'users' table (SQLAlchemy won't add columns to existing tables)
-    # Try multiple possible database names since config might vary
+    # Step 2: Manually fix missing columns in the 'users' table
     db_names = ["joyida.db", "app.db"]
     base_path = "/home/joidauz/backend/"
     
@@ -52,7 +53,7 @@ def fix_database():
             rows = cursor.fetchall()
             current_columns = [row[1] for row in rows]
             
-            # Define expected columns that might be missing from older versions
+            # Define expected columns
             expected_columns = [
                 ("first_name", "TEXT"),
                 ("last_name", "TEXT"),
