@@ -115,23 +115,27 @@ const ClientExplorePage = () => {
              <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-black z-10" />
              
              {/* Rotating Globe Container */}
-             <div className="absolute bottom-[-40%] left-1/2 -translate-x-1/2 w-[120%] md:w-[80%] aspect-square">
+             <div className="absolute bottom-[-65%] left-1/2 -translate-x-1/2 w-[180%] md:w-[140%] aspect-square">
                <motion.div 
                  animate={{ rotate: 360 }}
-                 transition={{ repeat: Infinity, duration: 180, ease: "linear" }}
-                 className="w-full h-full opacity-40 blur-[1px]"
+                 transition={{ repeat: Infinity, duration: 240, ease: "linear" }}
+                 className="w-full h-full opacity-70"
                  style={{ 
                    backgroundImage: 'url("/assets/globe-half.png")',
                    backgroundSize: 'contain',
                    backgroundRepeat: 'no-repeat',
                    backgroundPosition: 'center',
-                   maskImage: 'radial-gradient(circle at center, black 40%, transparent 70%)',
-                   WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 70%)'
+                   maskImage: 'radial-gradient(circle at center, black 45%, transparent 75%)',
+                   WebkitMaskImage: 'radial-gradient(circle at center, black 45%, transparent 75%)',
+                   willChange: 'transform',
+                   transform: 'translateZ(0)',
+                   backfaceVisibility: 'hidden'
                  }} 
                />
                
-               {/* Globe Glow Effect */}
-               <div className="absolute inset-0 bg-primary/20 blur-[120px] rounded-full scale-75 opacity-30" />
+               {/* Globe Glow Effect - Adjusted for prominence */}
+               <div className="absolute inset-0 bg-primary/20 blur-[160px] rounded-full scale-110 opacity-50 pointer-events-none" />
+               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-transparent to-transparent z-20" />
              </div>
            </motion.div>
         )}
