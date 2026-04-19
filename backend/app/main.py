@@ -64,11 +64,11 @@ api_router.include_router(utils.router, prefix="/utils", tags=["utils"])
 api_router.include_router(user_assets.router, prefix="/user-assets", tags=["user-assets"])
 app.include_router(api_router, prefix="/api/v1")
 
-# Serve static files with robust path discovery
+# Serve static files with robust absolute path discovery
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, "static", "uploads")
 if not os.path.exists(STATIC_DIR):
-    os.makedirs(STATIC_DIR, exist_ok=True)
+    os.makedirs(STATIC_DIR, mode=0o755, exist_ok=True)
 
 app.mount("/uploads", StaticFiles(directory=STATIC_DIR), name="uploads")
 

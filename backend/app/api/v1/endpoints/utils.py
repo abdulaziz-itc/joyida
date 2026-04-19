@@ -16,6 +16,11 @@ from app.models.service import ServiceCategory
 from app.schemas.user import ServiceCategory as ServiceCategorySchema
 from app.models.project import Project as ProjectModel
 
+# Absolute base directory discovery
+APP_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_UPLOAD_DIR = os.path.join(APP_ROOT, "static", "uploads")
+UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "reels")
+
 router = APIRouter()
 
 @router.get("/check-email")
@@ -115,6 +120,28 @@ def system_diagnostics(db: Session = Depends(get_db)):
         "upload_dir_exists": os.path.exists(UPLOAD_DIR)
     }
     return results
+
+@router.get("/list-files")
+def list_uploaded_files(db: Session = Depends(get_db)):
+    """Diagnostic endpoint to list contents of uploads directory."""
+    files_tree = {}
+    app_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    static_root = os.path.join(app_root, "static", "uploads")
+    
+    if not os.path.exists(static_root):
+        return {"error": f"Path not found: {static_root}"}
+        
+    for root, dirs, files in os.walk(static_root):
+        rel_path = os.path.relpath(root, static_root)
+        files_tree[rel_path] = {
+            "dirs": dirs,
+            "files": files[:20] # Limit output
+        }
+    
+    return {
+        "static_root": static_root,
+        "tree": files_tree
+    }
 
 @router.post("/save-thumbnail/{project_id}")
 def save_thumbnail(

@@ -8,7 +8,10 @@ import json
 from sqlalchemy.orm import Session
 from app.models.project import Project as ProjectModel
 
-UPLOAD_DIR = "static/uploads/reels"
+# Absolute base directory discovery
+APP_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_UPLOAD_DIR = os.path.join(APP_ROOT, "static", "uploads")
+UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "reels")
 
 def get_instagram_direct_url(url: str) -> str:
     """Standalone robust extractor for Instagram direct MP4 URL."""
