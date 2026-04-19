@@ -151,6 +151,22 @@
     "global_reach": "Global Reach",
     "global_desc": "Access a worldwide network of property experts and innovative designers."
   },
+  "onboarding": {
+    "next": "Next",
+    "skip": "Skip",
+    "getStarted": "Get Started",
+    "step_n_of_m": "Step {step} of {total}",
+    "slide1": {
+      "title": "Design Your Dream Home",
+      "subtitle": "Plan every inch of your space with the help of our top experts."
+    },
+    "slide2": {
+      "title": "Top Rated Specialists",
+      "subtitle": "Find the most experienced technicians and designers in your area."
+    },
+    "slide3": {
+      "title": "Secure and Fast",
+      "subtitle": "All transactions and communications are protected by industry standards."
     }
   },
   "profile": {

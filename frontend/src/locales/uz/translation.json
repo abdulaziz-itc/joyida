@@ -181,6 +181,22 @@
     "global_reach": "Keng qamrov",
     "global_desc": "Butun dunyo bo'ylab ko'chmas mulk mutaxassislari va innovatsion dizaynerlar tarmog'iga kiring."
   },
+  "onboarding": {
+    "next": "Davom etish",
+    "skip": "O'tkazib yuborish",
+    "getStarted": "Boshlash",
+    "step_n_of_m": "{step}-qadam (jami {total})",
+    "slide1": {
+      "title": "Orzuingizdagi uyni loyihalang",
+      "subtitle": "Ekspertlarimiz yordamida har bir qarich yerni rejalashtiring"
+    },
+    "slide2": {
+      "title": "Eng yaxshi mutaxassislar",
+      "subtitle": "Sizning hududingizdagi eng tajribali ustalarni toping"
+    },
+    "slide3": {
+      "title": "Xavfsiz va tezkor",
+      "subtitle": "Barcha tranzaksiyalar va muloqotlar himoyalangan"
     }
   },
   "profile": {
