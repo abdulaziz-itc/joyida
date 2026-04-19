@@ -9,6 +9,8 @@ class ProjectBase(BaseModel):
     progress: float = 0.0
     video_url: Optional[str] = None
     category: Optional[str] = None
+    views_count: Optional[int] = 0
+    likes_count: Optional[int] = 0
 
 class ProjectCreate(ProjectBase):
     pass
