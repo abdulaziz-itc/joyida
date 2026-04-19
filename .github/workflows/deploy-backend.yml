@@ -1,4 +1,4 @@
-name: Deploy Backend to cPanel via FTP
+name: "BACKEND: 🐘 Auto-Deploy"
 
 on:
   push:

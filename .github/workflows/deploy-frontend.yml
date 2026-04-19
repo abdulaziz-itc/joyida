@@ -1,4 +1,4 @@
-name: Deploy Frontend to cPanel
+name: "FRONTEND: 🚀 Auto-Deploy"
 
 on:
   push:
