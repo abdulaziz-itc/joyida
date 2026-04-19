@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VideoOff, Loader2 } from 'lucide-react';
 
 interface SocialVideoPlayerProps {
@@ -6,11 +6,36 @@ interface SocialVideoPlayerProps {
   isMuted: boolean;
 }
 
+declare global {
+  interface Window {
+    instgrm?: any;
+  }
+}
+
 const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Helper to detect platform
+  // Load Instagram Embed Script
+  useEffect(() => {
+    if (url.includes('instagram.com')) {
+      if (!window.instgrm) {
+        const script = document.createElement('script');
+        script.src = "https://www.instagram.com/embed.js";
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+        script.onload = () => {
+          if (window.instgrm) {
+            window.instgrm.Embeds.process();
+          }
+        };
+      } else {
+        window.instgrm.Embeds.process();
+      }
+    }
+  }, [url]);
+
   const getPlatform = (link: string) => {
     if (link.includes('instagram.com')) return 'instagram';
     if (link.includes('tiktok.com')) return 'tiktok';
@@ -21,9 +46,13 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
   const platform = getPlatform(url);
 
   const getInstagramEmbedUrl = (link: string) => {
-    const cleanUrl = link.split('?')[0];
+    // Robust parsing for reels vs posts
+    let cleanUrl = link.split('?')[0];
+    if (cleanUrl.includes('/reels/')) {
+        cleanUrl = cleanUrl.replace('/reels/', '/p/');
+    }
     const slash = cleanUrl.endsWith('/') ? '' : '/';
-    return `${cleanUrl}${slash}embed`;
+    return `${cleanUrl}${slash}embed/captioned/`;
   };
 
   const getTikTokEmbedUrl = (link: string) => {
@@ -50,15 +79,15 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
     return (
       <div className="w-full h-full bg-slate-900/50 flex flex-col items-center justify-center text-white/20 gap-4">
         <VideoOff size={48} />
-        <span className="text-xs font-black uppercase tracking-widest">Video Topilmadi</span>
+        <span className="text-xs font-black uppercase tracking-widest text-center">Video o'ynatilmadi</span>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full relative bg-black/20">
+    <div className="w-full h-full relative bg-black/20 overflow-hidden">
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
+        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
       )}
@@ -66,10 +95,15 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
       {platform === 'instagram' && (
         <iframe
           src={getInstagramEmbedUrl(url)}
-          className="w-full h-full border-none"
+          className="w-full h-[105%] border-none -mt-4" // Hidden header lift
           allowTransparency
           allowFullScreen
-          onLoad={() => setIsLoading(false)}
+          scrolling="no"
+          allow="autoplay"
+          onLoad={() => {
+            setIsLoading(false);
+            if (window.instgrm) window.instgrm.Embeds.process();
+          }}
           onError={() => setHasError(true)}
         />
       )}
