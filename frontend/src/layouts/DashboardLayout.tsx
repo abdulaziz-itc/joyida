@@ -10,16 +10,16 @@ import CheckoutOverlay from '../features/subscription/CheckoutOverlay';
 
 const NavItem = ({ icon: Icon, label, active = false, onClick }: any) => (
   <motion.div 
-    whileHover={{ x: 4, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
+    whileHover={{ x: 4, backgroundColor: 'rgba(var(--primary-val), 0.05)' }}
     onClick={onClick}
     className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all relative group ${
       active 
-        ? 'bg-gradient-to-r from-primary/25 to-transparent text-white shadow-[inset_0_0_25px_rgba(168,85,247,0.15)]' 
-        : 'text-white/40 hover:text-white'
+        ? 'bg-gradient-to-r from-primary/25 to-transparent text-foreground shadow-[inset_0_0_25px_var(--color-primary-glow)]' 
+        : 'text-foreground/50 hover:text-foreground'
     }`}
   >
-    <Icon className={`w-5 h-5 transition-colors ${active ? 'text-primary scale-110' : 'group-hover:text-white'}`} />
-    <span className={`font-semibold tracking-wide transition-colors text-sm ${active ? 'text-white' : 'group-hover:text-white/80'}`}>{label}</span>
+    <Icon className={`w-5 h-5 transition-colors ${active ? 'text-primary scale-110' : 'group-hover:text-foreground'}`} />
+    <span className={`font-semibold tracking-wide transition-colors text-sm ${active ? 'text-foreground' : 'group-hover:text-foreground'}`}>{label}</span>
     {active && (
       <>
         <motion.div 
