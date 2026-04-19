@@ -46,15 +46,21 @@ const KpiCard = ({ title, value, trend, isPositive, icon: Icon }: any) => {
   );
 };
 
+import { useAuthStore } from '../../store/authStore';
+
 const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  
   return (
     <div className="p-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-10">
         <div>
-          <h1 className="text-3xl font-bold">{t('dashboard.welcome')}, Alex!</h1>
-          <p className="text-gray-400">{t('dashboard.subtitle')}</p>
+          <h1 className="text-3xl font-bold font-display tracking-tight text-foreground">
+            {t('dashboard.welcome')}, {user?.full_name || 'User'}!
+          </h1>
+          <p className="text-foreground/40 font-medium">{t('dashboard.subtitle')}</p>
         </div>
         <div className="flex gap-4 items-center">
           <div className="relative">

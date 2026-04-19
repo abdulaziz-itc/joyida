@@ -19,11 +19,24 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [currentPage, setCurrentPage] = useState<string | null>(null);
   const [showPreferences, setShowPreferences] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfileSetup, setShowProfileSetup] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+
+  // Determine initial page based on authentication and roles
+  useEffect(() => {
+    if (isAuthenticated && user && !currentPage) {
+       if (user.is_superuser) {
+         setCurrentPage('admin');
+       } else if (user.is_expert) {
+         setCurrentPage('dashboard');
+       } else {
+         setCurrentPage('explore');
+       }
+    }
+  }, [isAuthenticated, user, currentPage]);
 
   useEffect(() => {
     // Apply saved theme
@@ -112,15 +125,21 @@ function App() {
   return (
     <GoogleOAuthProvider clientId="596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com">
       <div className="App">
-        <DashboardLayout onNavigate={setCurrentPage} currentPage={currentPage}>
-          {currentPage === 'dashboard' && <DashboardPage />}
-          {currentPage === 'projects' && <ProjectsPage />}
-          {currentPage === 'explore' && <ClientExplorePage />}
-          {currentPage === 'reels' && <ReelsFeedPage />}
-          {currentPage === 'messages' && <MessagesPage />}
-          {currentPage === 'profile' && <ClientProfilePage />}
-          {currentPage === 'admin' && <AdminLayout />}
-        </DashboardLayout>
+        {currentPage ? (
+          <DashboardLayout onNavigate={setCurrentPage} currentPage={currentPage}>
+            {currentPage === 'dashboard' && <DashboardPage />}
+            {currentPage === 'projects' && <ProjectsPage />}
+            {currentPage === 'explore' && <ClientExplorePage />}
+            {currentPage === 'reels' && <ReelsFeedPage />}
+            {currentPage === 'messages' && <MessagesPage />}
+            {currentPage === 'profile' && <ClientProfilePage />}
+            {currentPage === 'admin' && <AdminLayout />}
+          </DashboardLayout>
+        ) : (
+          <div className="w-full h-screen bg-background flex items-center justify-center">
+             <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
         <ToastContainer />
       </div>
     </GoogleOAuthProvider>
