@@ -181,22 +181,54 @@
     "global_reach": "Keng qamrov",
     "global_desc": "Butun dunyo bo'ylab ko'chmas mulk mutaxassislari va innovatsion dizaynerlar tarmog'iga kiring."
   },
-  "onboarding": {
-    "next": "Davom etish",
-    "skip": "O'tkazib yuborish",
-    "getStarted": "Boshlash",
-    "step_n_of_m": "{step}-qadam (jami {total})",
-    "slide1": {
-      "title": "Orzuingizdagi uyni loyihalang",
-      "subtitle": "Ekspertlarimiz yordamida har bir qarich yerni rejalashtiring"
-    },
-    "slide2": {
-      "title": "Eng yaxshi mutaxassislar",
-      "subtitle": "Sizning hududingizdagi eng tajribali ustalarni toping"
-    },
-    "slide3": {
-      "title": "Xavfsiz va tezkor",
-      "subtitle": "Barcha tranzaksiyalar va muloqotlar himoyalangan"
     }
+  },
+  "profile": {
+    "title": "Professional Profil",
+    "subtitle": "Ma'lumotlaringizni boshqaring va professional profilingizni boyiting.",
+    "appearance": "Tashqi ko'rinish",
+    "themeDesc": "Tungi yoki kunduzgi rejimni tanlang",
+    "language": "Til",
+    "langDesc": "Platforma uchun asosiy tilini tanlang",
+    "logout": "Tizimdan chiqish",
+    "logoutDesc": "Joriy sessiyani tugatish",
+    "personal": "Shaxsiy ma'lumotlar",
+    "personalDesc": "Ism, Familiya va Tug'ilgan sanani tahrirlash",
+    "education": "Ta'lim",
+    "eduDesc": "O'qigan joylaringiz va mutaxassisligingiz",
+    "experience": "Ish tajribasi",
+    "expDesc": "Faoliyat yuritgan joylaringiz va lavozimlaringiz",
+    "expertise": "Mutaxassislik va Ko'nikmalar",
+    "expertiseDesc": "Sizning mahoratingiz va ijtimoiy bog'lanishlaringiz",
+    "save": "Saqlash",
+    "saving": "Saqlanmoqda...",
+    "saved": "Muvaffaqiyatli saqlandi",
+    "lastName": "Familiya",
+    "firstName": "Ism",
+    "patronymic": "Otasining ismi",
+    "birthDate": "Tug'ilgan sana",
+    "add": "Qo'shish",
+    "institution": "Muassasa nomi",
+    "specialization": "Mutaxassislik",
+    "workplace": "Ish joyi",
+    "position": "Lavozim",
+    "duration": "Davomiyligi",
+    "edit": "Profilni tahrirlash",
+    "cancel": "Bekor qilish",
+    "personalInfo": "Shaxsiy ma'lumotlar",
+    "proInfo": "Kasbiy ma'lumotlar",
+    "location": "Manzil va Joylashuv",
+    "noData": "Ma'lumot mavjud emas",
+    "currentRating": "Reyting",
+    "totalReviews": "Sharhlar",
+    "expertSince": "Mutaxassislik boshlangan",
+    "expert": "Mutaxassis",
+    "client": "Mijoz",
+    "phone": "Telefon raqami",
+    "headline": "Sarlavha",
+    "bio": "Men haqimda",
+    "skills": "Ko'nikmalar",
+    "languages": "Tillar",
+    "socials": "Ijtimoiy tarmoqlar"
   }
 }
