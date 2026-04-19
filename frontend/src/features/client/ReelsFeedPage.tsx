@@ -170,12 +170,22 @@ const ReelsFeedPage = () => {
             </p>
           </div>
         ) : (
-          reels.map((reel) => (
-            <div key={reel.id} className="w-full h-full snap-start relative flex justify-center items-center bg-black">
-              
-              {/* Main Video Area */}
-              <div className="relative w-full max-w-[450px] h-[95vh] rounded-[2.5rem] bg-black overflow-hidden shadow-2xl group border border-white/5">
-                <SocialVideoPlayer url={reel.video_url || ''} isMuted={isMuted} />
+          reels.map((reel) => {
+            const getReelUrl = (url: string) => {
+              if (!url) return '';
+              if (url.startsWith('http')) return url;
+              // Remove trailing slash from VITE_API_URL and leading slash from url if present
+              const baseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
+              const cleanPath = url.replace(/^\//, '');
+              return `${baseUrl}/${cleanPath}`;
+            };
+            
+            return (
+              <div key={reel.id} className="w-full h-full snap-start relative flex justify-center items-center bg-black">
+                
+                {/* Main Video Area */}
+                <div className="relative w-full max-w-[450px] h-[95vh] rounded-[2.5rem] bg-black overflow-hidden shadow-2xl group border border-white/5">
+                  <SocialVideoPlayer url={getReelUrl(reel.video_url)} isMuted={isMuted} />
                 
                 {/* Gradient Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none" />
