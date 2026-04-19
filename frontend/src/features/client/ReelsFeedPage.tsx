@@ -571,6 +571,32 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
   const thumb = reel.thumbnail_url ? getFileUrl(reel.thumbnail_url) : getThumbnail(reel.video_url);
   const isDirectVideo = isVideoUrl(reel.video_url);
 
+  // Auto-capture if thumb is missing and it's a direct video
+  useEffect(() => {
+    if (!reel.thumbnail_url && isDirectVideo && !imgError) {
+      const video = document.createElement('video');
+      video.src = getFileUrl(reel.video_url);
+      video.crossOrigin = "anonymous";
+      video.muted = true;
+      video.currentTime = 1; // Seek to 1s
+      video.onseeked = async () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            await apiClient.post(`/utils/save-thumbnail/${reel.id}`, { image: imageData });
+          }
+        } catch (e) {
+          console.debug("Grid capture failed", e);
+        }
+      };
+    }
+  }, [reel.id, reel.thumbnail_url, isDirectVideo]);
+
   return (
     <motion.div 
       whileHover={{ scale: 0.98 }}
@@ -588,7 +614,7 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
           />
         ) : isDirectVideo ? (
           <video 
-            src={reel.video_url} 
+            src={getFileUrl(reel.video_url)} 
             className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
             preload="metadata"
             muted
@@ -596,9 +622,9 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
           />
         ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black p-4 text-center">
-                <PlayCircle size={32} className="text-white/5 mb-2" />
-                <span className="text-[10px] text-white/20 font-bold uppercase tracking-tight line-clamp-2 px-2">
-                    {reel.title || 'Untitled Work'}
+                <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin mb-4" />
+                <span className="text-[10px] text-white/40 font-bold uppercase tracking-tight line-clamp-2 px-2 animate-pulse">
+                    GENERATING PREVIEW...
                 </span>
             </div>
         )}
