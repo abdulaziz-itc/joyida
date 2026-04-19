@@ -78,7 +78,7 @@ const ReelsFeedPage = () => {
             )}
           </div>
 
-          {(user?.is_expert || user?.is_superuser) && (
+          {user && (
             <div className="relative group">
               <button 
                 onClick={() => setActiveTab('my-works')}
@@ -100,7 +100,7 @@ const ReelsFeedPage = () => {
           >
             <Search size={22} />
           </button>
-          {(user?.is_expert || user?.is_superuser) && (
+          {user && (
             <button 
               onClick={() => setIsUploadModalOpen(true)}
               className="px-6 py-3 bg-primary text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-glow-primary hover:scale-105 transition-all flex items-center gap-2"

@@ -32,7 +32,7 @@ class UserBase(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     patronymic: Optional[str] = None
-    is_expert: bool = False
+    is_expert: Optional[bool] = None
     profession: Optional[str] = None
     birth_year: Optional[int] = None
     birth_date: Optional[date] = None

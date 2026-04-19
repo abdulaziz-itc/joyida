@@ -202,6 +202,9 @@
   "profile": {
     "title": "Professional Profil",
     "subtitle": "Ma'lumotlaringizni boshqaring va professional profilingizni boyiting.",
+    "client_title": "Mening Profilim",
+    "client_subtitle": "Shaxsiy ma'lumotlar va sozlamalaringizni boshqaring.",
+    "becomeExpert": "Mutaxassis bo'lish",
     "appearance": "Tashqi ko'rinish",
     "themeDesc": "Tungi yoki kunduzgi rejimni tanlang",
     "language": "Til",

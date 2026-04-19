@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { 
   User as UserIcon, Moon, Sun, Globe, Bell, Shield, LogOut, 
   Lock, Edit3, Camera, Plus, Trash2, GraduationCap, Briefcase, 
-  Calendar, Check, AlertCircle, Loader2, Phone, Tag, Globe2, Award, X, CheckCircle2, Star, ChevronDown
+  Calendar, Check, AlertCircle, Loader2, Phone, Tag, Globe2, Award, X, CheckCircle2, Star, ChevronDown, Sparkles
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import apiClient from '../../api/apiClient';
@@ -123,6 +123,24 @@ const ClientProfilePage = () => {
     }
   };
 
+  const handleBecomeExpert = async () => {
+    setSaveStatus('saving');
+    try {
+      // Direct update to expert status and setting a placeholder name if missing
+      const response = await apiClient.put('/auth/me', {
+        is_expert: true,
+        full_name: user?.full_name || user?.email.split('@')[0],
+      });
+      setAuth(response.data, token!);
+      setSaveStatus('success');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+      // Optional: Redirect or scroll to new sections
+    } catch (error) {
+      console.error('Conversion to expert failed', error);
+      setSaveStatus('error');
+    }
+  };
+
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -223,12 +241,30 @@ const ClientProfilePage = () => {
             </div>
 
             <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-black text-foreground leading-tight">{user?.full_name || 'Foydalanuvchi'}</h2>
+              <h2 className="text-2xl font-black text-foreground leading-tight">
+                {user?.full_name || user?.email.split('@')[0]}
+              </h2>
               <p className="text-foreground/40 font-medium text-xs tracking-wider">{user?.email}</p>
-              <div className="pt-4">
-                <span className="px-5 py-2 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-2xl border border-primary/20 shadow-glow-primary">
+              <div className="pt-4 flex flex-col items-center gap-4">
+                <span className={`px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-2xl border transition-all ${
+                  user?.is_expert 
+                    ? 'bg-primary/10 text-primary border-primary/20 shadow-glow-primary' 
+                    : 'bg-foreground/5 text-foreground/40 border-foreground/10'
+                }`}>
                   {user?.is_expert ? t('profile.expert') : t('profile.client')}
                 </span>
+                
+                {/* Become Expert Call to Action */}
+                {!user?.is_expert && (
+                  <button 
+                    onClick={handleBecomeExpert}
+                    disabled={saveStatus === 'saving'}
+                    className="group relative flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:scale-105 transition-all shadow-glow-primary active:scale-95 disabled:opacity-50"
+                  >
+                    <Sparkles className="w-4 h-4 animate-pulse" />
+                    {t('profile.becomeExpert', 'Mutaxassis bo\'lish')}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -314,8 +350,12 @@ const ClientProfilePage = () => {
           
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h1 className="text-3xl md:text-4xl font-black text-foreground font-display tracking-tight leading-none">{t('profile.title')}</h1>
-              <p className="text-sm text-foreground/40 font-medium">{t('profile.subtitle')}</p>
+              <h1 className="text-3xl md:text-4xl font-black text-foreground font-display tracking-tight leading-none">
+                {user?.is_expert ? t('profile.title') : t('profile.client_title', 'Mening Profilim')}
+              </h1>
+              <p className="text-sm text-foreground/40 font-medium">
+                {user?.is_expert ? t('profile.subtitle') : t('profile.client_subtitle', 'Shaxsiy ma\'lumotlar va sozlamalaringizni boshqaring.')}
+              </p>
             </div>
             <div className="flex gap-2">
               {isEditing ? (
@@ -493,96 +533,100 @@ const ClientProfilePage = () => {
               )}
             </div>
 
-            {/* 3. EDUCATION */}
-            <div className="glass-card p-6 md:p-8 border-white/5 shadow-xl space-y-8">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 shadow-glow-blue"><GraduationCap className="w-6 h-6" /></div>
-                  <div>
-                    <h3 className="text-xl font-black text-foreground">{t('profile.education')}</h3>
-                    <p className="text-sm text-foreground/40 font-medium">{t('profile.eduDesc')}</p>
+            {/* 3. EDUCATION - Expert Only */}
+            {user?.is_expert && (
+              <div className="glass-card p-6 md:p-8 border-white/5 shadow-xl space-y-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 shadow-glow-blue"><GraduationCap className="w-6 h-6" /></div>
+                    <div>
+                      <h3 className="text-xl font-black text-foreground">{t('profile.education')}</h3>
+                      <p className="text-sm text-foreground/40 font-medium">{t('profile.eduDesc')}</p>
+                    </div>
                   </div>
+                  {isEditing && <button onClick={addEdu} className="p-3 bg-white/5 hover:bg-primary/20 text-primary border border-white/10 rounded-2xl transition-all shadow-lg"><Plus className="w-5 h-5" /></button>}
                 </div>
-                {isEditing && <button onClick={addEdu} className="p-3 bg-white/5 hover:bg-primary/20 text-primary border border-white/10 rounded-2xl transition-all shadow-lg"><Plus className="w-5 h-5" /></button>}
-              </div>
 
-              <div className="space-y-4">
-                {(isEditing ? localUser.educationInfo : user?.education_info)?.map((edu: any, idx: number) => (
-                  isEditing ? (
-                    <div key={idx} className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 relative group hover:border-blue-500/30 transition-all">
-                      <button onClick={() => { const nl = [...localUser.educationInfo]; nl.splice(idx, 1); setLocalUser({...localUser, educationInfo: nl}); }} className="absolute top-4 right-4 p-2 text-foreground/10 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 className="w-4 h-4" /></button>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <select className="premium-input !py-3 !text-sm appearance-none" value={edu.type} onChange={e => { const nl = [...localUser.educationInfo]; nl[idx].type = e.target.value; setLocalUser({...localUser, educationInfo: nl}); }}>
-                          <option value="Bakalavr">Bakalavr</option>
-                          <option value="Magistr">Magistr</option>
-                          <option value="Kolledj">Kolledj</option>
-                          <option value="Litsey">Litsey</option>
-                        </select>
-                        <input type="text" placeholder={t('profile.institution')} className="premium-input !py-3 !text-sm md:col-span-2" value={edu.institution} onChange={e => { const nl = [...localUser.educationInfo]; nl[idx].institution = e.target.value; setLocalUser({...localUser, educationInfo: nl}); }} />
-                        <input type="text" placeholder={t('profile.specialization')} className="premium-input !py-3 !text-sm md:col-span-2" value={edu.specialization} onChange={e => { const nl = [...localUser.educationInfo]; nl[idx].specialization = e.target.value; setLocalUser({...localUser, educationInfo: nl}); }} />
-                        <input type="number" placeholder="Yil" className="premium-input !py-3 !text-sm" value={edu.year} onChange={e => { const nl = [...localUser.educationInfo]; nl[idx].year = parseInt(e.target.value); setLocalUser({...localUser, educationInfo: nl}); }} />
+                <div className="space-y-4">
+                  {(isEditing ? localUser.educationInfo : user?.education_info)?.map((edu: any, idx: number) => (
+                    isEditing ? (
+                      <div key={idx} className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 relative group hover:border-blue-500/30 transition-all">
+                        <button onClick={() => { const nl = [...localUser.educationInfo]; nl.splice(idx, 1); setLocalUser({...localUser, educationInfo: nl}); }} className="absolute top-4 right-4 p-2 text-foreground/10 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 className="w-4 h-4" /></button>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <select className="premium-input !py-3 !text-sm appearance-none" value={edu.type} onChange={e => { const nl = [...localUser.educationInfo]; nl[idx].type = e.target.value; setLocalUser({...localUser, educationInfo: nl}); }}>
+                            <option value="Bakalavr">Bakalavr</option>
+                            <option value="Magistr">Magistr</option>
+                            <option value="Kolledj">Kolledj</option>
+                            <option value="Litsey">Litsey</option>
+                          </select>
+                          <input type="text" placeholder={t('profile.institution')} className="premium-input !py-3 !text-sm md:col-span-2" value={edu.institution} onChange={e => { const nl = [...localUser.educationInfo]; nl[idx].institution = e.target.value; setLocalUser({...localUser, educationInfo: nl}); }} />
+                          <input type="text" placeholder={t('profile.specialization')} className="premium-input !py-3 !text-sm md:col-span-2" value={edu.specialization} onChange={e => { const nl = [...localUser.educationInfo]; nl[idx].specialization = e.target.value; setLocalUser({...localUser, educationInfo: nl}); }} />
+                          <input type="number" placeholder="Yil" className="premium-input !py-3 !text-sm" value={edu.year} onChange={e => { const nl = [...localUser.educationInfo]; nl[idx].year = parseInt(e.target.value); setLocalUser({...localUser, educationInfo: nl}); }} />
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div key={idx} className="flex gap-4 p-6 bg-glass-bg border border-glass-border rounded-2xl group hover:border-primary/20 transition-all">
-                       <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center shrink-0">
-                          <span className="text-[10px] font-black text-primary uppercase">{edu.type?.charAt(0)}</span>
-                       </div>
-                       <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                             <h4 className="font-black text-foreground">{edu.institution}</h4>
-                             <span className="text-xs font-bold text-primary">{edu.year}</span>
-                          </div>
-                          <p className="text-sm font-medium text-foreground/60">{edu.specialization}</p>
-                          <div className="mt-2 inline-block px-2 py-0.5 bg-primary/10 rounded text-[9px] font-black text-primary uppercase tracking-tighter">{edu.type}</div>
-                       </div>
-                    </div>
-                  )
-                ))}
+                    ) : (
+                      <div key={idx} className="flex gap-4 p-6 bg-glass-bg border border-glass-border rounded-2xl group hover:border-primary/20 transition-all">
+                        <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center shrink-0">
+                            <span className="text-[10px] font-black text-primary uppercase">{edu.type?.charAt(0)}</span>
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="font-black text-foreground">{edu.institution}</h4>
+                              <span className="text-xs font-bold text-primary">{edu.year}</span>
+                            </div>
+                            <p className="text-sm font-medium text-foreground/60">{edu.specialization}</p>
+                            <div className="mt-2 inline-block px-2 py-0.5 bg-primary/10 rounded text-[9px] font-black text-primary uppercase tracking-tighter">{edu.type}</div>
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* 4. EXPERIENCE */}
-            <div className="glass-card p-6 md:p-8 border-white/5 shadow-xl space-y-8">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 shadow-glow-rose"><Briefcase className="w-6 h-6" /></div>
-                  <div>
-                    <h3 className="text-xl font-black text-foreground">{t('profile.experience')}</h3>
-                    <p className="text-sm text-foreground/40 font-medium">{t('profile.expDesc')}</p>
+            {/* 4. EXPERIENCE - Expert Only */}
+            {user?.is_expert && (
+              <div className="glass-card p-6 md:p-8 border-white/5 shadow-xl space-y-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 shadow-glow-rose"><Briefcase className="w-6 h-6" /></div>
+                    <div>
+                      <h3 className="text-xl font-black text-foreground">{t('profile.experience')}</h3>
+                      <p className="text-sm text-foreground/40 font-medium">{t('profile.expDesc')}</p>
+                    </div>
                   </div>
+                  {isEditing && <button onClick={addExp} className="p-3 bg-white/5 hover:bg-rose-500/20 text-rose-500 border border-white/10 rounded-2xl transition-all shadow-lg"><Plus className="w-5 h-5" /></button>}
                 </div>
-                {isEditing && <button onClick={addExp} className="p-3 bg-white/5 hover:bg-rose-500/20 text-rose-500 border border-white/10 rounded-2xl transition-all shadow-lg"><Plus className="w-5 h-5" /></button>}
-              </div>
 
-              <div className="space-y-4">
-                {(isEditing ? localUser.experienceInfo : user?.experience_info)?.map((exp: any, idx: number) => (
-                  isEditing ? (
-                    <div key={idx} className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 relative group hover:border-rose-500/30 transition-all">
-                      <button onClick={() => { const nl = [...localUser.experienceInfo]; nl.splice(idx, 1); setLocalUser({...localUser, experienceInfo: nl}); }} className="absolute top-4 right-4 p-2 text-foreground/10 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 className="w-4 h-4" /></button>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" placeholder={t('profile.workplace')} className="premium-input !py-3 !text-sm" value={exp.workplace} onChange={e => { const nl = [...localUser.experienceInfo]; nl[idx].workplace = e.target.value; setLocalUser({...localUser, experienceInfo: nl}); }} />
-                        <input type="text" placeholder={t('profile.position')} className="premium-input !py-3 !text-sm" value={exp.position} onChange={e => { const nl = [...localUser.experienceInfo]; nl[idx].position = e.target.value; setLocalUser({...localUser, experienceInfo: nl}); }} />
-                        <input type="text" placeholder={t('profile.duration')} className="premium-input !py-3 !text-sm md:col-span-2" value={exp.duration} onChange={e => { const nl = [...localUser.experienceInfo]; nl[idx].duration = e.target.value; setLocalUser({...localUser, experienceInfo: nl}); }} />
+                <div className="space-y-4">
+                  {(isEditing ? localUser.experienceInfo : user?.experience_info)?.map((exp: any, idx: number) => (
+                    isEditing ? (
+                      <div key={idx} className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 relative group group-hover:border-rose-500/30 transition-all">
+                        <button onClick={() => { const nl = [...localUser.experienceInfo]; nl.splice(idx, 1); setLocalUser({...localUser, experienceInfo: nl}); }} className="absolute top-4 right-4 p-2 text-foreground/10 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 className="w-4 h-4" /></button>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <input type="text" placeholder={t('profile.workplace')} className="premium-input !py-3 !text-sm" value={exp.workplace} onChange={e => { const nl = [...localUser.experienceInfo]; nl[idx].workplace = e.target.value; setLocalUser({...localUser, experienceInfo: nl}); }} />
+                          <input type="text" placeholder={t('profile.position')} className="premium-input !py-3 !text-sm" value={exp.position} onChange={e => { const nl = [...localUser.experienceInfo]; nl[idx].position = e.target.value; setLocalUser({...localUser, experienceInfo: nl}); }} />
+                          <input type="text" placeholder={t('profile.duration')} className="premium-input !py-3 !text-sm md:col-span-2" value={exp.duration} onChange={e => { const nl = [...localUser.experienceInfo]; nl[idx].duration = e.target.value; setLocalUser({...localUser, experienceInfo: nl}); }} />
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div key={idx} className="flex gap-4 p-6 bg-glass-bg border border-glass-border rounded-2xl group hover:border-rose-500/20 transition-all">
-                       <div className="w-12 h-12 rounded-xl bg-rose-500/5 flex items-center justify-center shrink-0">
-                          <Briefcase className="w-5 h-5 text-rose-500/40" />
-                       </div>
-                       <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                             <h4 className="font-black text-foreground">{exp.position}</h4>
-                             <span className="text-xs font-bold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-md">{exp.duration}</span>
-                          </div>
-                          <p className="text-sm font-black text-foreground/40">{exp.workplace}</p>
-                       </div>
-                    </div>
-                  )
-                ))}
+                    ) : (
+                      <div key={idx} className="flex gap-4 p-6 bg-glass-bg border border-glass-border rounded-2xl group hover:border-rose-500/20 transition-all">
+                        <div className="w-12 h-12 rounded-xl bg-rose-500/5 flex items-center justify-center shrink-0">
+                            <Briefcase className="w-5 h-5 text-rose-500/40" />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="font-black text-foreground">{exp.position}</h4>
+                              <span className="text-xs font-bold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-md">{exp.duration}</span>
+                            </div>
+                            <p className="text-sm font-black text-foreground/40">{exp.workplace}</p>
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
           </div>
         </div>
