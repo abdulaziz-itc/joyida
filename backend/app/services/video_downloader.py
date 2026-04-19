@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.models.project import Project as ProjectModel
 
 # Absolute base directory discovery
+# video_downloader.py is in backend/app/services/ (3 levels deep from backend/)
 APP_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 BASE_UPLOAD_DIR = os.path.join(APP_ROOT, "static", "uploads")
 UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "reels")
