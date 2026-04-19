@@ -15,6 +15,7 @@ class Project(Base):
     progress = Column(Float, default=0.0)
     views_count = Column(Integer, default=0)
     likes_count = Column(Integer, default=0)
+    is_downloaded = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     owner_id = Column(Integer, ForeignKey("users.id"))
 

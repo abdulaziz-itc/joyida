@@ -11,6 +11,7 @@ class ProjectBase(BaseModel):
     category: Optional[str] = None
     views_count: Optional[int] = 0
     likes_count: Optional[int] = 0
+    is_downloaded: Optional[bool] = False
 
 class ProjectCreate(ProjectBase):
     pass

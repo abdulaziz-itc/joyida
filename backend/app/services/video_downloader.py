@@ -68,6 +68,7 @@ def download_social_video(project_id: int, db_session_factory: callable):
                 urllib.request.urlretrieve(direct_mp4, filepath)
                 if os.path.exists(filepath):
                     project.video_url = local_url
+                    project.is_downloaded = True
                     db.add(project)
                     db.commit()
                     print(f"SUCCESS: Downloaded via direct extraction for project {project_id}")
@@ -89,6 +90,7 @@ def download_social_video(project_id: int, db_session_factory: callable):
             
             if os.path.exists(filepath):
                 project.video_url = local_url
+                project.is_downloaded = True
                 db.add(project)
                 db.commit()
                 print(f"SUCCESS: Downloaded via yt-dlp for project {project_id}")

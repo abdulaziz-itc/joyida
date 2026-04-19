@@ -453,15 +453,29 @@ const ReelGridCard = ({ reel, onClick }: any) => {
     return url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('/uploads/reels/');
   };
 
-  const getYouTubeThumb = (url: string) => {
+  const getThumbnail = (url: string) => {
+    if (!url) return null;
+    
+    // YouTube
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
       const id = url.split('v=')[1] || url.split('/').pop();
       return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
     }
+    
+    // Instagram
+    if (url.includes('instagram.com') || url.includes('instagr.am')) {
+        // Try to extract shortcode to get thumbnail via media endpoint
+        const parts = url.split('/');
+        const shortcode = parts[parts.indexOf('reel') + 1] || parts[parts.indexOf('reels') + 1] || parts[parts.indexOf('p') + 1];
+        if (shortcode) {
+            return `https://www.instagram.com/p/${shortcode}/media/?size=m`;
+        }
+    }
+    
     return null;
   };
 
-  const thumb = getYouTubeThumb(reel.video_url);
+  const thumb = getThumbnail(reel.video_url);
   const isDirectVideo = isVideoUrl(reel.video_url);
 
   return (
@@ -483,22 +497,30 @@ const ReelGridCard = ({ reel, onClick }: any) => {
             playsInline
           />
         ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                <PlayCircle size={40} className="text-white/10" />
+            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black p-4 text-center">
+                <PlayCircle size={32} className="text-white/5 mb-2" />
+                <span className="text-[10px] text-white/20 font-bold uppercase tracking-tight line-clamp-2 px-2">
+                    {reel.title || 'Untitled Work'}
+                </span>
             </div>
         )}
       </div>
 
-      <div className="absolute inset-0 flex items-center justify-center z-10">
-         <div className="w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-primary transition-all border border-white/10">
-           <PlayCircle size={24} />
+      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+         <div className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center text-white scale-75 group-hover:scale-100 transition-transform border border-white/20">
+           <PlayCircle size={28} />
          </div>
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-      <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
-        <h5 className="text-white text-[11px] font-bold truncate mb-1 tracking-tight">{reel.title}</h5>
-        <div className="flex items-center gap-2 text-[9px] text-white/60 font-black uppercase tracking-widest">
-          <Eye size={10} className="text-primary/60" /> {reel.views_count || 0}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity z-10" />
+      <div className="absolute bottom-0 left-0 right-0 p-3 z-20">
+        <h5 className="text-white text-[11px] font-black truncate mb-1 tracking-tight drop-shadow-lg">{reel.title}</h5>
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-[9px] text-white/60 font-black uppercase tracking-widest">
+                <Eye size={10} className="text-primary" /> {reel.views_count || 0}
+            </div>
+            {reel.is_downloaded && (
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-glow-green" title="Local Video" />
+            )}
         </div>
       </div>
     </motion.div>
