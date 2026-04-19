@@ -357,9 +357,9 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
           </AnimatePresence>
         </div>
         
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/95 pointer-events-none z-10" />
         
-        <div className="absolute inset-0 flex flex-col justify-end p-8 pb-4 z-20 pointer-events-none">
+        <div className="absolute inset-0 flex flex-col justify-end p-8 pb-10 z-20 pointer-events-none">
           <div className="flex items-end justify-between gap-4 overflow-hidden pointer-events-auto">
             <div className="flex-1 text-white">
               <motion.div 
@@ -396,7 +396,7 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
           </div>
         </div>
 
-        <div className="absolute right-4 bottom-12 z-30 flex flex-col gap-6 items-center pointer-events-auto">
+        <div className="absolute right-4 bottom-16 z-30 flex flex-col gap-6 items-center pointer-events-auto">
           <ReelInteractionButton 
             icon={<Heart size={28} className={reel.is_liked ? "text-red-500 fill-red-500" : "drop-shadow-glow"} />} 
             label={reel.likes_count || 0} 

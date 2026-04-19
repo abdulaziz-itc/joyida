@@ -66,20 +66,48 @@ def resolve_instagram_video(url: str = Query(...)):
         with urllib.request.urlopen(req, timeout=10) as response:
             html = response.read().decode('utf-8')
             
-            # Look for og:video meta tag
-            video_match = re.search(r'<meta[^>]*property="og:video"[^>]*content="([^"]+)"', html)
-            if not video_match:
-                # Try finding in the JSON blob if meta tag is missing (modern IG)
-                video_match = re.search(r'"video_url":"([^"]+)"', html)
+            # Enhanced discovery patterns
+            patterns = [
+                r'<meta[^>]*property="og:video"[^>]*content="([^"]+)"',
+                r'"video_url":"([^"]+)"',
+                r'"contentUrl":"([^"]+)"',
+                r'xdt_api_v1_media_2_info[^>]*video_versions[^>]*url":"([^"]+)"'
+            ]
             
-            if video_match:
-                video_url = video_match.group(1).replace("\\u0026", "&")
+            video_url = None
+            for pattern in patterns:
+                match = re.search(pattern, html)
+                if match:
+                    video_url = match.group(1).replace("\\u0026", "&").replace("\\/", "/")
+                    break
+            
+            if video_url:
                 return {"direct_url": video_url}
             
             raise HTTPException(status_code=404, detail="Direct video URL not found")
             
     except Exception as e:
-        # Fallback to a common public downloader proxy pattern if direct fails
-        # Many public tools use specific URL patterns or dedicated proxies.
-        # For now, we return error so frontend can fallback to iframe.
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/diag/system")
+def system_diagnostics(db: Session = Depends(get_db)):
+    """Check system dependencies and environment."""
+    import sys
+    import subprocess
+    
+    yt_dlp_status = "Not installed"
+    try:
+        import yt_dlp
+        yt_dlp_status = f"Available (Version: {yt_dlp.version.__version__})"
+    except ImportError:
+        pass
+
+    results = {
+        "python_version": sys.version,
+        "platform": sys.platform,
+        "yt_dlp": yt_dlp_status,
+        "database": str(db.bind.url).split("@")[-1] if db.bind.url.password else str(db.bind.url),
+        "cwd": os.getcwd(),
+        "upload_dir_exists": os.path.exists(UPLOAD_DIR)
+    }
+    return results
