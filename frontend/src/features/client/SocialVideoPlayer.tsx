@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { VideoOff, Loader2 } from 'lucide-react';
+import apiClient from '../../api/apiClient';
 
 interface SocialVideoPlayerProps {
   url: string;
@@ -16,38 +17,8 @@ declare global {
 const SocialVideoPlayer = ({ url, isMuted, isPlaying = false }: SocialVideoPlayerProps) => {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [directUrl, setDirectUrl] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Load Instagram Embed Script
-  useEffect(() => {
-    if (url.includes('instagram.com')) {
-      if (!window.instgrm) {
-        const script = document.createElement('script');
-        script.src = "https://www.instagram.com/embed.js";
-        script.async = true;
-        script.defer = true;
-        document.body.appendChild(script);
-        script.onload = () => {
-          if (window.instgrm) {
-            window.instgrm.Embeds.process();
-          }
-        };
-      } else {
-        window.instgrm.Embeds.process();
-      }
-    }
-  }, [url]);
-
-  // Handle Play/Pause for Native Video
-  useEffect(() => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.play().catch(err => console.debug("Autoplay blocked or failed", err));
-      } else {
-        videoRef.current.pause();
-      }
-    }
-  }, [isPlaying]);
 
   const getPlatform = (link: string) => {
     if (link.includes('instagram.com')) return 'instagram';
@@ -58,13 +29,66 @@ const SocialVideoPlayer = ({ url, isMuted, isPlaying = false }: SocialVideoPlaye
 
   const platform = getPlatform(url);
 
+  // Resolve Instagram Direct URL
+  useEffect(() => {
+    let isMounted = true;
+    if (platform === 'instagram') {
+      setIsLoading(true);
+      apiClient.get(`/utils/resolve-instagram?url=${encodeURIComponent(url)}`)
+        .then(res => {
+          if (isMounted && res.data.direct_url) {
+            setDirectUrl(res.data.direct_url);
+            setIsLoading(false);
+          }
+        })
+        .catch(err => {
+          console.error("IG Resolve failed, falling back to iframe", err);
+          if (isMounted) {
+            setIsLoading(false);
+            // We don't set error here, we'll just fall back to iframe
+          }
+        });
+    } else {
+      setDirectUrl(null);
+    }
+    return () => { isMounted = false; };
+  }, [url, platform]);
+
+  // Load Instagram Embed Script (Fallback)
+  useEffect(() => {
+    if (platform === 'instagram' && !directUrl) {
+      if (!window.instgrm) {
+        const script = document.createElement('script');
+        script.src = "https://www.instagram.com/embed.js";
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+        script.onload = () => {
+          if (window.instgrm) window.instgrm.Embeds.process();
+        };
+      } else {
+        window.instgrm.Embeds.process();
+      }
+    }
+  }, [url, platform, directUrl]);
+
+  // Handle Play/Pause for Native Video
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play().catch(err => console.debug("Autoplay blocked or failed", err));
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isPlaying, directUrl, url]);
+
   const getInstagramEmbedUrl = (link: string) => {
     let cleanUrl = link.split('?')[0];
     if (cleanUrl.includes('/reels/')) {
         cleanUrl = cleanUrl.replace('/reels/', '/p/');
     }
     const slash = cleanUrl.endsWith('/') ? '' : '/';
-    // Instagram doesn't support a simple autoplay param, but we handle container visibility
     return `${cleanUrl}${slash}embed/captioned/`;
   };
 
@@ -85,7 +109,6 @@ const SocialVideoPlayer = ({ url, isMuted, isPlaying = false }: SocialVideoPlaye
     } else if (link.includes('youtu.be/')) {
       videoId = link.split('youtu.be/')[1]?.split('?')[0];
     }
-    // Autoplay depends on isPlaying prop
     return `https://www.youtube.com/embed/${videoId}?autoplay=${isPlaying ? 1 : 0}&mute=${isMuted ? 1 : 0}&loop=1&playlist=${videoId}&controls=0&modestbranding=1`;
   };
 
@@ -98,16 +121,37 @@ const SocialVideoPlayer = ({ url, isMuted, isPlaying = false }: SocialVideoPlaye
     );
   }
 
+  // Use native video player if it's a direct file or a successfully resolved Instagram video
+  const isDirectPlayable = platform === 'native' || (platform === 'instagram' && !!directUrl);
+
   return (
     <div className="w-full h-full relative bg-black/20 overflow-hidden">
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40">
+        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40 backdrop-blur-sm">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
       )}
 
-      {/* Conditional Rendering helps restart iframes when active state changes for platforms that need it */}
-      {platform === 'instagram' && (
+      {isDirectPlayable && (
+        <video 
+          ref={videoRef}
+          src={directUrl || url} 
+          loop 
+          muted={isMuted}
+          playsInline
+          onLoadedData={() => setIsLoading(false)}
+          onError={() => {
+              if (platform === 'instagram') {
+                  setDirectUrl(null); // Fallback to iframe if direct mp4 fails to load
+              } else {
+                  setHasError(true);
+              }
+          }}
+          className="w-full h-full object-cover"
+        />
+      )}
+
+      {!isDirectPlayable && platform === 'instagram' && (
         <iframe
           key={`insta-${isPlaying}`}
           src={getInstagramEmbedUrl(url)}
@@ -145,19 +189,6 @@ const SocialVideoPlayer = ({ url, isMuted, isPlaying = false }: SocialVideoPlaye
           allowFullScreen
           onLoad={() => setIsLoading(false)}
           onError={() => setHasError(true)}
-        />
-      )}
-
-      {platform === 'native' && (
-        <video 
-          ref={videoRef}
-          src={url} 
-          loop 
-          muted={isMuted}
-          playsInline
-          onLoadedData={() => setIsLoading(false)}
-          onError={() => setHasError(true)}
-          className="w-full h-full object-cover"
         />
       )}
     </div>

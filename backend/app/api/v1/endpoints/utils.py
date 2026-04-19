@@ -1,8 +1,7 @@
-import os
-import uuid
-import shutil
-from typing import Any, List
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+import re
+import urllib.request
+from typing import Any, List, Optional
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.db.session import get_db
@@ -48,3 +47,35 @@ def read_services(
     """Retrieve service categories."""
     services = db.query(ServiceCategory).offset(skip).limit(limit).all()
     return services
+
+@router.get("/resolve-instagram")
+def resolve_instagram_video(url: str = Query(...)):
+    """Extract direct video URL from an Instagram public link."""
+    try:
+        # Mimic a browser request to get meta tags
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+        }
+        
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=10) as response:
+            html = response.read().decode('utf-8')
+            
+            # Look for og:video meta tag
+            video_match = re.search(r'<meta[^>]*property="og:video"[^>]*content="([^"]+)"', html)
+            if not video_match:
+                # Try finding in the JSON blob if meta tag is missing (modern IG)
+                video_match = re.search(r'"video_url":"([^"]+)"', html)
+            
+            if video_match:
+                video_url = video_match.group(1).replace("\\u0026", "&")
+                return {"direct_url": video_url}
+            
+            raise HTTPException(status_code=404, detail="Direct video URL not found")
+            
+    except Exception as e:
+        # Fallback to a common public downloader proxy pattern if direct fails
+        # Many public tools use specific URL patterns or dedicated proxies.
+        # For now, we return error so frontend can fallback to iframe.
+        raise HTTPException(status_code=500, detail=str(e))

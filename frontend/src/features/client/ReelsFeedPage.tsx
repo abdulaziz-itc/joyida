@@ -331,20 +331,20 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
         
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none z-10" />
         
-        <div className="absolute inset-0 flex flex-col justify-end p-8 pb-10 z-20 pointer-events-none">
-          <div className="flex items-end justify-between gap-6 overflow-hidden pointer-events-auto">
+        <div className="absolute inset-0 flex flex-col justify-end p-8 pb-4 z-20 pointer-events-none">
+          <div className="flex items-end justify-between gap-4 overflow-hidden pointer-events-auto">
             <div className="flex-1 text-white">
               <motion.div 
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                className="flex items-center gap-3 mb-5"
+                className="flex items-center gap-3 mb-3"
               >
-                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black backdrop-blur-3xl shadow-premium">
+                <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black backdrop-blur-3xl shadow-premium">
                   {reel.expert?.full_name?.charAt(0) || reel.owner?.full_name?.charAt(0) || 'U'}
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="font-black text-lg tracking-tight">@{reel.expert?.full_name?.toLowerCase().replace(' ', '_') || reel.owner?.full_name?.toLowerCase().replace(' ', '_') || 'user'}</h3>
-                  <p className="text-primary/80 text-[10px] font-black uppercase tracking-widest">{reel.category || reel.expert?.profession || t('reels.profession_fallback')}</p>
+                  <h3 className="font-black text-base tracking-tight">@{reel.expert?.full_name?.toLowerCase().replace(' ', '_') || reel.owner?.full_name?.toLowerCase().replace(' ', '_') || 'user'}</h3>
+                  <p className="text-primary/80 text-[9px] font-black uppercase tracking-widest">{reel.category || reel.expert?.profession || t('reels.profession_fallback')}</p>
                 </div>
               </motion.div>
 
@@ -352,15 +352,15 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="max-w-[85%]"
+                className="max-w-[90%]"
               >
-                <h4 className="font-bold text-xl mb-2 tracking-tight line-clamp-1 text-white/90">{reel.title || t('reels.fallback_title')}</h4>
-                <p className="text-white/40 text-sm leading-relaxed line-clamp-2 mb-6 font-medium">
+                <h4 className="font-bold text-lg mb-1 tracking-tight line-clamp-1 text-white/90">{reel.title || t('reels.fallback_title')}</h4>
+                <p className="text-white/40 text-[12px] leading-snug line-clamp-2 mb-4 font-medium">
                   {reel.description || t('reels.fallback_desc')}
                 </p>
                 <div className="flex items-center gap-3">
-                    <div className="px-4 py-2 bg-white/5 backdrop-blur-3xl border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white/40">
-                      <MapPin size={12} className="text-primary/60" /> {t('reels.location_fallback')}
+                    <div className="px-3 py-1.5 bg-white/5 backdrop-blur-3xl border border-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2 text-white/40">
+                      <MapPin size={10} className="text-primary/60" /> {t('reels.location_fallback')}
                     </div>
                 </div>
               </motion.div>
