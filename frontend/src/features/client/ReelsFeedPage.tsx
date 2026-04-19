@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Volume2, VolumeX, MessageCircle, Heart, Share2, 
-  MapPin, Star, VideoOff, Search, Plus, Filter, User, 
-  Eye, Copy, Check 
+  MapPin, Star, VideoOff, Search, Plus, 
+  Eye 
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../../api/apiClient';
@@ -139,7 +139,9 @@ const ReelsFeedPage = () => {
         )}
       </AnimatePresence>
 
-      <div className="flex-1 h-full bg-black relative overflow-y-scroll snap-y snap-mandatory hide-scrollbar">
+      <div className="flex-1 h-full bg-black relative overflow-y-scroll snap-y snap-mandatory hide-scrollbar text-white">
+        
+        {/* Mute Button Overlay */}
         <div className="fixed top-24 right-8 z-40 flex flex-col gap-4">
           <button 
             onClick={() => setIsMuted(!isMuted)}
@@ -154,7 +156,7 @@ const ReelsFeedPage = () => {
              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-glow-primary" />
           </div>
         ) : reels.length === 0 ? (
-          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black text-white">
+          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black">
             <div className="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 shadow-glow-primary">
               <VideoOff className="w-12 h-12 text-primary/40" />
             </div>
@@ -162,6 +164,7 @@ const ReelsFeedPage = () => {
             <p className="text-white/50 max-w-sm font-medium leading-relaxed">
               {t('reels.no_videos_desc')}
             </p>
+          </div>
         ) : (
           reels.map((reel) => {
             const getReelUrl = (url: string) => {
@@ -175,6 +178,7 @@ const ReelsFeedPage = () => {
             return (
               <div key={reel.id} className="w-full h-full snap-start relative flex justify-center items-center bg-black">
                 <div className="relative w-full max-w-[450px] h-[95vh] rounded-[2.5rem] bg-black overflow-hidden shadow-2xl group border border-white/5">
+                  
                   <SocialVideoPlayer url={getReelUrl(reel.video_url)} isMuted={isMuted} />
                   
                   <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none" />
@@ -272,13 +276,14 @@ const ReelsFeedPage = () => {
             );
           })
         )}
+
       </div>
     </div>
   );
 };
 
 const ReelInteractionButton = ({ icon, label, color }: { icon: React.ReactNode, label: string | number, color: string }) => (
-  <button className={`flex flex-col items-center gap-1 group transition-all`}>
+  <button className={"flex flex-col items-center gap-1 group transition-all"}>
     <div className={`w-14 h-14 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white transition-all group-hover:bg-white/20 ${color} group-hover:scale-110 shadow-premium`}>
       {icon}
     </div>
