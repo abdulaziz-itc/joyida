@@ -622,10 +622,13 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
           />
         ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black p-4 text-center">
-                <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin mb-4" />
-                <span className="text-[10px] text-white/40 font-bold uppercase tracking-tight line-clamp-2 px-2 animate-pulse">
-                    GENERATING PREVIEW...
+                <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin mb-4 shadow-glow-primary" />
+                <span className="text-[10px] text-white/60 font-black uppercase tracking-widest animate-pulse">
+                    {reel.is_downloaded ? 'Preparing Preview...' : 'Downloading Reel...'}
                 </span>
+                <p className="text-[8px] text-white/20 mt-2 font-medium max-w-[80%] uppercase tracking-tighter">
+                   {reel.is_downloaded ? 'Capturing best frame' : 'Securing local copy'}
+                </p>
             </div>
         )}
       </div>

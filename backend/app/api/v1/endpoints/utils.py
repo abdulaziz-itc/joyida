@@ -3,19 +3,18 @@ import re
 import uuid
 import shutil
 import urllib.request
+import base64
+import subprocess
 from typing import Any, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.db.session import get_db
-import base64
-import subprocess
-from fastapi.responses import FileResponse
 from app.models.user import User as UserModel
 from app.models.service import ServiceCategory
 from app.schemas.user import ServiceCategory as ServiceCategorySchema
 from app.models.project import Project as ProjectModel
-from app.db.session import get_db
 
 router = APIRouter()
 
@@ -184,10 +183,11 @@ def download_reel(
     output_path = os.path.join(output_dir, output_filename)
 
     # Watermark command using ffmpeg
-    # drawtext filter: text='JOIDA', bottom right, white color, font size 24
+    # drawtext filter: text='JOIDA', bottom right, white color with shadow and box
+    # x=w-tw-40:y=h-th-40 (40px padding from bottom-right)
     command = [
         "ffmpeg", "-y", "-i", input_path,
-        "-vf", "drawtext=text='JOIDA':x=w-tw-20:y=h-th-20:fontsize=48:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5",
+        "-vf", "drawtext=text='JOIDA':x=w-tw-40:y=h-th-40:fontsize=48:fontcolor=white:shadowcolor=black@0.6:shadowx=3:shadowy=3:box=1:boxcolor=black@0.2:boxborderw=10",
         "-c:a", "copy", output_path
     ]
 
