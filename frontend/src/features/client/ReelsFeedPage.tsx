@@ -64,35 +64,46 @@ const ReelsFeedPage = () => {
       />
 
       {/* Top Header Overlay */}
-      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 bg-gradient-to-b from-black/60 to-transparent pointer-events-none">
-        <div className="flex items-center gap-8 pointer-events-auto">
-          <button 
-            onClick={() => setActiveTab('explore')}
-            className={`text-lg font-black tracking-tight transition-all ${activeTab === 'explore' ? 'text-white scale-110' : 'text-white/40 hover:text-white/70'}`}
-          >
-            {t('reels.explore')}
-          </button>
-          {user?.role === 'expert' && (
+      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none">
+        <div className="flex items-center gap-10 pointer-events-auto">
+          <div className="relative group">
             <button 
-              onClick={() => setActiveTab('my-works')}
-              className={`text-lg font-black tracking-tight transition-all ${activeTab === 'my-works' ? 'text-white scale-110' : 'text-white/40 hover:text-white/70'}`}
+              onClick={() => setActiveTab('explore')}
+              className={`text-xl font-black tracking-tighter transition-all ${activeTab === 'explore' ? 'text-white' : 'text-white/40 hover:text-white/60'}`}
             >
-              {t('reels.my_works')}
+              {t('reels.explore')}
             </button>
+            {activeTab === 'explore' && (
+              <motion.div layoutId="activeTab" className="absolute -bottom-2 left-0 right-0 h-1 bg-primary rounded-full shadow-glow-primary" />
+            )}
+          </div>
+
+          {(user?.is_expert || user?.is_superuser) && (
+            <div className="relative group">
+              <button 
+                onClick={() => setActiveTab('my-works')}
+                className={`text-xl font-black tracking-tighter transition-all ${activeTab === 'my-works' ? 'text-white' : 'text-white/40 hover:text-white/60'}`}
+              >
+                {t('reels.my_works')}
+              </button>
+              {activeTab === 'my-works' && (
+                <motion.div layoutId="activeTab" className="absolute -bottom-2 left-0 right-0 h-1 bg-primary rounded-full shadow-glow-primary" />
+              )}
+            </div>
           )}
         </div>
 
         <div className="flex items-center gap-4 pointer-events-auto">
           <button 
             onClick={() => setShowSearch(!showSearch)}
-            className="p-3 bg-white/10 backdrop-blur-3xl rounded-2xl text-white border border-white/10 hover:bg-white/20 transition-all"
+            className="p-3 bg-white/10 backdrop-blur-3xl rounded-2xl text-white border border-white/10 hover:bg-white/20 transition-all shadow-premium"
           >
             <Search size={22} />
           </button>
-          {user?.role === 'expert' && (
+          {(user?.is_expert || user?.is_superuser) && (
             <button 
               onClick={() => setIsUploadModalOpen(true)}
-              className="px-6 py-3 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-glow-primary hover:scale-105 transition-all flex items-center gap-2"
+              className="px-6 py-3 bg-primary text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-glow-primary hover:scale-105 transition-all flex items-center gap-2"
             >
               <Plus size={18} /> {t('reels.upload_work')}
             </button>
