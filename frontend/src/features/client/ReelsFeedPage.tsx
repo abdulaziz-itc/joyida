@@ -162,8 +162,8 @@ const ReelsFeedPage = () => {
             <p className="text-white/50 max-w-sm font-medium leading-relaxed">
               {t('reels.no_videos_desc')}
             </p>
-          </div>
         ) : (
+          reels.map((reel) => {
             const getReelUrl = (url: string) => {
               if (!url) return '';
               if (url.startsWith('http')) return url;
