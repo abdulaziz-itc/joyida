@@ -25,6 +25,7 @@ export interface User {
     profile_picture_url?: string;
     rating?: number;
     review_count?: number;
+    role?: string;
 }
 
 

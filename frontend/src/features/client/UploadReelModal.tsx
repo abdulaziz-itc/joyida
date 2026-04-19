@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Video, Check, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import apiClient from '../../../api/apiClient';
+import apiClient from '../../api/apiClient';
 
 interface UploadReelModalProps {
   isOpen: boolean;
