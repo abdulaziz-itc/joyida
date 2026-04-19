@@ -1,6 +1,10 @@
 import os
 import uuid
-import yt_dlp
+try:
+    import yt_dlp
+    YT_DLP_AVAILABLE = True
+except ImportError:
+    YT_DLP_AVAILABLE = False
 from sqlalchemy.orm import Session
 from app.models.project import Project as ProjectModel
 
@@ -21,11 +25,9 @@ def download_social_video(project_id: int, db_session_factory: callable):
         if not any(x in original_url for x in ['instagram.com', 'tiktok.com', 'youtube.com', 'youtu.be']):
             return # Not a social link we handle
 
-        if not os.path.exists(UPLOAD_DIR):
-            os.makedirs(UPLOAD_DIR)
-
-        filename = f"{uuid.uuid4()}.mp4"
-        filepath = os.path.join(UPLOAD_DIR, filename)
+        if not YT_DLP_AVAILABLE:
+            print(f"Skipping download for project {project_id}: yt-dlp library not installed on server.")
+            return
 
         ydl_opts = {
             'outtmpl': filepath,
