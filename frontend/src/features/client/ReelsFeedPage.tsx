@@ -50,7 +50,6 @@ const ReelsFeedPage = () => {
   const copyToClipboard = (reelId: number) => {
     const url = `${window.location.origin}/reels/${reelId}`;
     navigator.clipboard.writeText(url);
-    // Could add a toast here
   };
 
   return (
@@ -62,8 +61,6 @@ const ReelsFeedPage = () => {
         <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary/10 blur-[120px] rounded-full animate-pulse-slow" />
       </div>
 
-      
-      {/* Upload Modal */}
       <UploadReelModal 
         isOpen={isUploadModalOpen} 
         onClose={() => setIsUploadModalOpen(false)} 
@@ -142,10 +139,7 @@ const ReelsFeedPage = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Feed Content */}
       <div className="flex-1 h-full bg-black relative overflow-y-scroll snap-y snap-mandatory hide-scrollbar">
-        
-        {/* Mute Button Overlay */}
         <div className="fixed top-24 right-8 z-40 flex flex-col gap-4">
           <button 
             onClick={() => setIsMuted(!isMuted)}
@@ -174,7 +168,6 @@ const ReelsFeedPage = () => {
             const getReelUrl = (url: string) => {
               if (!url) return '';
               if (url.startsWith('http')) return url;
-              // Remove trailing slash from VITE_API_URL and leading slash from url if present
               const baseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
               const cleanPath = url.replace(/^\//, '');
               return `${baseUrl}/${cleanPath}`;
@@ -182,20 +175,14 @@ const ReelsFeedPage = () => {
             
             return (
               <div key={reel.id} className="w-full h-full snap-start relative flex justify-center items-center bg-black">
-                
-                {/* Main Video Area */}
                 <div className="relative w-full max-w-[450px] h-[95vh] rounded-[2.5rem] bg-black overflow-hidden shadow-2xl group border border-white/5">
                   <SocialVideoPlayer url={getReelUrl(reel.video_url)} isMuted={isMuted} />
-                
-                {/* Gradient Overlays */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none" />
-                
-                {/* Info Overlay (Bottom) */}
-                <div className="absolute inset-0 flex flex-col justify-end p-8 pb-10">
-                   <div className="flex items-end justify-between gap-6 overflow-hidden">
-                     
-                     {/* Left: Metadata */}
-                     <div className="flex-1 text-white">
+                  
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none" />
+                  
+                  <div className="absolute inset-0 flex flex-col justify-end p-8 pb-10">
+                    <div className="flex items-end justify-between gap-6 overflow-hidden">
+                      <div className="flex-1 text-white">
                         <motion.div 
                           initial={{ x: -20, opacity: 0 }}
                           whileInView={{ x: 0, opacity: 1 }}
@@ -234,58 +221,54 @@ const ReelsFeedPage = () => {
                              </div>
                           </div>
                         </motion.div>
-                     </div>
-
-                   </div>
-                </div>
-
-                {/* Vertical Interaction Bar (Right) */}
-                <div className="absolute right-4 bottom-24 z-30 flex flex-col gap-6 items-center">
-                  <ReelInteractionButton 
-                    icon={<Heart size={28} className="drop-shadow-glow" />} 
-                    label={reel.likes_count || 0} 
-                    color="hover:text-red-500" 
-                  />
-                  <ReelInteractionButton 
-                    icon={<MessageCircle size={28} />} 
-                    label={reel.comments_count || 0} 
-                    color="hover:text-primary" 
-                  />
-                  <ReelInteractionButton 
-                    icon={<Eye size={28} />} 
-                    label={reel.views_count || 0} 
-                    color="hover:text-blue-400" 
-                  />
-                  <button 
-                    onClick={() => copyToClipboard(reel.id)}
-                    className="flex flex-col items-center gap-1 group"
-                  >
-                    <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:bg-primary transition-all hover:scale-110">
-                      <Share2 size={28} />
+                      </div>
                     </div>
-                    <span className="text-[10px] font-black text-white/70 uppercase tracking-tighter">SHARE</span>
-                  </button>
-                  
-                  {/* Spinning Vinyl Icon */}
-                  <div className="w-12 h-12 rounded-full border-4 border-white/10 p-1 animate-spin-slow mt-4">
-                     <div className="w-full h-full rounded-full bg-gradient-to-tr from-primary to-secondary p-0.5">
-                       <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full" />
+                  </div>
+
+                  <div className="absolute right-4 bottom-24 z-30 flex flex-col gap-6 items-center">
+                    <ReelInteractionButton 
+                      icon={<Heart size={28} className="drop-shadow-glow" />} 
+                      label={reel.likes_count || 0} 
+                      color="hover:text-red-500" 
+                    />
+                    <ReelInteractionButton 
+                      icon={<MessageCircle size={28} />} 
+                      label={reel.comments_count || 0} 
+                      color="hover:text-primary" 
+                    />
+                    <ReelInteractionButton 
+                      icon={<Eye size={28} />} 
+                      label={reel.views_count || 0} 
+                      color="hover:text-blue-400" 
+                    />
+                    <button 
+                      onClick={() => copyToClipboard(reel.id)}
+                      className="flex flex-col items-center gap-1 group"
+                    >
+                      <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:bg-primary transition-all hover:scale-110">
+                        <Share2 size={28} />
+                      </div>
+                      <span className="text-[10px] font-black text-white/70 uppercase tracking-tighter">SHARE</span>
+                    </button>
+                    
+                    <div className="w-12 h-12 rounded-full border-4 border-white/10 p-1 animate-spin-slow mt-4">
+                       <div className="w-full h-full rounded-full bg-gradient-to-tr from-primary to-secondary p-0.5">
+                         <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full" />
+                         </div>
                        </div>
-                     </div>
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/5 overflow-hidden">
+                     <motion.div 
+                        initial={{ width: '0%' }}
+                        whileInView={{ width: '100%' }}
+                        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                        className="h-full bg-primary shadow-glow-primary" 
+                     />
                   </div>
                 </div>
-
-                {/* Progress Bar (Bottom) */}
-                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/5 overflow-hidden">
-                   <motion.div 
-                      initial={{ width: '0%' }}
-                      whileInView={{ width: '100%' }}
-                      transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                      className="h-full bg-primary shadow-glow-primary" 
-                   />
-                </div>
-
               </div>
             );
           })
