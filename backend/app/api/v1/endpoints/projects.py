@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List, Any, Optional
-from app.db.session import get_db
+from app.db.session import get_db, SessionLocal
 from app.api import deps
 from app.models.user import User
 from app.models.project import Project as ProjectModel
 from app.schemas.project import Project, ProjectCreate, ProjectUpdate
+from app.services.video_downloader import download_social_video
 
 router = APIRouter()
 
@@ -44,12 +45,19 @@ def create_project(
     db: Session = Depends(get_db),
     project_in: ProjectCreate,
     current_user: User = Depends(deps.get_current_user),
+    background_tasks: BackgroundTasks,
 ) -> Any:
     """Create new project."""
     project = ProjectModel(**project_in.dict(), owner_id=current_user.id)
     db.add(project)
     db.commit()
     db.refresh(project)
+    
+    # If the URL is a social media link, trigger background download
+    url = project.video_url
+    if url and any(x in url for x in ['instagram.com', 'tiktok.com', 'youtube.com', 'youtu.be']):
+        background_tasks.add_task(download_social_video, project.id, SessionLocal)
+        
     return project
 
 @router.put("/{id}", response_model=Project)
