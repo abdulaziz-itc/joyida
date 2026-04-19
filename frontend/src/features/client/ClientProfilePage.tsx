@@ -48,6 +48,14 @@ const translations = {
     currentRating: "Reyting",
     totalReviews: "Sharhlar",
     expertSince: "Mutaxassislik boshlangan",
+    expert: "Mutaxassis",
+    client: "Mijoz",
+    phone: "Telefon raqami",
+    headline: "Headline (Qisqacha sarlavha)",
+    bio: "Bio (O'zingiz haqingizda)",
+    skills: "Ko'nikmalar",
+    languages: "Tillar",
+    socials: "Ijtimoiy tarmoqlar"
   }
 };
 
