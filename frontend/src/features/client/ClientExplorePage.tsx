@@ -166,16 +166,17 @@ const ClientExplorePage = () => {
         <div className={`p-8 w-full max-w-4xl mx-auto transition-all duration-1000 ${showRealMap ? 'opacity-90 pt-12' : 'mt-[22vh]'}`}>
           {!showRealMap && (
              <div className="text-center mb-16 pointer-events-auto">
-               <motion.h1 
-                 initial={{ opacity: 0, scale: 0.95 }}
-                 animate={{ opacity: 1, scale: 1 }}
-                 className="text-8xl font-black mb-8 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-[0_0_40px_rgba(139,92,246,0.2)] font-display tracking-tight"
-               >
-                 Joyida
-               </motion.h1>
-               <p className="text-white/60 text-xl font-medium tracking-[1px] max-w-xl mx-auto leading-relaxed">
-                 O'z mahallangizdan eng malakali mutaxassislarni toping.
-               </p>
+                <motion.h1 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-primary/60 drop-shadow-[0_0_50px_rgba(168,85,247,0.3)] font-display tracking-tighter"
+                >
+                  Joyida
+                </motion.h1>
+                <p className="text-white/70 text-xl font-medium tracking-[2px] max-w-2xl mx-auto leading-relaxed uppercase opacity-80">
+                  O'z mahallangizdan eng malakali mutaxassislarni toping.
+                </p>
              </div>
           )}
 

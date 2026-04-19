@@ -14,19 +14,19 @@ const NavItem = ({ icon: Icon, label, active = false, onClick }: any) => (
     onClick={onClick}
     className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all relative group ${
       active 
-        ? 'bg-gradient-to-r from-primary/20 to-transparent text-white shadow-[inset_0_0_20px_rgba(139,92,246,0.1)]' 
+        ? 'bg-gradient-to-r from-primary/25 to-transparent text-white shadow-[inset_0_0_25px_rgba(168,85,247,0.15)]' 
         : 'text-white/40 hover:text-white'
     }`}
   >
-    <Icon className={`w-5 h-5 transition-colors ${active ? 'text-primary outline-primary/50' : 'group-hover:text-white'}`} />
-    <span className={`font-medium tracking-wide transition-colors text-sm ${active ? 'text-white' : 'group-hover:text-white'}`}>{label}</span>
+    <Icon className={`w-5 h-5 transition-colors ${active ? 'text-primary scale-110' : 'group-hover:text-white'}`} />
+    <span className={`font-semibold tracking-wide transition-colors text-sm ${active ? 'text-white' : 'group-hover:text-white/80'}`}>{label}</span>
     {active && (
       <>
         <motion.div 
           layoutId="activeNav" 
-          className="absolute left-0 w-1 h-6 bg-primary rounded-r-full shadow-[0_0_15px_rgba(139,92,246,0.6)]" 
+          className="absolute left-0 w-1 h-6 bg-primary rounded-r-full shadow-[0_0_20px_var(--color-primary)]" 
         />
-        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(139,92,246,1)]" />
+        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_12px_var(--color-primary)]" />
       </>
     )}
   </motion.div>
