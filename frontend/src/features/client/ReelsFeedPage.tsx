@@ -287,8 +287,8 @@ const ReelsFeedPage = () => {
                 </div>
 
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
