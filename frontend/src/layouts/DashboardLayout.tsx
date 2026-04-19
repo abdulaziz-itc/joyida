@@ -10,15 +10,25 @@ import CheckoutOverlay from '../features/subscription/CheckoutOverlay';
 
 const NavItem = ({ icon: Icon, label, active = false, onClick }: any) => (
   <motion.div 
-    whileHover={{ x: 5 }}
+    whileHover={{ x: 4, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
     onClick={onClick}
-    className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all ${
-      active ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+    className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all relative group ${
+      active 
+        ? 'bg-gradient-to-r from-primary/20 to-transparent text-white shadow-[inset_0_0_20px_rgba(139,92,246,0.1)]' 
+        : 'text-white/40 hover:text-white'
     }`}
   >
-    <Icon className="w-5 h-5" />
-    <span className="font-medium">{label}</span>
-    {active && <motion.div layoutId="activeNav" className="ml-auto w-1 h-5 bg-purple-500 rounded-full" />}
+    <Icon className={`w-5 h-5 transition-colors ${active ? 'text-primary outline-primary/50' : 'group-hover:text-white'}`} />
+    <span className={`font-medium tracking-wide transition-colors text-sm ${active ? 'text-white' : 'group-hover:text-white'}`}>{label}</span>
+    {active && (
+      <>
+        <motion.div 
+          layoutId="activeNav" 
+          className="absolute left-0 w-1 h-6 bg-primary rounded-r-full shadow-[0_0_15px_rgba(139,92,246,0.6)]" 
+        />
+        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(139,92,246,1)]" />
+      </>
+    )}
   </motion.div>
 );
 
@@ -39,58 +49,55 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
   };
 
   return (
-    <div className="flex min-h-screen bg-[#050505] text-white">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-white/5 p-6 flex flex-col fixed h-full bg-[#050505]/50 backdrop-blur-xl z-20">
-        <div className="flex items-center gap-3 mb-12 px-4">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center font-bold text-xl">
+    <div className="flex min-h-screen bg-[#020205] text-white">
+      {/* Sidebar - Premium Glassmorphism */}
+      <aside className="w-64 border-r border-white/5 p-6 flex flex-col fixed h-full bg-white/[0.02] backdrop-blur-3xl z-30 shadow-[20px_0_80px_rgba(0,0,0,0.6)]">
+        <div className="flex items-center gap-3 mb-12 px-2">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-2xl shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-white/10">
             J
           </div>
-          <span className="text-xl font-bold tracking-tight text-white">Joyida</span>
+          <span className="text-2xl font-black tracking-tight text-white font-display">Joyida</span>
         </div>
 
-        <nav className="flex-1 space-y-2">
-          {/* 1. ADMIN MENU */}
+        <nav className="flex-1 space-y-1.5">
           {user?.is_superuser && (
-            <>
+            <div className="space-y-1.5">
               <NavItem icon={ShieldCheck} label="Admin Console" active={currentPage === 'admin'} onClick={() => onNavigate('admin')} />
               <NavItem icon={LayoutDashboard} label="Dashboard" active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
               <NavItem icon={Users} label="Users" />
               <NavItem icon={PieChart} label="Analytics" />
               <NavItem icon={Settings} label="Settings" />
-            </>
+            </div>
           )}
 
-          {/* 2. EXPERT / SPECIALIST MENU */}
           {!user?.is_superuser && user?.is_expert && (
-            <>
+            <div className="space-y-1.5">
               <NavItem icon={LayoutDashboard} label="Dashboard" active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
               <NavItem icon={Briefcase} label="Orders/Projects" active={currentPage === 'projects'} onClick={() => onNavigate('projects')} />
               <NavItem icon={MessageCircle} label="Messages" active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
               <NavItem icon={Settings} label="Settings" active={currentPage === 'settings'} onClick={() => onNavigate('settings')} />
-            </>
+            </div>
           )}
 
-          {/* 3. ORDINARY USER / CLIENT MENU */}
           {!user?.is_superuser && !user?.is_expert && (
-            <>
+            <div className="space-y-1.5">
               <NavItem icon={MapPin} label="Explore" active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
               <NavItem icon={Film} label="Reels" active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
               <NavItem icon={MessageCircle} label="Messages" active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
               <NavItem icon={User} label="Profile & Settings" active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
-            </>
+            </div>
           )}
         </nav>
 
         <div className="mt-auto space-y-4 pt-6 border-t border-white/5">
           {user?.is_expert && user?.subscription_tier !== 'pro' && (
             <motion.button 
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, filter: 'brightness(1.1)' }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowPlans(true)}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-400 text-[#050505] font-black text-xs uppercase tracking-[1px] flex items-center justify-center gap-2 shadow-lg shadow-amber-500/10"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-[#050505] font-black text-xs uppercase tracking-[2px] flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(251,191,36,0.2)]"
             >
-               <Zap className="w-4 h-4 fill-current" /> Go Pro
+               <Zap className="w-4 h-4 fill-current" /> Upgrade to Pro
             </motion.button>
           )}
           
