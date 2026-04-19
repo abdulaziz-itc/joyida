@@ -260,5 +260,38 @@
     "profile": "Profil va Sozlamalar",
     "upgrade": "PRO darajaga o'tish",
     "logout": "Chiqish"
+  },
+  "reels": {
+    "no_videos": "Hozircha videolar yo'q",
+    "no_videos_desc": "Mutaxassislar hali hech qanday ish namunalarini joylamagan.",
+    "follow": "Obuna bo'lish",
+    "fallback_title": "Mening yangi ishim",
+    "fallback_desc": "Joyida platformasi orqali bajarilgan sifatli xizmat namunasi.",
+    "profession_fallback": "Mutaxassis",
+    "location_fallback": "Toshkent"
+  },
+  "messages": {
+    "title": "Xabarlar",
+    "search_chats": "Suhbatlarni qidirish...",
+    "no_chats": "Hozircha suhbatlar yo'q",
+    "online": "Online",
+    "no_messages": "Hali xabarlar yo'q",
+    "type_message": "Xabaringizni yozing...",
+    "select_chat": "Suhbatni tanlang",
+    "select_chat_desc": "Xaritadan loyihangiz uchun mos ustani toping va ularga to'g'ridan to'g'ri xabar yo'llang.",
+    "unknown": "Noma'lum"
+  },
+  "explore": {
+    "headline": "O'z mahallangizdan eng malakali mutaxassislarni toping.",
+    "placeholder": "Qanday mutaxassis kerak? (masalan: Santexnik)",
+    "find": "Topish",
+    "searching": "Qidirilmoqda...",
+    "searching_in": "{{radius}} m masofadan qidirilmoqda...",
+    "searching_in_km": "{{radius}} km masofadan qidirilmoqda...",
+    "new": "Yangi",
+    "nearby": "Yaqin atrofda",
+    "view_profile": "Profilni ko'rish",
+    "fallback_expert": "Mutaxassis",
+    "fallback_profession": "Usta"
   }
 }

@@ -230,5 +230,38 @@
     "profile": "Profile & Settings",
     "upgrade": "Upgrade to PRO",
     "logout": "Logout"
+  },
+  "reels": {
+    "no_videos": "No Videos Yet",
+    "no_videos_desc": "Experts haven't posted any work samples yet.",
+    "follow": "Follow",
+    "fallback_title": "My New Work",
+    "fallback_desc": "Quality service sample performed through Joyida platform.",
+    "profession_fallback": "Specialist",
+    "location_fallback": "Tashkent"
+  },
+  "messages": {
+    "title": "Messages",
+    "search_chats": "Search chats...",
+    "no_chats": "No chats yet",
+    "online": "Online",
+    "no_messages": "No messages yet",
+    "type_message": "Type your message...",
+    "select_chat": "Select a Chat",
+    "select_chat_desc": "Find the right expert for your project from the map and message them directly.",
+    "unknown": "Unknown"
+  },
+  "explore": {
+    "headline": "Find the most skilled specialists in your neighborhood.",
+    "placeholder": "What kind of specialist do you need? (e.g. Plumber)",
+    "find": "Find",
+    "searching": "Searching...",
+    "searching_in": "Searching within {{radius}} m...",
+    "searching_in_km": "Searching within {{radius}} km...",
+    "new": "New",
+    "nearby": "Nearby",
+    "view_profile": "View Profile",
+    "fallback_expert": "Specialist",
+    "fallback_profession": "Technician"
   }
 }

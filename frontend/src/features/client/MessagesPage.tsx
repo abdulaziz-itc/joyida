@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Search, User, ArrowLeft, Phone, MoreVertical, Plus, Send } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/authStore';
 import apiClient from '../../api/apiClient';
 
 const MessagesPage = () => {
+  const { t } = useTranslation();
   const [rooms, setRooms] = useState<any[]>([]);
   const [activeRoom, setActiveRoom] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -78,12 +80,12 @@ const MessagesPage = () => {
       {/* Sidebar for chat list */}
       <div className={`w-full md:w-96 border-r border-white/5 bg-[#080808] flex flex-col transition-all ${activeRoom ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-8 border-b border-white/5 bg-[#0a0a0a]">
-          <h2 className="text-3xl font-black font-display text-white mb-6 tracking-tight">Xabarlar</h2>
+          <h2 className="text-3xl font-black font-display text-white mb-6 tracking-tight">{t('messages.title')}</h2>
           <div className="relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30 group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
-              placeholder="Suhbatlarni qidirish..." 
+              placeholder={t('messages.search_chats')}
               className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-primary/30 transition-all placeholder:text-foreground/20"
             />
           </div>
@@ -97,7 +99,7 @@ const MessagesPage = () => {
           ) : rooms.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-foreground/30 text-center p-12 h-64">
               <MessageSquare size={48} className="mb-4 opacity-10" />
-              <p className="text-sm">Hozircha suhbatlar yo'q</p>
+              <p className="text-sm">{t('messages.no_chats')}</p>
             </div>
           ) : (
             <div className="flex flex-col">
@@ -119,13 +121,13 @@ const MessagesPage = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                      <div className="flex justify-between items-start mb-1">
-                       <h4 className="text-white font-bold text-base truncate">{room.other_user?.full_name || 'Noma\'lum'}</h4>
+                       <h4 className="text-white font-bold text-base truncate">{room.other_user?.full_name || t('messages.unknown')}</h4>
                        <span className="text-[10px] text-foreground/30 font-bold uppercase tracking-widest">
                          {room.last_message?.created_at ? new Date(room.last_message.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
                        </span>
                      </div>
                      <p className="text-xs text-foreground/40 truncate font-medium">
-                       {room.last_message?.text || room.other_user?.profession || 'Mutaxassis'}
+                       {room.last_message?.text || room.other_user?.profession || t('reels.profession_fallback')}
                      </p>
                   </div>
                 </div>
@@ -156,7 +158,7 @@ const MessagesPage = () => {
                     <h3 className="text-white font-black text-lg">{activeRoom.other_user?.full_name}</h3>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full" />
-                      <p className="text-xs text-green-500/80 font-bold uppercase tracking-wider">Online</p>
+                      <p className="text-xs text-green-500/80 font-bold uppercase tracking-wider">{t('messages.online')}</p>
                     </div>
                   </div>
                 </div>
@@ -175,7 +177,7 @@ const MessagesPage = () => {
                 {messages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-foreground/20">
                      <MessageSquare size={64} className="mb-4 opacity-5" />
-                     <p className="text-sm font-bold uppercase tracking-widest">Hali xabarlar yo'q</p>
+                     <p className="text-sm font-bold uppercase tracking-widest">{t('messages.no_messages')}</p>
                   </div>
                 ) : (
                   messages.map((msg, idx) => {
@@ -213,7 +215,7 @@ const MessagesPage = () => {
                         type="text" 
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Xabaringizni yozing..."
+                        placeholder={t('messages.type_message')}
                         className="w-full bg-[#111111] border border-white/5 rounded-2xl py-5 px-6 text-white focus:outline-none focus:border-primary/50 transition-all placeholder:text-foreground/20"
                       />
                    </div>
@@ -237,9 +239,9 @@ const MessagesPage = () => {
                <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl" />
                <MessageSquare className="w-14 h-14 text-primary relative z-10" />
              </div>
-             <h3 className="text-3xl font-black text-white mb-4 tracking-tight">Suhbatni tanlang</h3>
+             <h3 className="text-3xl font-black text-white mb-4 tracking-tight">{t('messages.select_chat')}</h3>
              <p className="text-foreground/40 text-base max-w-sm text-center leading-relaxed font-medium">
-               Xaritadan loyihangiz uchun mos ustani toping va ularga to'g'ridan to'g'ri xabar yo'llang.
+               {t('messages.select_chat_desc')}
              </p>
            </div>
          )}

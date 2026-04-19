@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Volume2, VolumeX, MessageCircle, Heart, Share2, MapPin, Star, VideoOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import apiClient from '../../api/apiClient';
 
 const ReelsFeedPage = () => {
+  const { t } = useTranslation();
   const [reels, setReels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
@@ -46,9 +48,9 @@ const ReelsFeedPage = () => {
           <div className="w-32 h-32 bg-white/5 rounded-full flex items-center justify-center mb-8 border border-white/10 shadow-glow-primary">
             <VideoOff className="w-12 h-12 text-foreground/30" />
           </div>
-          <h2 className="text-3xl font-black text-white mb-4 tracking-tight">Hozircha videolar yo'q</h2>
+          <h2 className="text-3xl font-black text-white mb-4 tracking-tight">{t('reels.no_videos')}</h2>
           <p className="text-foreground/40 max-w-sm font-medium leading-relaxed">
-            Mutaxassislar hali hech qanday ish namunalarini joylamagan.
+            {t('reels.no_videos_desc')}
           </p>
         </div>
       ) : (
@@ -85,10 +87,10 @@ const ReelsFeedPage = () => {
                       </div>
                       <div>
                         <h3 className="font-black text-lg tracking-tight">@{reel.expert?.full_name?.toLowerCase().replace(' ', '_') || 'expert'}</h3>
-                        <p className="text-primary text-xs font-bold uppercase tracking-widest">{reel.expert?.profession || 'Mutaxassis'}</p>
+                        <p className="text-primary text-xs font-bold uppercase tracking-widest">{reel.expert?.profession || t('reels.profession_fallback')}</p>
                       </div>
                       <button className="ml-4 px-4 py-1.5 bg-primary text-[10px] font-black uppercase tracking-tighter rounded-lg hover:bg-primary-hover transition-colors">
-                        Folov
+                        {t('reels.follow')}
                       </button>
                     </motion.div>
 
@@ -97,13 +99,13 @@ const ReelsFeedPage = () => {
                       whileInView={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <h4 className="font-bold text-xl mb-2 tracking-tight">{reel.title || 'Mening yangi ishim'}</h4>
+                      <h4 className="font-bold text-xl mb-2 tracking-tight">{reel.title || t('reels.fallback_title')}</h4>
                       <p className="text-white/60 text-sm leading-relaxed max-w-md line-clamp-3 mb-6">
-                        {reel.description || 'Joyida platformasi orqali bajarilgan sifatli xizmat namunasi. #joyida #quality'}
+                        {reel.description || t('reels.fallback_desc')}
                       </p>
                       <div className="flex items-center gap-3">
                          <div className="px-4 py-2 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2">
-                           <MapPin size={14} className="text-primary" /> Toshkent
+                           <MapPin size={14} className="text-primary" /> {t('reels.location_fallback')}
                          </div>
                          <div className="px-4 py-2 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2">
                            <Star size={14} className="text-amber-400" /> 4.9

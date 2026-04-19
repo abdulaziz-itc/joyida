@@ -1,9 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Star, Filter, ArrowRight } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { useTranslation } from 'react-i18next';
 import apiClient from '../../api/apiClient';
 
 // Fix for default marker icons in Leaflet with React
@@ -23,6 +18,7 @@ const ChangeView = ({ center, zoom }: { center: [number, number], zoom: number }
 };
 
 const ClientExplorePage = () => {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [showRealMap, setShowRealMap] = useState(false);
@@ -61,7 +57,12 @@ const ClientExplorePage = () => {
 
     for (let i = 0; i < thresholds.length; i++) {
         setSearchRadius(thresholds[i]);
-        setSearchStatus(`Searching in ${thresholds[i] >= 1000 ? thresholds[i]/1000 : thresholds[i]}${thresholds[i] >= 1000 ? 'km' : 'm'}...`);
+        const radiusVal = thresholds[i] >= 1000 ? thresholds[i]/1000 : thresholds[i];
+        const statusText = thresholds[i] >= 1000 
+          ? t('explore.searching_in_km', { radius: radiusVal })
+          : t('explore.searching_in', { radius: radiusVal });
+          
+        setSearchStatus(statusText);
         
         try {
             const response = await apiClient.get('/experts/nearby', {
@@ -194,7 +195,7 @@ const ClientExplorePage = () => {
                 <p className={`text-xl font-bold tracking-[2.5px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-sm ${
                   currentTheme === 'light' ? 'text-foreground/90' : 'text-foreground/70 opacity-80'
                 }`}>
-                  O'z mahallangizdan eng malakali mutaxassislarni toping.
+                  {t('explore.headline')}
                 </p>
              </div>
           )}
@@ -209,7 +210,7 @@ const ClientExplorePage = () => {
                 type="text" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Qanday mutaxassis kerak? (masalan: Santexnik)"
+                placeholder={t('explore.placeholder')}
                 className={`flex-1 bg-transparent border-none focus:ring-0 text-foreground px-6 py-5 text-xl placeholder:text-foreground/40`}
               />
               <button 
@@ -217,7 +218,7 @@ const ClientExplorePage = () => {
                 disabled={isSearching}
                 className="glow-button !px-10 !py-5 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
               >
-                {isSearching ? '...' : 'Topish'}
+                {isSearching ? '...' : t('explore.find')}
               </button>
             </div>
           </form>
@@ -244,20 +245,20 @@ const ClientExplorePage = () => {
                      {selectedSpecialist.full_name?.charAt(0) || 'U'}
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">{selectedSpecialist.full_name || 'Mutaxassis'}</h3>
-                    <p className="text-primary text-sm font-medium">{selectedSpecialist.profession || 'Usta'}</p>
+                    <h3 className="text-xl font-bold text-white">{selectedSpecialist.full_name || t('explore.fallback_expert')}</h3>
+                    <p className="text-primary text-sm font-medium">{selectedSpecialist.profession || t('explore.fallback_profession')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="flex items-center gap-1 text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg text-sm font-bold">
-                    <Star className="w-4 h-4 fill-current" /> {selectedSpecialist.rating || 'Yangi'}
+                    <Star className="w-4 h-4 fill-current" /> {selectedSpecialist.rating || t('explore.new')}
                   </div>
                   <div className="text-foreground/40 text-sm flex items-center gap-1">
-                    <MapPin className="w-4 h-4" /> Yaqin atrofda
+                    <MapPin className="w-4 h-4" /> {t('explore.nearby')}
                   </div>
                 </div>
                 <button className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground">
-                  Profilni Ko'rish <ArrowRight className="w-4 h-4" />
+                  {t('explore.view_profile')} <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>
