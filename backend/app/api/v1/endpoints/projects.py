@@ -63,6 +63,14 @@ def create_project(
     background_tasks: BackgroundTasks,
 ) -> Any:
     """Create new project."""
+    # Check for duplicates (same URL for same user)
+    existing = db.query(ProjectModel).filter(
+        ProjectModel.owner_id == current_user.id,
+        ProjectModel.video_url == project_in.video_url
+    ).first()
+    if existing:
+        return existing
+
     project = ProjectModel(**project_in.dict(), owner_id=current_user.id)
     db.add(project)
     db.commit()

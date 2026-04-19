@@ -43,6 +43,7 @@ def add_column(table_name, column_name, column_type):
 try:
     add_column("projects", "is_downloaded", "BOOLEAN DEFAULT 0")
     add_column("projects", "thumbnail_url", "VARCHAR")
+    add_column("projects", "is_public", "BOOLEAN DEFAULT 1")
     print("Migration check completed.")
 
 except Exception as e:
