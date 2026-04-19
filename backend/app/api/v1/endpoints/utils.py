@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.api import deps
 from app.db.session import get_db
 from app.models.user import User as UserModel
+from app.models.service import ServiceCategory
 from app.schemas.user import ServiceCategory as ServiceCategorySchema
 
 router = APIRouter()
