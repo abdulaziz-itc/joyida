@@ -25,18 +25,33 @@ def read_projects(
 def read_public_projects(
     db: Session = Depends(get_db),
     skip: int = 0,
-    limit: int = 100,
-    search: Optional[str] = None
+    limit: int = 20,
+    search: Optional[str] = None,
+    background_tasks: BackgroundTasks = None
 ) -> Any:
-    """Retrieve all public projects (for Reels)."""
-    query = db.query(ProjectModel)
+    """Retrieve all public projects with proactive auto-downloader."""
+    query = db.query(ProjectModel).filter(ProjectModel.is_public == True)
     if search:
+        search_filter = f"%{search}%"
         query = query.filter(
-            (ProjectModel.title.ilike(f"%{search}%")) | 
-            (ProjectModel.description.ilike(f"%{search}%")) |
-            (ProjectModel.category.ilike(f"%{search}%"))
+            (ProjectModel.title.ilike(search_filter)) | 
+            (ProjectModel.description.ilike(search_filter)) |
+            (ProjectModel.category.ilike(search_filter))
         )
-    projects = query.offset(skip).limit(limit).all()
+    
+    projects = query.order_by(ProjectModel.created_at.desc()).offset(skip).limit(limit).all()
+    
+    # Proactive auto-downloader
+    if background_tasks:
+        for project in projects:
+            # If it looks like a social link and isn't downloaded, trigger it
+            if not project.is_downloaded and project.video_url and ('http' in project.video_url):
+                 # Verify it's actually a social platform we support
+                 url_low = project.video_url.lower()
+                 if any(x in url_low for x in ['instagram.com', 'instagr.am', 'tiktok.com', 'youtube.com', 'youtu.be']):
+                     print(f"DEBUG: Proactive trigger for project {project.id}")
+                     background_tasks.add_task(download_social_video, project.id, SessionLocal)
+
     return projects
 
 @router.post("/", response_model=Project)
