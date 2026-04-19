@@ -7,6 +7,8 @@ class ProjectBase(BaseModel):
     description: Optional[str] = None
     status: str = "Ongoing"
     progress: float = 0.0
+    video_url: Optional[str] = None
+    category: Optional[str] = None
 
 class ProjectCreate(ProjectBase):
     pass

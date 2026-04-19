@@ -75,18 +75,18 @@ const MessagesPage = () => {
   };
 
   return (
-    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-[#050505] overflow-hidden">
+    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-background overflow-hidden">
       
       {/* Sidebar for chat list */}
-      <div className={`w-full md:w-96 border-r border-white/5 bg-[#080808] flex flex-col transition-all ${activeRoom ? 'hidden md:flex' : 'flex'}`}>
-        <div className="p-8 border-b border-white/5 bg-[#0a0a0a]">
-          <h2 className="text-3xl font-black font-display text-white mb-6 tracking-tight">{t('messages.title')}</h2>
+      <div className={`w-full md:w-96 border-r border-glass-border bg-glass-bg/50 backdrop-blur-xl flex flex-col transition-all ${activeRoom ? 'hidden md:flex' : 'flex'}`}>
+        <div className="p-8 border-b border-glass-border bg-glass-bg/80">
+          <h2 className="text-3xl font-black font-display text-foreground mb-6 tracking-tight">{t('messages.title')}</h2>
           <div className="relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30 group-focus-within:text-primary transition-colors" />
             <input 
               type="text" 
               placeholder={t('messages.search_chats')}
-              className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-primary/30 transition-all placeholder:text-foreground/20"
+              className="w-full bg-input-bg border border-input-border rounded-2xl py-4 pl-12 pr-4 text-sm text-foreground focus:outline-none focus:border-primary/30 transition-all placeholder:text-foreground/20"
             />
           </div>
         </div>
@@ -97,7 +97,7 @@ const MessagesPage = () => {
                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
              </div>
           ) : rooms.length === 0 ? (
-            <div className="flex flex-col items-center justify-center text-foreground/30 text-center p-12 h-64">
+            <div className="flex flex-col items-center justify-center text-foreground/50 text-center p-12 h-64">
               <MessageSquare size={48} className="mb-4 opacity-10" />
               <p className="text-sm">{t('messages.no_chats')}</p>
             </div>
@@ -107,26 +107,26 @@ const MessagesPage = () => {
                 <div 
                   key={room.id} 
                   onClick={() => setActiveRoom(room)}
-                  className={`flex items-center gap-4 p-6 border-b border-white/5 cursor-pointer transition-all hover:bg-white/5 ${activeRoom?.id === room.id ? 'bg-primary/5 border-l-4 border-l-primary' : ''}`}
+                  className={`flex items-center gap-4 p-6 border-b border-glass-border cursor-pointer transition-all hover:bg-foreground/5 ${activeRoom?.id === room.id ? 'bg-primary/5 border-l-4 border-l-primary' : ''}`}
                 >
                   <div className="relative">
-                    <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden border border-white/10 group-hover:scale-105 transition-transform">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden border border-glass-border group-hover:scale-105 transition-transform">
                        {room.other_user?.profile_picture_url ? (
                          <img src={room.other_user.profile_picture_url} className="w-full h-full object-cover" />
                        ) : (
                          <User className="w-6 h-6" />
                        )}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-[#080808]" />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-background" />
                   </div>
                   <div className="flex-1 min-w-0">
                      <div className="flex justify-between items-start mb-1">
-                       <h4 className="text-white font-bold text-base truncate">{room.other_user?.full_name || t('messages.unknown')}</h4>
+                       <h4 className="text-foreground font-bold text-base truncate">{room.other_user?.full_name || t('messages.unknown')}</h4>
                        <span className="text-[10px] text-foreground/30 font-bold uppercase tracking-widest">
                          {room.last_message?.created_at ? new Date(room.last_message.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
                        </span>
                      </div>
-                     <p className="text-xs text-foreground/40 truncate font-medium">
+                     <p className="text-xs text-foreground/50 truncate font-medium">
                        {room.last_message?.text || room.other_user?.profession || t('reels.profession_fallback')}
                      </p>
                   </div>
@@ -138,16 +138,16 @@ const MessagesPage = () => {
       </div>
       
       {/* Main chat area */}
-      <div className={`flex-1 flex flex-col bg-[#030303] relative ${!activeRoom ? 'hidden md:flex items-center justify-center' : 'flex'}`}>
+      <div className={`flex-1 flex flex-col bg-background/50 relative ${!activeRoom ? 'hidden md:flex items-center justify-center' : 'flex'}`}>
          {activeRoom ? (
            <>
              {/* Chat Header */}
-             <div className="p-6 border-b border-white/5 bg-[#050505]/80 backdrop-blur-3xl sticky top-0 z-10 flex items-center justify-between">
+             <div className="p-6 border-b border-glass-border bg-glass-bg/90 backdrop-blur-3xl sticky top-0 z-10 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <button onClick={() => setActiveRoom(null)} className="md:hidden p-2 text-white/50 hover:text-white mr-2">
+                  <button onClick={() => setActiveRoom(null)} className="md:hidden p-2 text-foreground/50 hover:text-foreground mr-2">
                     <ArrowLeft size={20} />
                   </button>
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-primary border border-white/10 overflow-hidden">
+                  <div className="w-12 h-12 rounded-2xl bg-foreground/5 flex items-center justify-center text-primary border border-glass-border overflow-hidden">
                     {activeRoom.other_user?.profile_picture_url ? (
                          <img src={activeRoom.other_user.profile_picture_url} className="w-full h-full object-cover" />
                        ) : (
@@ -155,7 +155,7 @@ const MessagesPage = () => {
                        )}
                   </div>
                   <div>
-                    <h3 className="text-white font-black text-lg">{activeRoom.other_user?.full_name}</h3>
+                    <h3 className="text-foreground font-black text-lg">{activeRoom.other_user?.full_name}</h3>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full" />
                       <p className="text-xs text-green-500/80 font-bold uppercase tracking-wider">{t('messages.online')}</p>
@@ -163,7 +163,7 @@ const MessagesPage = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                   <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-white/70 transition-colors">
+                   <button className="p-3 bg-foreground/5 hover:bg-foreground/10 rounded-xl text-foreground/70 transition-colors">
                      <Phone size={20} />
                    </button>
                    <button className="p-3 bg-primary/10 hover:bg-primary/20 rounded-xl text-primary transition-colors">
@@ -187,10 +187,10 @@ const MessagesPage = () => {
                         key={msg.id || idx} 
                         className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}
                       >
-                        <div className={`max-w-[70%] p-5 rounded-3xl shadow-xl border ${
+                        <div className={`max-w-[70%] p-5 rounded-3xl shadow-premium border ${
                           isMe 
                           ? 'bg-primary border-primary text-white rounded-tr-none' 
-                          : 'bg-[#111111] border-white/5 text-foreground/80 rounded-tl-none'
+                          : 'bg-glass-bg border-glass-border text-foreground/80 rounded-tl-none'
                         }`}>
                           <p className="text-[15px] leading-relaxed font-medium">{msg.text}</p>
                         </div>
@@ -205,9 +205,9 @@ const MessagesPage = () => {
              </div>
 
              {/* Input Area */}
-             <div className="p-8 bg-[#050505]/80 backdrop-blur-3xl border-t border-white/5">
+             <div className="p-8 bg-glass-bg/90 backdrop-blur-3xl border-t border-glass-border">
                 <form onSubmit={handleSendMessage} className="flex items-center gap-4 max-w-5xl mx-auto">
-                   <button type="button" className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl text-foreground/50 transition-colors">
+                   <button type="button" className="p-4 bg-foreground/5 hover:bg-foreground/10 rounded-2xl text-foreground/50 transition-colors">
                      <Plus size={24} />
                    </button>
                    <div className="flex-1 relative group">
@@ -216,7 +216,7 @@ const MessagesPage = () => {
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder={t('messages.type_message')}
-                        className="w-full bg-[#111111] border border-white/5 rounded-2xl py-5 px-6 text-white focus:outline-none focus:border-primary/50 transition-all placeholder:text-foreground/20"
+                        className="w-full bg-input-bg border border-input-border rounded-2xl py-5 px-6 text-foreground focus:outline-none focus:border-primary/50 transition-all placeholder:text-foreground/20"
                       />
                    </div>
                    <button 
@@ -236,11 +236,11 @@ const MessagesPage = () => {
          ) : (
            <div className="flex flex-col items-center">
              <div className="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 relative">
-               <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl" />
+               <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl opacity-20" />
                <MessageSquare className="w-14 h-14 text-primary relative z-10" />
              </div>
-             <h3 className="text-3xl font-black text-white mb-4 tracking-tight">{t('messages.select_chat')}</h3>
-             <p className="text-foreground/40 text-base max-w-sm text-center leading-relaxed font-medium">
+             <h3 className="text-3xl font-black text-foreground mb-4 tracking-tight font-display">{t('messages.select_chat')}</h3>
+             <p className="text-foreground/60 text-base max-w-sm text-center leading-relaxed font-medium">
                {t('messages.select_chat_desc')}
              </p>
            </div>

@@ -199,7 +199,7 @@ const ClientExplorePage = () => {
                   Joyida
                 </motion.h1>
                 <p className={`text-xl font-bold tracking-[2.5px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-sm ${
-                  currentTheme === 'light' ? 'text-foreground/90' : 'text-foreground/70 opacity-80'
+                  currentTheme === 'light' ? 'text-foreground/90' : 'text-foreground/80'
                 }`}>
                   {t('explore.headline')}
                 </p>
@@ -259,7 +259,7 @@ const ClientExplorePage = () => {
                   <div className="flex items-center gap-1 text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg text-sm font-bold">
                     <Star className="w-4 h-4 fill-current" /> {selectedSpecialist.rating || t('explore.new')}
                   </div>
-                  <div className="text-foreground/40 text-sm flex items-center gap-1">
+                  <div className="text-foreground/60 text-sm flex items-center gap-1">
                     <MapPin className="w-4 h-4" /> {t('explore.nearby')}
                   </div>
                 </div>

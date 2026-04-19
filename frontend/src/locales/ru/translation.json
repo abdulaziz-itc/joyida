@@ -232,13 +232,25 @@
     "logout": "Выйти"
   },
   "reels": {
-    "no_videos": "Видео пока нет",
-    "no_videos_desc": "Специалисты пока не опубликовали примеры своих работ.",
+    "no_videos": "Пока видео нет",
+    "no_videos_desc": "Специалисты еще не добавили образцы своих работ.",
     "follow": "Подписаться",
     "fallback_title": "Моя новая работа",
-    "fallback_desc": "Пример качественной работы, выполненной через платформу Joyida.",
+    "fallback_desc": "Пример качественного сервиса, выполненного через платформу Joyida.",
     "profession_fallback": "Специалист",
-    "location_fallback": "Ташкент"
+    "location_fallback": "Ташкент",
+    "explore": "Обзор",
+    "my_works": "Мои работы",
+    "search_placeholder": "Поиск видео...",
+    "upload_work": "Загрузить работу",
+    "upload_title": "Новый образец работы",
+    "video_url": "Ссылка на видео (URL)",
+    "work_title": "Заголовок",
+    "category": "Категория",
+    "description": "Описание",
+    "submit_upload": "Опубликовать сейчас",
+    "success_title": "Успех!",
+    "success_desc": "Ваша работа успешно опубликована."
   },
   "messages": {
     "title": "Сообщения",

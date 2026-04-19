@@ -25,9 +25,17 @@ def read_public_projects(
     db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 100,
+    search: Optional[str] = None
 ) -> Any:
     """Retrieve all public projects (for Reels)."""
-    projects = db.query(ProjectModel).offset(skip).limit(limit).all()
+    query = db.query(ProjectModel)
+    if search:
+        query = query.filter(
+            (ProjectModel.title.ilike(f"%{search}%")) | 
+            (ProjectModel.description.ilike(f"%{search}%")) |
+            (ProjectModel.category.ilike(f"%{search}%"))
+        )
+    projects = query.offset(skip).limit(limit).all()
     return projects
 
 @router.post("/", response_model=Project)

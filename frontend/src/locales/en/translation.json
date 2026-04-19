@@ -232,13 +232,25 @@
     "logout": "Logout"
   },
   "reels": {
-    "no_videos": "No Videos Yet",
+    "no_videos": "No videos yet",
     "no_videos_desc": "Experts haven't posted any work samples yet.",
     "follow": "Follow",
-    "fallback_title": "My New Work",
-    "fallback_desc": "Quality service sample performed through Joyida platform.",
-    "profession_fallback": "Specialist",
-    "location_fallback": "Tashkent"
+    "fallback_title": "My latest work",
+    "fallback_desc": "A sample of quality service provided through Joyida platform.",
+    "profession_fallback": "Expert",
+    "location_fallback": "Tashkent",
+    "explore": "Explore",
+    "my_works": "My Works",
+    "search_placeholder": "Search reels...",
+    "upload_work": "Upload Work",
+    "upload_title": "New Work Sample",
+    "video_url": "Video URL",
+    "work_title": "Title",
+    "category": "Category",
+    "description": "Description",
+    "submit_upload": "Share Now",
+    "success_title": "Success!",
+    "success_desc": "Your work has been published successfully."
   },
   "messages": {
     "title": "Messages",

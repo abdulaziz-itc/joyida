@@ -268,7 +268,19 @@
     "fallback_title": "Mening yangi ishim",
     "fallback_desc": "Joyida platformasi orqali bajarilgan sifatli xizmat namunasi.",
     "profession_fallback": "Mutaxassis",
-    "location_fallback": "Toshkent"
+    "location_fallback": "Toshkent",
+    "explore": "Kashf qilish",
+    "my_works": "Mening ishlarim",
+    "search_placeholder": "Videolarni qidirish...",
+    "upload_work": "Ishni yuklash",
+    "upload_title": "Yangi ish namunasi",
+    "video_url": "Video havolasi (URL)",
+    "work_title": "Sarlavha",
+    "category": "Toifa",
+    "description": "Tavsif",
+    "submit_upload": "Hoziroq ulashish",
+    "success_title": "Muvaffaqiyat!",
+    "success_desc": "Sizning ish namunangiz muvaffaqiyatli chop etildi."
   },
   "messages": {
     "title": "Xabarlar",
