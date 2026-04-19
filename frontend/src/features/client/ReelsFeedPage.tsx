@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Volume2, VolumeX, MessageCircle, Heart, Share2, 
   MapPin, Star, VideoOff, Search, Plus, 
-  Eye, X, PlayCircle, Play, Pause, Edit2, Trash2
+  Eye, X, PlayCircle, Play, Pause, Edit2, Trash2, Download
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../../api/apiClient';
@@ -149,6 +149,48 @@ const ReelsFeedPage = () => {
     setIsUploadModalOpen(true);
   };
 
+  const handleDownload = async (reelId: number, title: string) => {
+    try {
+      const response = await apiClient.get(`/utils/download-reel/${reelId}`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `JOIDA_${title}.mp4`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Download failed", err);
+      // Fallback: try direct video URL if watermark fails
+      const reel = reels.find(r => r.id === reelId);
+      if (reel?.video_url) {
+          window.open(getFileUrl(reel.video_url), '_blank');
+      }
+    }
+  };
+
+  const handleThumbnailCapture = async (reelId: number, videoElement: HTMLVideoElement) => {
+    try {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        
+        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL('image/jpeg', 0.8);
+        
+        await apiClient.post(`/utils/save-thumbnail/${reelId}`, { image: imageData });
+        
+        // Update local state to show the new thumb
+        setReels(prev => prev.map(r => r.id === reelId ? { ...r, thumbnail_url: 'updated' } : r));
+    } catch (err) {
+        console.debug("Thumbnail capture skipped or failed", err);
+    }
+  };
+
   return (
     <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-[#050510] overflow-hidden relative font-outfit">
       
@@ -282,6 +324,10 @@ const ReelsFeedPage = () => {
                 getReelUrl={getReelUrl}
                 handleLike={handleLike}
                 copyToClipboard={copyToClipboard}
+                onDownload={() => handleDownload(reel.id, reel.title)}
+                onCaptureThumb={(video: any) => {
+                    if (!reel.thumbnail_url) handleThumbnailCapture(reel.id, video);
+                }}
               />
             ))
           ) : (
@@ -314,6 +360,10 @@ const ReelsFeedPage = () => {
             className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4"
           >
             <button 
+              onDownload={() => handleDownload(selectedReel.id, selectedReel.title)}
+              onCaptureThumb={(video: any) => {
+                  if (!selectedReel.thumbnail_url) handleThumbnailCapture(selectedReel.id, video);
+              }}
               onClick={() => setSelectedReel(null)}
               className="absolute top-6 right-6 p-4 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all z-[110]"
             >
@@ -329,6 +379,10 @@ const ReelsFeedPage = () => {
                 getReelUrl={getReelUrl}
                 handleLike={handleLike}
                 copyToClipboard={copyToClipboard}
+                onDownload={() => handleDownload(selectedReel.id, selectedReel.title)}
+                onCaptureThumb={(video: any) => {
+                    if (!selectedReel.thumbnail_url) handleThumbnailCapture(selectedReel.id, video);
+                }}
                 isModal
               />
             </div>
@@ -339,7 +393,7 @@ const ReelsFeedPage = () => {
   );
 };
 
-const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLike, copyToClipboard, isModal = false }: any) => {
+const FullReelView = ({ reel, onClose, onDownload, onCaptureThumb, isPlaying, user, t, getReelUrl, handleLike, copyToClipboard, isModal = false }: any) => {
   const [isPaused, setIsPaused] = useState(false);
   const [showPlayIcon, setShowPlayIcon] = useState(false);
 
@@ -364,6 +418,7 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
             url={getReelUrl(reel.video_url)} 
             isMuted={isMuted} 
             isPlaying={isPlaying && !isPaused}
+            onLoadedData={onCaptureThumb}
           />
 
           {/* Play/Pause Center Indicator */}
@@ -439,6 +494,13 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
             label={reel.views_count || 0} 
             color="hover:text-blue-400" 
           />
+          <ReelInteractionButton 
+            icon={<Download size={28} className="drop-shadow-glow" />} 
+            label="Save" 
+            color="hover:text-primary" 
+            onClick={onDownload}
+          />
+
           <button 
             onClick={() => {
               if (navigator.share) {
@@ -508,7 +570,7 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
     return null;
   };
 
-  const thumb = getThumbnail(reel.video_url);
+  const thumb = reel.thumbnail_url ? getFileUrl(reel.thumbnail_url) : getThumbnail(reel.video_url);
   const isDirectVideo = isVideoUrl(reel.video_url);
 
   return (

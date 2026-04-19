@@ -6,6 +6,7 @@ interface SocialVideoPlayerProps {
   url: string;
   isMuted: boolean;
   isPlaying?: boolean;
+  onLoadedData?: (video: HTMLVideoElement) => void;
 }
 
 declare global {
@@ -14,7 +15,7 @@ declare global {
   }
 }
 
-const SocialVideoPlayer = ({ url, isMuted, isPlaying = false }: SocialVideoPlayerProps) => {
+const SocialVideoPlayer = ({ url, isMuted, isPlaying = false, onLoadedData }: SocialVideoPlayerProps) => {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [directUrl, setDirectUrl] = useState<string | null>(null);
@@ -139,7 +140,10 @@ const SocialVideoPlayer = ({ url, isMuted, isPlaying = false }: SocialVideoPlaye
           loop 
           muted={isMuted}
           playsInline
-          onLoadedData={() => setIsLoading(false)}
+          onLoadedData={(e: any) => {
+              setIsLoading(false);
+              if (onLoadedData) onLoadedData(e.target);
+          }}
           onError={() => {
               if (platform === 'instagram') {
                   setDirectUrl(null); // Fallback to iframe if direct mp4 fails to load

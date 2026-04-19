@@ -8,9 +8,11 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.db.session import get_db
-from app.models.user import User as UserModel
-from app.models.service import ServiceCategory
-from app.schemas.user import ServiceCategory as ServiceCategorySchema
+import base64
+import subprocess
+from fastapi.responses import FileResponse
+from app.models.project import Project as ProjectModel
+from app.db.session import get_db
 
 router = APIRouter()
 
@@ -111,3 +113,91 @@ def system_diagnostics(db: Session = Depends(get_db)):
         "upload_dir_exists": os.path.exists(UPLOAD_DIR)
     }
     return results
+
+@router.post("/save-thumbnail/{project_id}")
+def save_thumbnail(
+    project_id: int,
+    data: dict,
+    db: Session = Depends(get_db)
+):
+    """Save a base64 encoded thumbnail for a project."""
+    try:
+        project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+        # Decode base64
+        header, encoded = data["image"].split(",", 1)
+        image_data = base64.b64decode(encoded)
+
+        # Create directory
+        thumb_dir = "static/uploads/thumbnails"
+        if not os.path.exists(thumb_dir):
+            os.makedirs(thumb_dir)
+
+        filename = f"thumb_{project_id}_{uuid.uuid4().hex[:8]}.jpg"
+        file_path = os.path.join(thumb_dir, filename)
+
+        with open(file_path, "wb") as f:
+            f.write(image_data)
+
+        # Update project
+        project.thumbnail_url = f"/uploads/thumbnails/{filename}"
+        db.commit()
+
+        return {"status": "success", "url": project.thumbnail_url}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/download-reel/{project_id}")
+def download_reel(
+    project_id: int,
+    db: Session = Depends(get_db)
+):
+    """Download a reel with a JOIDA watermark."""
+    project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not project or not project.video_url:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    # Clean path
+    raw_path = project.video_url.lstrip('/')
+    if raw_path.startswith('uploads/'):
+        input_path = os.path.join("static", raw_path)
+    else:
+        # If it's an external URL, we'd need to download it first
+        # For now, let's assume it's local since we download them
+        input_path = raw_path
+
+    if not os.path.exists(input_path):
+         raise HTTPException(status_code=404, detail=f"File not found on server: {input_path}")
+
+    # Output path for watermarked video
+    output_dir = "static/uploads/exports"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    output_filename = f"joida_{os.path.basename(input_path)}"
+    output_path = os.path.join(output_dir, output_filename)
+
+    # Watermark command using ffmpeg
+    # drawtext filter: text='JOIDA', bottom right, white color, font size 24
+    command = [
+        "ffmpeg", "-y", "-i", input_path,
+        "-vf", "drawtext=text='JOIDA':x=w-tw-20:y=h-th-20:fontsize=48:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5",
+        "-c:a", "copy", output_path
+    ]
+
+    try:
+        subprocess.run(command, check=True, capture_output=True)
+        return FileResponse(
+            path=output_path, 
+            filename=f"JOIDA_{project.title}.mp4",
+            media_type="video/mp4"
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"FFmpeg error: {e.stderr.decode()}")
+        # Fallback to original if ffmpeg fails
+        return FileResponse(path=input_path, filename=f"{project.title}.mp4")
+    except Exception as e:
+         raise HTTPException(status_code=500, detail=str(e))

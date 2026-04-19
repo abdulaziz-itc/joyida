@@ -12,6 +12,7 @@ class ProjectBase(BaseModel):
     views_count: Optional[int] = 0
     likes_count: Optional[int] = 0
     is_downloaded: Optional[bool] = False
+    thumbnail_url: Optional[str] = None
 
 class ProjectCreate(ProjectBase):
     pass
