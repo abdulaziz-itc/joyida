@@ -38,20 +38,20 @@
 }
 
 [data-theme='light'] {
-  /* LIGHT THEME Overrides */
-  --bg-main: #f8fafc;
-  --fg-main: #0f172a;
-  --primary-val: #7c3aed;
-  --primary-hover-val: #6d28d9;
-  --primary-glow-val: rgba(124, 58, 237, 0.15);
+  /* LIGHT THEME Overrides - High Contrast Refinement */
+  --bg-main: #fcfdfe;
+  --fg-main: #020617;
+  --primary-val: #6d28d9;
+  --primary-hover-val: #5b21b6;
+  --primary-glow-val: rgba(109, 40, 217, 0.1);
   
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(15, 23, 42, 0.08);
-  --input-bg: rgba(15, 23, 42, 0.02);
-  --input-border: rgba(15, 23, 42, 0.1);
-  --text-muted: rgba(15, 23, 42, 0.5);
-  --shadow-val: 0 20px 60px rgba(15, 23, 42, 0.08);
-  --hero-gradient: linear-gradient(to bottom right, #0f172a, var(--primary-val));
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(2, 6, 23, 0.1);
+  --input-bg: rgba(2, 6, 23, 0.03);
+  --input-border: rgba(2, 6, 23, 0.12);
+  --text-muted: rgba(2, 6, 23, 0.55);
+  --shadow-val: 0 20px 50px rgba(2, 6, 23, 0.08);
+  --hero-gradient: linear-gradient(to bottom right, #020617, var(--primary-val));
 }
 
 /* Global resets for Tailwind 4.0 */

@@ -183,11 +183,17 @@ const ClientExplorePage = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-primary/60 drop-shadow-[0_0_50px_var(--color-primary-glow)] font-display tracking-tighter"
+                  className={`text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-sm ${
+                    currentTheme === 'light'
+                      ? 'bg-gradient-to-b from-primary to-primary/80'
+                      : 'bg-gradient-to-b from-white via-white to-primary/60 drop-shadow-[0_0_50px_var(--color-primary-glow)]'
+                  }`}
                 >
                   Joyida
                 </motion.h1>
-                <p className="text-foreground/70 text-xl font-medium tracking-[2px] max-w-2xl mx-auto leading-relaxed uppercase opacity-80">
+                <p className={`text-xl font-bold tracking-[2px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 ${
+                  currentTheme === 'light' ? 'text-foreground/80' : 'text-foreground/70 opacity-80'
+                }`}>
                   O'z mahallangizdan eng malakali mutaxassislarni toping.
                 </p>
              </div>
