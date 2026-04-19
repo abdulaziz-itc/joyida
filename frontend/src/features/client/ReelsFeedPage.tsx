@@ -164,11 +164,10 @@ const ReelsFeedPage = () => {
             </p>
           </div>
         ) : (
-          reels.map((reel) => {
             const getReelUrl = (url: string) => {
               if (!url) return '';
               if (url.startsWith('http')) return url;
-              const baseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
+              const baseUrl = import.meta.env.VITE_API_URL?.split('/api/')[0];
               const cleanPath = url.replace(/^\//, '');
               return `${baseUrl}/${cleanPath}`;
             };
