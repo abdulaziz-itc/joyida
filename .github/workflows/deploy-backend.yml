@@ -25,4 +25,13 @@ jobs:
           server-dir: backend/
           protocol: ftp
           port: 21
-          dangerous-clean-slate: false # We don't want to delete venv and other files on server
+          dangerous-clean-slate: false
+          exclude: |
+            venv/**
+            venv_old/**
+            **/__pycache__/**
+            .git/**
+            .github/**
+            joyida.db
+            app.db
+ # We don't want to delete venv and other files on server
