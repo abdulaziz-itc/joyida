@@ -10,15 +10,10 @@ def find_app_root():
             return parent
         current = parent
 
-# Robust paths
 APP_ROOT = find_app_root()
 db_path = os.path.join(APP_ROOT, "joyida.db")
 if not os.path.exists(db_path):
-    # Try common locations
-    possible = [
-        os.path.join(APP_ROOT, "backend", "joyida.db"),
-        "/home/joidauz/backend/joyida.db"
-    ]
+    possible = [os.path.join(APP_ROOT, "backend", "joyida.db"), "/home/joidauz/backend/joyida.db"]
     for p in possible:
         if os.path.exists(p):
             db_path = p
@@ -31,50 +26,46 @@ if not os.path.exists(db_path):
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-print(f"Starting Robust Integrity Audit on {db_path}...")
-print(f"System identified APP_ROOT at: {APP_ROOT}")
+print(f"Starting Intelligent Audit on {db_path}...")
 
 try:
+    # 1. Remove Exact URL Duplicates for same user (keep only the first one)
+    print("Checking for duplicate video URLs...")
+    cursor.execute("""
+        DELETE FROM projects 
+        WHERE id NOT IN (
+            SELECT MIN(id) 
+            FROM projects 
+            GROUP BY owner_id, video_url
+        )
+    """)
+    if cursor.rowcount > 0:
+        print(f"Removed {cursor.rowcount} duplicate project entries.")
+
+    # 2. Sync Missing Files
     cursor.execute("SELECT id, video_url, is_downloaded, thumbnail_url FROM projects")
     rows = cursor.fetchall()
     
     reset_count = 0
-    thumb_reset_count = 0
-    
     for row_id, video_url, is_downloaded, thumb_url in rows:
-        # Check Video
         if is_downloaded and video_url and video_url.startswith('/uploads/'):
-            # Convert URL to absolute disk path using identified APP_ROOT
             rel_path = video_url.lstrip('/')
             abs_path = os.path.join(APP_ROOT, "static", rel_path)
             
-            if not os.path.exists(abs_path):
-                print(f"MISSING: Project {row_id} - File {abs_path} not found. Resetting...")
+            if not os.path.exists(abs_path) or os.path.getsize(abs_path) == 0:
                 cursor.execute("UPDATE projects SET is_downloaded = 0 WHERE id = ?", (row_id,))
                 reset_count += 1
-            else:
-                # Optional: Check if file size is > 0
-                if os.path.getsize(abs_path) == 0:
-                     print(f"EMPTY: Project {row_id} - {abs_path} is 0 bytes. Resetting...")
-                     cursor.execute("UPDATE projects SET is_downloaded = 0 WHERE id = ?", (row_id,))
-                     reset_count += 1
 
-        # Check Thumbnail
         if thumb_url and thumb_url.startswith('/uploads/'):
             rel_thumb = thumb_url.lstrip('/')
             abs_thumb = os.path.join(APP_ROOT, "static", rel_thumb)
-            
             if not os.path.exists(abs_thumb):
-                 print(f"THUMB MISSING: Project {row_id} - {abs_thumb} not found. Resetting...")
                  cursor.execute("UPDATE projects SET thumbnail_url = NULL WHERE id = ?", (row_id,))
-                 thumb_reset_count += 1
-                 
+
     conn.commit()
-    print(f"Audit Complete.")
-    print(f"Reset {reset_count} videos and {thumb_reset_count} thumbnails.")
-    print(f"These will be re-downloaded next time the feed is loaded.")
+    print(f"Audit Complete. Reset {reset_count} missing files.")
 
 except Exception as e:
-    print(f"Integrity error: {str(e)}")
+    print(f"Audit error: {str(e)}")
 finally:
     conn.close()
