@@ -474,6 +474,8 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
 };
 
 const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) => {
+  const [imgError, setImgError] = useState(false);
+  
   const isVideoUrl = (url: string) => {
     if (!url) return false;
     return url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('/uploads/reels/');
@@ -491,8 +493,13 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
     // Instagram
     if (url.includes('instagram.com') || url.includes('instagr.am')) {
         // Try to extract shortcode to get thumbnail via media endpoint
-        const parts = url.split('/');
-        const shortcode = parts[parts.indexOf('reel') + 1] || parts[parts.indexOf('reels') + 1] || parts[parts.indexOf('p') + 1];
+        const parts = url.split('?')[0].split('/');
+        // Search for 'p', 'reel', or 'reels' and get the next part
+        let shortcode = '';
+        if (parts.includes('reel')) shortcode = parts[parts.indexOf('reel') + 1];
+        else if (parts.includes('reels')) shortcode = parts[parts.indexOf('reels') + 1];
+        else if (parts.includes('p')) shortcode = parts[parts.indexOf('p') + 1];
+        
         if (shortcode) {
             return `https://www.instagram.com/p/${shortcode}/media/?size=m`;
         }
@@ -512,8 +519,13 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
       className="aspect-[9/16] relative bg-slate-900 rounded-2xl overflow-hidden cursor-pointer group border border-white/5 shadow-premium"
     >
       <div className="absolute inset-0">
-        {thumb ? (
-          <img src={thumb} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" alt="" />
+        {thumb && !imgError ? (
+          <img 
+            src={thumb} 
+            className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" 
+            alt="" 
+            onError={() => setImgError(true)}
+          />
         ) : isDirectVideo ? (
           <video 
             src={reel.video_url} 
