@@ -1,12 +1,26 @@
 import sqlite3
 import os
 
-db_path = "backend/joyida.db"
+# Possible paths for the database
+possible_paths = [
+    "backend/joyida.db",
+    "joyida.db",
+    "app/joyida.db",
+    "../backend/joyida.db"
+]
 
-if not os.path.exists(db_path):
-    print(f"Error: {db_path} not found!")
+db_path = None
+for path in possible_paths:
+    if os.path.exists(path):
+        db_path = path
+        break
+
+if not db_path:
+    print("Error: joyida.db not found in any common locations!")
+    print(f"Searched in: {', '.join(possible_paths)}")
     exit(1)
 
+print(f"Found database at: {db_path}")
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
