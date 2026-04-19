@@ -1,3 +1,9 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, MapPin, Star, Filter, ArrowRight } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../../api/apiClient';
 
