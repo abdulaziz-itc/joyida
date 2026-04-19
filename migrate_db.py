@@ -25,18 +25,25 @@ print(f"Found database at: {db_path}")
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
+def add_column(table_name, column_name, column_type):
+    try:
+        cursor.execute(f"PRAGMA table_info({table_name})")
+        columns = [column[1] for column in cursor.fetchall()]
+        
+        if column_name not in columns:
+            print(f"Adding '{column_name}' column to {table_name} table...")
+            cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}")
+            conn.commit()
+            print(f"Column '{column_name}' added successfully.")
+        else:
+            print(f"Column '{column_name}' already exists in {table_name}.")
+    except Exception as e:
+        print(f"Error adding column {column_name}: {str(e)}")
+
 try:
-    # Check if column exists
-    cursor.execute("PRAGMA table_info(projects)")
-    columns = [column[1] for column in cursor.fetchall()]
-    
-    if "is_downloaded" not in columns:
-        print("Adding 'is_downloaded' column to projects table...")
-        cursor.execute("ALTER TABLE projects ADD COLUMN is_downloaded BOOLEAN DEFAULT 0")
-        conn.commit()
-        print("Success! Migration completed.")
-    else:
-        print("'is_downloaded' column already exists. No action needed.")
+    add_column("projects", "is_downloaded", "BOOLEAN DEFAULT 0")
+    add_column("projects", "thumbnail_url", "VARCHAR")
+    print("Migration check completed.")
 
 except Exception as e:
     print(f"Migration error: {str(e)}")
