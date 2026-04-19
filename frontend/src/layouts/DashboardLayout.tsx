@@ -49,7 +49,6 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
   };
 
   return (
-  return (
     <div className="flex min-h-screen bg-[#010103] text-white">
       {/* Floating Glass Sidebar */}
       <aside className="fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex flex-col bg-white/[0.03] backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] transition-all duration-500">
