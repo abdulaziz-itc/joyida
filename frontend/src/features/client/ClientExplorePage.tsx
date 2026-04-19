@@ -185,14 +185,14 @@ const ClientExplorePage = () => {
                   transition={{ duration: 0.8 }}
                   className={`text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-sm ${
                     currentTheme === 'light'
-                      ? 'bg-gradient-to-b from-primary to-primary/80'
+                      ? 'bg-gradient-to-b from-primary/80 via-primary to-primary-hover drop-shadow-[0_0_30px_rgba(255,255,255,0.8)]'
                       : 'bg-gradient-to-b from-white via-white to-primary/60 drop-shadow-[0_0_50px_var(--color-primary-glow)]'
                   }`}
                 >
                   Joyida
                 </motion.h1>
-                <p className={`text-xl font-bold tracking-[2px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 ${
-                  currentTheme === 'light' ? 'text-foreground/80' : 'text-foreground/70 opacity-80'
+                <p className={`text-xl font-bold tracking-[2.5px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-sm ${
+                  currentTheme === 'light' ? 'text-foreground/90' : 'text-foreground/70 opacity-80'
                 }`}>
                   O'z mahallangizdan eng malakali mutaxassislarni toping.
                 </p>
@@ -203,14 +203,14 @@ const ClientExplorePage = () => {
             <div className={`absolute inset-0 bg-primary/20 rounded-3xl blur-[60px] opacity-0 group-hover:opacity-40 transition-opacity duration-700`} />
             <div className="relative flex items-center bg-glass-bg backdrop-blur-3xl border border-glass-border p-2.5 rounded-3xl shadow-premium group-hover:border-primary/30 transition-all">
               <div className="pl-6">
-                <Search className={`w-6 h-6 ${isSearching ? 'text-primary animate-spin' : 'text-foreground/30'}`} />
+                <Search className={`w-6 h-6 ${isSearching ? 'text-primary animate-spin' : 'text-foreground/40'}`} />
               </div>
               <input 
                 type="text" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Qanday mutaxassis kerak? (masalan: Santexnik)"
-                className="flex-1 bg-transparent border-none focus:ring-0 text-foreground px-6 py-5 text-xl placeholder:text-foreground/20"
+                className={`flex-1 bg-transparent border-none focus:ring-0 text-foreground px-6 py-5 text-xl placeholder:text-foreground/40`}
               />
               <button 
                 type="submit"
