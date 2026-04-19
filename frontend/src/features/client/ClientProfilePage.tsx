@@ -165,7 +165,7 @@ const ClientProfilePage = () => {
         
         {/* LEFT ASPECT: Brand & Info */}
         <div className="w-full lg:w-1/3 space-y-6">
-          <div className="glass-card p-8 border-white/5 shadow-2xl relative overflow-hidden group">
+          <div className="glass-card p-8 border-white/5 shadow-premium relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
             
             <div className="relative w-32 h-32 mx-auto mb-6">
@@ -193,7 +193,7 @@ const ClientProfilePage = () => {
             </div>
 
             <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-black text-white leading-tight">{user?.full_name || 'Foydalanuvchi'}</h2>
+              <h2 className="text-2xl font-black text-foreground leading-tight">{user?.full_name || 'Foydalanuvchi'}</h2>
               <p className="text-foreground/40 font-medium text-xs tracking-wider">{user?.email}</p>
               <div className="pt-4">
                 <span className="px-5 py-2 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-2xl border border-primary/20 shadow-glow-primary">
@@ -202,24 +202,24 @@ const ClientProfilePage = () => {
               </div>
             </div>
 
-            <div className="space-y-4 pt-6 border-t border-white/5">
-              <div className="flex items-center justify-between p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+            <div className="space-y-4 pt-6 border-t border-glass-border">
+              <div className="flex items-center justify-between p-4 bg-white/[0.02] rounded-2xl border border-glass-border">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Globe className="w-4 h-4" /></div>
                   <span className="text-xs font-black uppercase tracking-widest text-foreground/60">{t.language}</span>
                 </div>
-                <span className="text-xs font-black text-white">O'zbek</span>
+                <span className="text-xs font-black text-foreground">O'zbek</span>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-white/[0.02] rounded-2xl border border-white/5">
+              <div className="flex items-center justify-between p-4 bg-white/[0.02] rounded-2xl border border-glass-border">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500">
                     {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
                   </div>
                   <span className="text-xs font-black uppercase tracking-widest text-foreground/60">{t.appearance}</span>
                 </div>
-                <button onClick={toggleTheme} className="w-12 h-6 bg-white/10 rounded-full relative p-1">
-                  <motion.div animate={{ x: theme === 'dark' ? 24 : 0 }} className="w-4 h-4 bg-white rounded-full shadow-lg" />
+                <button onClick={toggleTheme} className="w-12 h-6 bg-foreground/10 rounded-full relative p-1 transition-colors">
+                  <motion.div animate={{ x: theme === 'dark' ? 24 : 0 }} className="w-4 h-4 bg-background rounded-full shadow-lg" />
                 </button>
               </div>
 
@@ -234,7 +234,7 @@ const ClientProfilePage = () => {
         <div className="w-full lg:w-2/3 space-y-8">
           
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl md:text-4xl font-black text-white font-display tracking-tight leading-none">{t.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-black text-foreground font-display tracking-tight leading-none">{t.title}</h1>
             <button 
               onClick={handleSave}
               disabled={saveStatus === 'saving'}
@@ -248,11 +248,11 @@ const ClientProfilePage = () => {
           <div className="space-y-6">
             
             {/* 1. PERSONAL & BIO */}
-            <div className="glass-card p-6 md:p-8 border-white/5 shadow-xl space-y-8">
+            <div className="glass-card p-6 md:p-8 border-glass-border shadow-xl space-y-8">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-glow-primary"><Edit3 className="w-6 h-6" /></div>
                 <div>
-                  <h3 className="text-xl font-black text-white">{t.personal}</h3>
+                  <h3 className="text-xl font-black text-foreground">{t.personal}</h3>
                   <p className="text-sm text-foreground/40 font-medium">{t.personalDesc}</p>
                 </div>
               </div>

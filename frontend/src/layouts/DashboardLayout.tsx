@@ -49,19 +49,19 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
   };
 
   return (
-    <div className="flex min-h-screen bg-[#010103] text-white">
+    <div className="flex min-h-screen bg-background text-foreground transition-colors duration-500">
       {/* Floating Glass Sidebar */}
-      <aside className="fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex flex-col bg-white/[0.03] backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] transition-all duration-500">
-        <div className="flex items-center gap-3 mb-10 px-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-2xl shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-white/10">
+      <aside className="fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex flex-col bg-glass-bg backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-premium transition-all duration-500">
+        <div className="flex items-center gap-3 mb-10 px-2 text-foreground">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-2xl shadow-[0_0_20px_var(--color-primary-glow)] border border-white/10">
             J
           </div>
-          <span className="text-2xl font-black tracking-tight text-white font-display">Joyida</span>
+          <span className="text-2xl font-black tracking-tight font-display">Joyida</span>
         </div>
 
         <nav className="flex-1 space-y-1.5 overflow-y-auto no-scrollbar">
           {user?.is_superuser && (
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 text-foreground">
               <NavItem icon={ShieldCheck} label="Admin Console" active={currentPage === 'admin'} onClick={() => onNavigate('admin')} />
               <NavItem icon={LayoutDashboard} label="Dashboard" active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
               <NavItem icon={Users} label="Users" />
@@ -106,7 +106,7 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
       </aside>
 
       {/* Main Content - Detached and shifted for the floating sidebar */}
-      <main className="flex-1 ml-[19rem] min-h-screen bg-transparent relative">
+      <main className="flex-1 ml-[19rem] min-h-screen bg-transparent relative transition-all duration-500">
         {children}
         
         <AnimatePresence>

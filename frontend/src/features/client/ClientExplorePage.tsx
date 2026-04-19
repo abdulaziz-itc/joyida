@@ -32,13 +32,19 @@ const ClientExplorePage = () => {
   const [searchStatus, setSearchStatus] = useState('');
   const [userLocation, setUserLocation] = useState<[number, number]>([41.311081, 69.240562]);
 
-  // Handle location discovery
+  const [currentTheme, setCurrentTheme] = useState(document.documentElement.getAttribute('data-theme') || 'dark');
+  
+  // Observe theme changes
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        setUserLocation([pos.coords.latitude, pos.coords.longitude]);
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          setCurrentTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+        }
       });
-    }
+    });
+    observer.observe(document.documentElement, { attributes: true });
+    return () => observer.disconnect();
   }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -100,22 +106,26 @@ const ClientExplorePage = () => {
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-theme(spacing.16))] md:h-screen overflow-hidden">
+    <div className="relative w-full h-[calc(100vh-theme(spacing.16))] md:h-screen overflow-hidden bg-background">
       
       {/* Full-screen Background Layer */}
       <motion.div 
-        initial={{ scale: 1.1, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 2 }}
-        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        key={currentTheme}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
         style={{ 
-          backgroundImage: 'url("/assets/globe-realistic.png")',
-          backgroundColor: '#010103'
+          backgroundImage: currentTheme === 'light' ? 'url("/assets/specialist-map-light.png")' : 'url("/assets/globe-realistic.png")',
         }}
       />
       
       {/* Background Overlays for Depth and Contrast */}
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none" />
+      <div className={`fixed inset-0 z-0 pointer-events-none transition-colors duration-1000 ${
+        currentTheme === 'light' 
+          ? 'bg-gradient-to-b from-white/40 via-transparent to-white/40' 
+          : 'bg-gradient-to-b from-black/60 via-transparent to-black/80'
+      }`} />
       <div className="fixed inset-0 z-0 backdrop-blur-[1px] pointer-events-none" />
 
       {/* Real Map Layer */}
@@ -129,12 +139,15 @@ const ClientExplorePage = () => {
             <MapContainer 
                center={userLocation} 
                zoom={13} 
-               style={{ width: '100%', height: '100%', background: '#050505' }}
+               style={{ width: '100%', height: '100%', background: currentTheme === 'light' ? '#f1f5f9' : '#050505' }}
                zoomControl={false}
             >
               <ChangeView center={userLocation} zoom={isSearching ? 12 : 14} />
               <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                url={currentTheme === 'light' 
+                  ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                  : "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                }
               />
               {specialists.map(spec => (
                 <Marker 
@@ -170,11 +183,11 @@ const ClientExplorePage = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-primary/60 drop-shadow-[0_0_50px_rgba(168,85,247,0.3)] font-display tracking-tighter"
+                  className="text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-primary/60 drop-shadow-[0_0_50px_var(--color-primary-glow)] font-display tracking-tighter"
                 >
                   Joyida
                 </motion.h1>
-                <p className="text-white/70 text-xl font-medium tracking-[2px] max-w-2xl mx-auto leading-relaxed uppercase opacity-80">
+                <p className="text-foreground/70 text-xl font-medium tracking-[2px] max-w-2xl mx-auto leading-relaxed uppercase opacity-80">
                   O'z mahallangizdan eng malakali mutaxassislarni toping.
                 </p>
              </div>
@@ -182,7 +195,7 @@ const ClientExplorePage = () => {
 
           <form onSubmit={handleSearch} className="pointer-events-auto relative group max-w-2xl mx-auto">
             <div className={`absolute inset-0 bg-primary/20 rounded-3xl blur-[60px] opacity-0 group-hover:opacity-40 transition-opacity duration-700`} />
-            <div className="relative flex items-center bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-2.5 rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.6)] group-hover:border-white/20 transition-all">
+            <div className="relative flex items-center bg-glass-bg backdrop-blur-3xl border border-glass-border p-2.5 rounded-3xl shadow-premium group-hover:border-primary/30 transition-all">
               <div className="pl-6">
                 <Search className={`w-6 h-6 ${isSearching ? 'text-primary animate-spin' : 'text-foreground/30'}`} />
               </div>
@@ -191,12 +204,12 @@ const ClientExplorePage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Qanday mutaxassis kerak? (masalan: Santexnik)"
-                className="flex-1 bg-transparent border-none focus:ring-0 text-white px-6 py-5 text-xl placeholder:text-foreground/20"
+                className="flex-1 bg-transparent border-none focus:ring-0 text-foreground px-6 py-5 text-xl placeholder:text-foreground/20"
               />
               <button 
                 type="submit"
                 disabled={isSearching}
-                className="bg-primary hover:bg-primary-hover text-white px-10 py-5 rounded-2xl font-black transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                className="glow-button !px-10 !py-5 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
               >
                 {isSearching ? '...' : 'Topish'}
               </button>
