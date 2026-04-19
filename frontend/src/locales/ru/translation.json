@@ -216,5 +216,19 @@
     "skills": "Навыки",
     "languages": "Языки",
     "socials": "Социальные сети"
+  },
+  "nav": {
+    "admin": "Админ Панель",
+    "dashboard": "Панель управления",
+    "users": "Пользователи",
+    "analytics": "Аналитика",
+    "settings": "Настройки",
+    "projects": "Заказы и Проекты",
+    "messages": "Сообщения",
+    "explore": "Поиск",
+    "reels": "Reels",
+    "profile": "Профиль и Настройки",
+    "upgrade": "Перейти на PRO",
+    "logout": "Выйти"
   }
 }

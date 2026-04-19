@@ -4,6 +4,7 @@ import {
   ShieldCheck, MapPin, Zap, Users, PieChart, Film, MessageCircle, User 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/authStore';
 import SubscriptionPlans from '../features/subscription/SubscriptionPlans';
 import CheckoutOverlay from '../features/subscription/CheckoutOverlay';
@@ -33,6 +34,7 @@ const NavItem = ({ icon: Icon, label, active = false, onClick }: any) => (
 );
 
 const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any, onNavigate: (page: string) => void, currentPage: string }) => {
+  const { t } = useTranslation();
   const { logout, user } = useAuthStore();
   const [showPlans, setShowPlans] = React.useState(false);
   const [showCheckout, setShowCheckout] = React.useState(false);
@@ -62,29 +64,29 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         <nav className="flex-1 space-y-1.5 overflow-y-auto no-scrollbar">
           {user?.is_superuser && (
             <div className="space-y-1.5 text-foreground">
-              <NavItem icon={ShieldCheck} label="Admin Console" active={currentPage === 'admin'} onClick={() => onNavigate('admin')} />
-              <NavItem icon={LayoutDashboard} label="Dashboard" active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
-              <NavItem icon={Users} label="Users" />
-              <NavItem icon={PieChart} label="Analytics" />
-              <NavItem icon={Settings} label="Settings" />
+              <NavItem icon={ShieldCheck} label={t('nav.admin')} active={currentPage === 'admin'} onClick={() => onNavigate('admin')} />
+              <NavItem icon={LayoutDashboard} label={t('nav.dashboard')} active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
+              <NavItem icon={Users} label={t('nav.users')} />
+              <NavItem icon={PieChart} label={t('nav.analytics')} />
+              <NavItem icon={Settings} label={t('nav.settings')} />
             </div>
           )}
 
           {!user?.is_superuser && user?.is_expert && (
             <div className="space-y-1.5">
-              <NavItem icon={LayoutDashboard} label="Dashboard" active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
-              <NavItem icon={Briefcase} label="Orders/Projects" active={currentPage === 'projects'} onClick={() => onNavigate('projects')} />
-              <NavItem icon={MessageCircle} label="Messages" active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
-              <NavItem icon={Settings} label="Settings" active={currentPage === 'settings'} onClick={() => onNavigate('settings')} />
+              <NavItem icon={LayoutDashboard} label={t('nav.dashboard')} active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
+              <NavItem icon={Briefcase} label={t('nav.projects')} active={currentPage === 'projects'} onClick={() => onNavigate('projects')} />
+              <NavItem icon={MessageCircle} label={t('nav.messages')} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
+              <NavItem icon={Settings} label={t('nav.settings')} active={currentPage === 'settings'} onClick={() => onNavigate('settings')} />
             </div>
           )}
 
           {!user?.is_superuser && !user?.is_expert && (
             <div className="space-y-1.5">
-              <NavItem icon={MapPin} label="Explore" active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
-              <NavItem icon={Film} label="Reels" active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
-              <NavItem icon={MessageCircle} label="Messages" active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
-              <NavItem icon={User} label="Profile & Settings" active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
+              <NavItem icon={MapPin} label={t('nav.explore')} active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
+              <NavItem icon={Film} label={t('nav.reels')} active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
+              <NavItem icon={MessageCircle} label={t('nav.messages')} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
+              <NavItem icon={User} label={t('nav.profile')} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
             </div>
           )}
         </nav>
@@ -97,11 +99,11 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
               onClick={() => setShowPlans(true)}
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-[#050505] font-black text-xs uppercase tracking-[2px] flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(251,191,36,0.2)]"
             >
-               <Zap className="w-4 h-4 fill-current" /> Upgrade
+               <Zap className="w-4 h-4 fill-current" /> {t('nav.upgrade')}
             </motion.button>
           )}
           
-          <NavItem icon={LogOut} label="Logout" onClick={logout} />
+          <NavItem icon={LogOut} label={t('nav.logout')} onClick={logout} />
         </div>
       </aside>
 

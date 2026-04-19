@@ -216,5 +216,19 @@
     "skills": "Skills",
     "languages": "Languages",
     "socials": "Social Networks"
+  },
+  "nav": {
+    "admin": "Admin Console",
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "projects": "Orders & Projects",
+    "messages": "Messages",
+    "explore": "Explore",
+    "reels": "Reels",
+    "profile": "Profile & Settings",
+    "upgrade": "Upgrade to PRO",
+    "logout": "Logout"
   }
 }

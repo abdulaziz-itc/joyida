@@ -246,5 +246,19 @@
     "skills": "Ko'nikmalar",
     "languages": "Tillar",
     "socials": "Ijtimoiy tarmoqlar"
+  },
+  "nav": {
+    "admin": "Admin Panel",
+    "dashboard": "Boshqaruv paneli",
+    "users": "Foydalanuvchilar",
+    "analytics": "Analitika",
+    "settings": "Sozlamalar",
+    "projects": "Buyurtmalar va Loyihalar",
+    "messages": "Xabarlar",
+    "explore": "Qidiruv",
+    "reels": "Reels",
+    "profile": "Profil va Sozlamalar",
+    "upgrade": "PRO darajaga o'tish",
+    "logout": "Chiqish"
   }
 }
