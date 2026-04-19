@@ -1,0 +1,27 @@
+name: Deploy Backend to cPanel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚀 Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd ~/repositories/joyida
+            git pull origin main
+            cp -rf ~/repositories/joyida/backend/* /home/joidauz/backend/
+            mkdir -p /home/joidauz/backend/tmp
+            touch /home/joidauz/backend/tmp/restart.txt
+            echo "✅ Backend muvaffaqiyatli yangilandi va restart qilindi!"
