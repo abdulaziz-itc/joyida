@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Volume2, VolumeX, MessageCircle, Heart, Share2, 
   MapPin, Star, VideoOff, Search, Plus, 
-  Eye, X, PlayCircle
+  Eye, X, PlayCircle, Play, Pause
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../../api/apiClient';
@@ -314,6 +314,15 @@ const ReelsFeedPage = () => {
 };
 
 const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLike, copyToClipboard, isModal = false }: any) => {
+  const [isPaused, setIsPaused] = useState(false);
+  const [showPlayIcon, setShowPlayIcon] = useState(false);
+
+  const handleTogglePlay = () => {
+    setIsPaused(!isPaused);
+    setShowPlayIcon(true);
+    setTimeout(() => setShowPlayIcon(false), 800);
+  };
+
   return (
     <div 
       data-reel-item="true"
@@ -321,12 +330,31 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
       className={`w-full h-full ${isModal ? '' : 'snap-start'} relative flex justify-center items-center bg-black overflow-hidden`}
     >
       <div className={`relative w-full ${isModal ? 'h-full' : 'max-w-[450px] h-[95vh] rounded-[2.5rem]'} bg-black overflow-hidden shadow-2xl group border border-white/5`}>
-        <div className="absolute inset-0 z-0">
+        <div 
+            className="absolute inset-0 z-0 cursor-pointer"
+            onClick={handleTogglePlay}
+        >
           <SocialVideoPlayer 
             url={getReelUrl(reel.video_url)} 
             isMuted={isMuted} 
-            isPlaying={isPlaying}
+            isPlaying={isPlaying && !isPaused}
           />
+
+          {/* Play/Pause Center Indicator */}
+          <AnimatePresence>
+              {showPlayIcon && (
+                  <motion.div
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1.2, opacity: 1 }}
+                      exit={{ scale: 1.5, opacity: 0 }}
+                      className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
+                  >
+                      <div className="w-20 h-20 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white border border-white/20">
+                          {isPaused ? <Play size={40} fill="currentColor" /> : <Pause size={40} fill="currentColor" />}
+                      </div>
+                  </motion.div>
+              )}
+          </AnimatePresence>
         </div>
         
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none z-10" />
@@ -419,27 +447,63 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
   );
 };
 
-const ReelGridCard = ({ reel, onClick }: any) => (
-  <motion.div 
-    whileHover={{ scale: 0.98 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={onClick}
-    className="aspect-[9/16] relative bg-white/5 rounded-2xl overflow-hidden cursor-pointer group border border-white/5 shadow-premium"
-  >
-    <div className="absolute inset-0 flex items-center justify-center">
-       <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white group-hover:scale-110 transition-all">
-         <PlayCircle size={24} />
-       </div>
-    </div>
-    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
-    <div className="absolute bottom-0 left-0 right-0 p-4">
-      <h5 className="text-white text-xs font-bold truncate mb-1">{reel.title}</h5>
-      <div className="flex items-center gap-2 text-[10px] text-white/60 font-black uppercase tracking-widest">
-        <Eye size={10} /> {reel.views_count || 0}
+const ReelGridCard = ({ reel, onClick }: any) => {
+  const isVideoUrl = (url: string) => {
+    if (!url) return false;
+    return url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('/uploads/reels/');
+  };
+
+  const getYouTubeThumb = (url: string) => {
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      const id = url.split('v=')[1] || url.split('/').pop();
+      return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+    }
+    return null;
+  };
+
+  const thumb = getYouTubeThumb(reel.video_url);
+  const isDirectVideo = isVideoUrl(reel.video_url);
+
+  return (
+    <motion.div 
+      whileHover={{ scale: 0.98 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
+      className="aspect-[9/16] relative bg-slate-900 rounded-2xl overflow-hidden cursor-pointer group border border-white/5 shadow-premium"
+    >
+      <div className="absolute inset-0">
+        {thumb ? (
+          <img src={thumb} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" alt="" />
+        ) : isDirectVideo ? (
+          <video 
+            src={reel.video_url} 
+            className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
+            preload="metadata"
+            muted
+            playsInline
+          />
+        ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                <PlayCircle size={40} className="text-white/10" />
+            </div>
+        )}
       </div>
-    </div>
-  </motion.div>
-);
+
+      <div className="absolute inset-0 flex items-center justify-center z-10">
+         <div className="w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-primary transition-all border border-white/10">
+           <PlayCircle size={24} />
+         </div>
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+        <h5 className="text-white text-[11px] font-bold truncate mb-1 tracking-tight">{reel.title}</h5>
+        <div className="flex items-center gap-2 text-[9px] text-white/60 font-black uppercase tracking-widest">
+          <Eye size={10} className="text-primary/60" /> {reel.views_count || 0}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const ReelInteractionButton = ({ icon, label, color, onClick }: any) => (
   <button onClick={onClick} className="flex flex-col items-center gap-1 group transition-all pointer-events-auto">

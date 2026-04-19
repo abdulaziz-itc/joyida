@@ -1,10 +1,23 @@
 import os
 import uuid
+import sys
+import subprocess
+
 try:
     import yt_dlp
     YT_DLP_AVAILABLE = True
 except ImportError:
-    YT_DLP_AVAILABLE = False
+    try:
+        # Self-healing: try to install yt-dlp into the current environment
+        print("yt-dlp missing. Attempting self-installation...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "yt-dlp"])
+        import yt_dlp
+        YT_DLP_AVAILABLE = True
+        print("yt-dlp successfully installed.")
+    except Exception as e:
+        print(f"Self-installation of yt-dlp failed: {str(e)}")
+        YT_DLP_AVAILABLE = False
+
 from sqlalchemy.orm import Session
 from app.models.project import Project as ProjectModel
 
@@ -22,8 +35,16 @@ def download_social_video(project_id: int, db_session_factory: callable):
             return
 
         original_url = project.video_url
-        if not any(x in original_url for x in ['instagram.com', 'tiktok.com', 'youtube.com', 'youtu.be']):
-            return # Not a social link we handle
+        # normalize URL and check platforms
+        url_lower = original_url.lower()
+        is_social = any(x in url_lower for x in [
+            'instagram.com', 'instagr.am', 
+            'tiktok.com', 'vm.tiktok.com', 
+            'youtube.com', 'youtu.be'
+        ])
+        
+        if not is_social:
+            return 
 
         if not YT_DLP_AVAILABLE:
             print(f"Skipping download for project {project_id}: yt-dlp library not installed on server.")

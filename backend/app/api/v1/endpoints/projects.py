@@ -55,8 +55,15 @@ def create_project(
     
     # If the URL is a social media link, trigger background download
     url = project.video_url
-    if url and any(x in url for x in ['instagram.com', 'tiktok.com', 'youtube.com', 'youtu.be']):
-        background_tasks.add_task(download_social_video, project.id, SessionLocal)
+    if url:
+        url_lower = url.lower()
+        is_social = any(x in url_lower for x in [
+            'instagram.com', 'instagr.am', 
+            'tiktok.com', 'vm.tiktok.com', 
+            'youtube.com', 'youtu.be'
+        ])
+        if is_social:
+            background_tasks.add_task(download_social_video, project.id, SessionLocal)
         
     return project
 
