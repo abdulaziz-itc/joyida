@@ -11,6 +11,9 @@ from app.db.session import get_db
 import base64
 import subprocess
 from fastapi.responses import FileResponse
+from app.models.user import User as UserModel
+from app.models.service import ServiceCategory
+from app.schemas.user import ServiceCategory as ServiceCategorySchema
 from app.models.project import Project as ProjectModel
 from app.db.session import get_db
 
