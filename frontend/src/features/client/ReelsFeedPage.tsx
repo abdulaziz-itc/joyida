@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Volume2, VolumeX, MessageCircle, Heart, Share2, 
   MapPin, Star, VideoOff, Search, Plus, 
-  Eye, X, PlayCircle, Play, Pause
+  Eye, X, PlayCircle, Play, Pause, Edit2, Trash2
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../../api/apiClient';
@@ -20,6 +20,7 @@ const ReelsFeedPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'explore' | 'my-works'>('explore');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [editingReel, setEditingReel] = useState<any | null>(null);
   const [showSearch, setShowSearch] = useState(false);
   const [viewedReels, setViewedReels] = useState<Set<number>>(new Set());
   const [selectedReel, setSelectedReel] = useState<any | null>(null);
@@ -130,6 +131,24 @@ const ReelsFeedPage = () => {
     return `${baseUrl}/${cleanPath}`;
   };
 
+  const handleDeleteReel = async (e: React.MouseEvent, reelId: number) => {
+    e.stopPropagation();
+    if (!window.confirm(t('reels.confirm_delete', 'Ushbu ish namunasini o\'chirishga ishonchingiz komilmi?'))) return;
+    
+    try {
+      await apiClient.delete(`/projects/${reelId}`);
+      setReels(prev => prev.filter(r => r.id !== reelId));
+    } catch (err) {
+      console.error("Delete failed", err);
+    }
+  };
+
+  const handleEditReel = (e: React.MouseEvent, reel: any) => {
+    e.stopPropagation();
+    setEditingReel(reel);
+    setIsUploadModalOpen(true);
+  };
+
   return (
     <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-[#050510] overflow-hidden relative font-outfit">
       
@@ -141,7 +160,11 @@ const ReelsFeedPage = () => {
 
       <UploadReelModal 
         isOpen={isUploadModalOpen} 
-        onClose={() => setIsUploadModalOpen(false)} 
+        editingProject={editingReel}
+        onClose={() => {
+          setIsUploadModalOpen(false);
+          setEditingReel(null);
+        }} 
         onSuccess={() => fetchReels('', activeTab === 'my-works')}
       />
 
@@ -267,6 +290,9 @@ const ReelsFeedPage = () => {
                 <ReelGridCard 
                   key={reel.id} 
                   reel={reel} 
+                  showControls={activeTab === 'my-works'}
+                  onDelete={(e: any) => handleDeleteReel(e, reel.id)}
+                  onEdit={(e: any) => handleEditReel(e, reel)}
                   onClick={() => {
                     setSelectedReel(reel);
                     handleView(reel.id);
@@ -447,7 +473,7 @@ const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLik
   );
 };
 
-const ReelGridCard = ({ reel, onClick }: any) => {
+const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) => {
   const isVideoUrl = (url: string) => {
     if (!url) return false;
     return url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('/uploads/reels/');
@@ -505,6 +531,25 @@ const ReelGridCard = ({ reel, onClick }: any) => {
             </div>
         )}
       </div>
+
+      {showControls && (
+          <div className="absolute top-3 right-3 z-30 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 duration-300">
+              <button 
+                onClick={onEdit}
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-all border border-white/10"
+                title="Edit"
+              >
+                  <Edit2 size={14} />
+              </button>
+              <button 
+                onClick={onDelete}
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-all border border-white/10"
+                title="Delete"
+              >
+                  <Trash2 size={14} />
+              </button>
+          </div>
+      )}
 
       <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
          <div className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center text-white scale-75 group-hover:scale-100 transition-transform border border-white/20">

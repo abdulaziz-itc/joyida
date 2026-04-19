@@ -8,20 +8,33 @@ interface UploadReelModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  editingProject?: any;
 }
 
 type SourceType = 'url' | 'file' | null;
 
-const UploadReelModal = ({ isOpen, onClose, onSuccess }: UploadReelModalProps) => {
+const UploadReelModal = ({ isOpen, onClose, onSuccess, editingProject }: UploadReelModalProps) => {
   const { t } = useTranslation();
   const [sourceType, setSourceType] = useState<SourceType>(null);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [videoUrl, setVideoUrl] = useState(''); 
+  const [title, setTitle] = useState(editingProject?.title || '');
+  const [description, setDescription] = useState(editingProject?.description || '');
+  const [category, setCategory] = useState(editingProject?.category || '');
+  const [videoUrl, setVideoUrl] = useState(editingProject?.video_url || ''); 
   const [isUploading, setIsUploading] = useState(false);
-  const [step, setStep] = useState(0); // 0: Choice, 1: Source Input, 2: Metadata, 3: Success
+  const [step, setStep] = useState(editingProject ? 2 : 0); // 0: Choice, 1: Source Input, 2: Metadata, 3: Success
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (editingProject && isOpen) {
+      setTitle(editingProject.title || '');
+      setDescription(editingProject.description || '');
+      setCategory(editingProject.category || '');
+      setVideoUrl(editingProject.video_url || '');
+      setStep(2);
+    } else if (!editingProject && isOpen) {
+       resetForm();
+    }
+  }, [editingProject, isOpen]);
 
   const getPlatformIcon = (link: string) => {
     if (link.includes('instagram.com')) return <Instagram className="w-5 h-5 text-pink-500" />;
@@ -55,13 +68,20 @@ const UploadReelModal = ({ isOpen, onClose, onSuccess }: UploadReelModalProps) =
     e.preventDefault();
     setIsUploading(true);
     try {
-      await apiClient.post('/projects/', {
+      const payload = {
         title,
         description,
         category,
         video_url: videoUrl,
         status: 'Completed'
-      });
+      };
+
+      if (editingProject) {
+        await apiClient.put(`/projects/${editingProject.id}`, payload);
+      } else {
+        await apiClient.post('/projects/', payload);
+      }
+      
       setStep(3); // Success step
       setTimeout(() => {
         onSuccess();
@@ -69,7 +89,7 @@ const UploadReelModal = ({ isOpen, onClose, onSuccess }: UploadReelModalProps) =
         resetForm();
       }, 2500);
     } catch (err) {
-      console.error("Project creation failed", err);
+      console.error("Operation failed", err);
     } finally {
       setIsUploading(false);
     }
@@ -128,7 +148,11 @@ const UploadReelModal = ({ isOpen, onClose, onSuccess }: UploadReelModalProps) =
               <div className="flex justify-between items-center mb-10">
                 <div className="space-y-1">
                   <h3 className="text-2xl font-black font-display text-white tracking-tight">
-                    {step === 3 ? t('reels.success_title', 'Muvaffaqiyat!') : t('reels.upload_title', 'Yangi ish namunasi')}
+                    {step === 3 
+                      ? t('reels.success_title', 'Muvaffaqiyat!') 
+                      : editingProject 
+                        ? t('reels.edit_title', 'Tahrirlash') 
+                        : t('reels.upload_title', 'Yangi ish namunasi')}
                   </h3>
                   {step < 3 && (
                     <p className="text-sm text-white/40 font-medium">Bajarilgan ishingizni butun dunyoga ko'rsating.</p>
