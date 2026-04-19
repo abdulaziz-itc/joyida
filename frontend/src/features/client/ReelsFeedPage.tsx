@@ -54,7 +54,14 @@ const ReelsFeedPage = () => {
   };
 
   return (
-    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-black overflow-hidden relative">
+    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-[#050510] overflow-hidden relative">
+      
+      {/* Background Nebula Aura */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/10 blur-[120px] rounded-full animate-pulse-slow" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary/10 blur-[120px] rounded-full animate-pulse-slow" />
+      </div>
+
       
       {/* Upload Modal */}
       <UploadReelModal 
@@ -184,15 +191,15 @@ const ReelsFeedPage = () => {
                           whileInView={{ x: 0, opacity: 1 }}
                           className="flex items-center gap-3 mb-5"
                         >
-                          <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-black backdrop-blur-xl">
+                          <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black backdrop-blur-3xl shadow-premium">
                             {reel.expert?.full_name?.charAt(0) || reel.owner?.full_name?.charAt(0) || 'U'}
                           </div>
                           <div className="flex flex-col">
                             <h3 className="font-black text-lg tracking-tight">@{reel.expert?.full_name?.toLowerCase().replace(' ', '_') || reel.owner?.full_name?.toLowerCase().replace(' ', '_') || 'user'}</h3>
-                            <p className="text-primary text-[10px] font-black uppercase tracking-widest">{reel.category || reel.expert?.profession || t('reels.profession_fallback')}</p>
+                            <p className="text-primary/80 text-[10px] font-black uppercase tracking-widest">{reel.category || reel.expert?.profession || t('reels.profession_fallback')}</p>
                           </div>
                           {user?.id !== (reel.owner_id || reel.expert?.id) && (
-                            <button className="ml-2 px-4 py-1.5 bg-white text-black text-[10px] font-black uppercase tracking-tighter rounded-xl hover:bg-primary hover:text-white transition-all">
+                            <button className="ml-2 px-4 py-2 bg-white/10 backdrop-blur-3xl border border-white/20 text-white text-[10px] font-black uppercase tracking-tighter rounded-xl hover:bg-primary hover:border-primary transition-all shadow-premium">
                               {t('reels.follow')}
                             </button>
                           )}
@@ -204,16 +211,16 @@ const ReelsFeedPage = () => {
                           transition={{ delay: 0.2 }}
                           className="max-w-[85%]"
                         >
-                          <h4 className="font-bold text-xl mb-2 tracking-tight line-clamp-1">{reel.title || t('reels.fallback_title')}</h4>
-                          <p className="text-white/60 text-sm leading-relaxed line-clamp-2 mb-6">
+                          <h4 className="font-bold text-xl mb-2 tracking-tight line-clamp-1 text-white/90">{reel.title || t('reels.fallback_title')}</h4>
+                          <p className="text-white/40 text-sm leading-relaxed line-clamp-2 mb-6 font-medium">
                             {reel.description || t('reels.fallback_desc')}
                           </p>
                           <div className="flex items-center gap-3">
-                             <div className="px-4 py-2 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                               <MapPin size={12} className="text-primary" /> {t('reels.location_fallback')}
+                             <div className="px-4 py-2 bg-white/5 backdrop-blur-3xl border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white/40">
+                               <MapPin size={12} className="text-primary/60" /> {t('reels.location_fallback')}
                              </div>
-                             <div className="px-4 py-2 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                               <Star size={12} className="text-amber-400" /> 4.9
+                             <div className="px-4 py-2 bg-white/5 backdrop-blur-3xl border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-white/40">
+                               <Star size={12} className="text-amber-400/60" /> 4.9
                              </div>
                           </div>
                         </motion.div>
@@ -226,17 +233,17 @@ const ReelsFeedPage = () => {
                 <div className="absolute right-4 bottom-24 z-30 flex flex-col gap-6 items-center">
                   <ReelInteractionButton 
                     icon={<Heart size={28} className="drop-shadow-glow" />} 
-                    label={reel.likes_count || '2.4k'} 
+                    label={reel.likes_count || 0} 
                     color="hover:text-red-500" 
                   />
                   <ReelInteractionButton 
                     icon={<MessageCircle size={28} />} 
-                    label="48" 
+                    label={reel.comments_count || 0} 
                     color="hover:text-primary" 
                   />
                   <ReelInteractionButton 
                     icon={<Eye size={28} />} 
-                    label={reel.views_count || '12.1k'} 
+                    label={reel.views_count || 0} 
                     color="hover:text-blue-400" 
                   />
                   <button 
