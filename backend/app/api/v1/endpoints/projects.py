@@ -88,3 +88,35 @@ def delete_project(
     db.delete(project)
     db.commit()
     return project
+
+@router.post("/{id}/like", response_model=Project)
+def like_project(
+    *,
+    db: Session = Depends(get_db),
+    id: int,
+) -> Any:
+    """Increment likes for a project."""
+    project = db.query(ProjectModel).filter(ProjectModel.id == id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    project.likes_count += 1
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+    return project
+
+@router.post("/{id}/view", response_model=Project)
+def view_project(
+    *,
+    db: Session = Depends(get_db),
+    id: int,
+) -> Any:
+    """Increment views for a project."""
+    project = db.query(ProjectModel).filter(ProjectModel.id == id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    project.views_count += 1
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+    return project

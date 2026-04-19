@@ -21,6 +21,27 @@ const ReelsFeedPage = () => {
   const [activeTab, setActiveTab] = useState<'explore' | 'my-works'>('explore');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [viewedReels, setViewedReels] = useState<Set<number>>(new Set());
+
+  const handleLike = async (reelId: number) => {
+    try {
+      const response = await apiClient.post(`/projects/${reelId}/like`);
+      setReels(prev => prev.map(r => r.id === reelId ? { ...r, likes_count: response.data.likes_count } : r));
+    } catch (err) {
+      console.error("Error liking reel", err);
+    }
+  };
+
+  const handleView = async (reelId: number) => {
+    if (viewedReels.has(reelId)) return;
+    try {
+      const response = await apiClient.post(`/projects/${reelId}/view`);
+      setReels(prev => prev.map(r => r.id === reelId ? { ...r, views_count: response.data.views_count } : r));
+      setViewedReels(prev => new Set(prev).add(reelId));
+    } catch (err) {
+      console.error("Error tracking view", err);
+    }
+  };
 
   const fetchReels = async (query = '', owned = false) => {
     setLoading(true);
@@ -139,9 +160,7 @@ const ReelsFeedPage = () => {
         )}
       </AnimatePresence>
 
-      <div className="flex-1 h-full bg-black relative overflow-y-scroll snap-y snap-mandatory hide-scrollbar text-white">
-        
-        {/* Mute Button Overlay */}
+      <div className="flex-1 h-full bg-black relative overflow-y-scroll snap-y snap-mandatory hide-scrollbar">
         <div className="fixed top-24 right-8 z-40 flex flex-col gap-4">
           <button 
             onClick={() => setIsMuted(!isMuted)}
@@ -156,7 +175,7 @@ const ReelsFeedPage = () => {
              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-glow-primary" />
           </div>
         ) : reels.length === 0 ? (
-          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black">
+          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black text-white">
             <div className="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 shadow-glow-primary">
               <VideoOff className="w-12 h-12 text-primary/40" />
             </div>
@@ -176,9 +195,13 @@ const ReelsFeedPage = () => {
             };
             
             return (
-              <div key={reel.id} className="w-full h-full snap-start relative flex justify-center items-center bg-black">
+              <div 
+                key={reel.id} 
+                className="w-full h-full snap-start relative flex justify-center items-center bg-black"
+                onMouseEnter={() => handleView(reel.id)}
+                onTouchStart={() => handleView(reel.id)}
+              >
                 <div className="relative w-full max-w-[450px] h-[95vh] rounded-[2.5rem] bg-black overflow-hidden shadow-2xl group border border-white/5">
-                  
                   <SocialVideoPlayer url={getReelUrl(reel.video_url)} isMuted={isMuted} />
                   
                   <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none" />
@@ -228,11 +251,12 @@ const ReelsFeedPage = () => {
                     </div>
                   </div>
 
-                  <div className="absolute right-4 bottom-24 z-30 flex flex-col gap-6 items-center">
+                  <div className="absolute right-4 bottom-12 z-30 flex flex-col gap-6 items-center">
                     <ReelInteractionButton 
                       icon={<Heart size={28} className="drop-shadow-glow" />} 
                       label={reel.likes_count || 0} 
                       color="hover:text-red-500" 
+                      onClick={() => handleLike(reel.id)}
                     />
                     <ReelInteractionButton 
                       icon={<MessageCircle size={28} />} 
@@ -245,7 +269,17 @@ const ReelsFeedPage = () => {
                       color="hover:text-blue-400" 
                     />
                     <button 
-                      onClick={() => copyToClipboard(reel.id)}
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: reel.title,
+                            text: reel.description,
+                            url: `${window.location.origin}/reels/${reel.id}`
+                          });
+                        } else {
+                          copyToClipboard(reel.id);
+                        }
+                      }}
                       className="flex flex-col items-center gap-1 group"
                     >
                       <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:bg-primary transition-all hover:scale-110">
@@ -276,14 +310,13 @@ const ReelsFeedPage = () => {
             );
           })
         )}
-
       </div>
     </div>
   );
 };
 
-const ReelInteractionButton = ({ icon, label, color }: { icon: React.ReactNode, label: string | number, color: string }) => (
-  <button className={"flex flex-col items-center gap-1 group transition-all"}>
+const ReelInteractionButton = ({ icon, label, color, onClick }: { icon: React.ReactNode, label: string | number, color: string, onClick?: () => void }) => (
+  <button onClick={onClick} className={"flex flex-col items-center gap-1 group transition-all"}>
     <div className={`w-14 h-14 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white transition-all group-hover:bg-white/20 ${color} group-hover:scale-110 shadow-premium`}>
       {icon}
     </div>
