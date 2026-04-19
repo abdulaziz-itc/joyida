@@ -8,9 +8,17 @@ import json
 from sqlalchemy.orm import Session
 from app.models.project import Project as ProjectModel
 
-# Absolute base directory discovery
-# video_downloader.py is in backend/app/services/ (3 levels deep from backend/)
-APP_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Robust base directory discovery
+def find_app_root():
+    current = os.path.abspath(__file__)
+    while True:
+        parent = os.path.dirname(current)
+        if parent == current: return os.getcwd()
+        if os.path.exists(os.path.join(parent, "static")):
+            return parent
+        current = parent
+
+APP_ROOT = find_app_root()
 BASE_UPLOAD_DIR = os.path.join(APP_ROOT, "static", "uploads")
 UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "reels")
 

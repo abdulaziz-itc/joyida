@@ -16,9 +16,17 @@ from app.models.service import ServiceCategory
 from app.schemas.user import ServiceCategory as ServiceCategorySchema
 from app.models.project import Project as ProjectModel
 
-# Absolute base directory discovery
-# utils.py is in backend/app/api/v1/endpoints/ (5 levels deep from backend/)
-APP_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+# Robust base directory discovery
+def find_app_root():
+    current = os.path.abspath(__file__)
+    while True:
+        parent = os.path.dirname(current)
+        if parent == current: return os.getcwd() # Last resort
+        if os.path.exists(os.path.join(parent, "static")):
+            return parent
+        current = parent
+
+APP_ROOT = find_app_root()
 BASE_UPLOAD_DIR = os.path.join(APP_ROOT, "static", "uploads")
 UPLOAD_DIR = os.path.join(BASE_UPLOAD_DIR, "reels")
 
