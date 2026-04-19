@@ -64,40 +64,49 @@ def read_services(
 
 @router.get("/resolve-instagram")
 def resolve_instagram_video(url: str = Query(...)):
-    """Extract direct video URL from an Instagram public link."""
+    """Extract direct video URL from an Instagram public link with robust handling."""
     try:
-        # Mimic a browser request to get meta tags
+        # Normalize URL
+        url = url.split('?')[0].rstrip('/') + '/'
+        
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept-Language': 'en-US,en;q=0.9',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
         }
         
         req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req, timeout=10) as response:
+        with urllib.request.urlopen(req, timeout=12) as response:
             html = response.read().decode('utf-8')
             
-            # Enhanced discovery patterns
+            # Enhanced discovery patterns (2024/2025 structure)
             patterns = [
-                r'<meta[^>]*property="og:video"[^>]*content="([^"]+)"',
                 r'"video_url":"([^"]+)"',
+                r'<meta[^>]*property="og:video"[^>]*content="([^"]+)"',
+                r'"video_versions":\[\{"url":"([^"]+)"',
                 r'"contentUrl":"([^"]+)"',
-                r'xdt_api_v1_media_2_info[^>]*video_versions[^>]*url":"([^"]+)"'
             ]
             
             video_url = None
             for pattern in patterns:
-                match = re.search(pattern, html)
-                if match:
-                    video_url = match.group(1).replace("\\u0026", "&").replace("\\/", "/")
-                    break
+                matches = re.findall(pattern, html)
+                for match in matches:
+                    clean_url = match.replace("\\u0026", "&").replace("\\/", "/")
+                    if "video" in clean_url or ".mp4" in clean_url:
+                        video_url = clean_url
+                        break
+                if video_url: break
             
             if video_url:
                 return {"direct_url": video_url}
             
-            raise HTTPException(status_code=404, detail="Direct video URL not found")
+            # If standard regex fails, don't crash, return empty so frontend can handle
+            return {"direct_url": None, "message": "Could not extract direct URL automatically"}
             
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Resolve error for {url}: {str(e)}")
+        # Return 200 with null instead of 500 to keep the frontend running smoothly
+        return {"direct_url": None, "error": str(e)}
 
 @router.get("/diag/system")
 def system_diagnostics(db: Session = Depends(get_db)):
