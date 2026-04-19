@@ -186,25 +186,25 @@ const ClientExplorePage = () => {
       <div className="relative z-20 flex flex-col h-full pointer-events-none">
         
         {/* Top Search Area */}
-        <div className={`p-8 w-full max-w-4xl mx-auto transition-all duration-1000 ${showRealMap ? 'opacity-90 pt-12' : 'mt-[25vh]'}`}>
+        <div className={`p-8 w-full max-w-4xl mx-auto transition-all duration-1000 ${showRealMap ? 'opacity-90 pt-12' : 'mt-[22vh]'}`}>
           {!showRealMap && (
-             <div className="text-center mb-12 pointer-events-auto">
+             <div className="text-center mb-16 pointer-events-auto">
                <motion.h1 
-                 initial={{ opacity: 0, scale: 0.9 }}
+                 initial={{ opacity: 0, scale: 0.95 }}
                  animate={{ opacity: 1, scale: 1 }}
-                 className="text-7xl font-black text-white font-display tracking-tight mb-6 text-gradient"
+                 className="text-8xl font-black mb-8 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-[0_0_40px_rgba(139,92,246,0.2)] font-display tracking-tight"
                >
                  Joyida
                </motion.h1>
-               <p className="text-foreground/50 text-xl max-w-lg mx-auto">
+               <p className="text-white/60 text-xl font-medium tracking-[1px] max-w-xl mx-auto leading-relaxed">
                  O'z mahallangizdan eng malakali mutaxassislarni toping.
                </p>
              </div>
           )}
 
           <form onSubmit={handleSearch} className="pointer-events-auto relative group max-w-2xl mx-auto">
-            <div className={`absolute inset-0 bg-primary/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-            <div className="relative flex items-center bg-[#111111]/90 backdrop-blur-3xl border border-white/5 p-2 rounded-3xl shadow-2xl">
+            <div className={`absolute inset-0 bg-primary/20 rounded-3xl blur-[60px] opacity-0 group-hover:opacity-40 transition-opacity duration-700`} />
+            <div className="relative flex items-center bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-2.5 rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.6)] group-hover:border-white/20 transition-all">
               <div className="pl-6">
                 <Search className={`w-6 h-6 ${isSearching ? 'text-primary animate-spin' : 'text-foreground/30'}`} />
               </div>
