@@ -49,17 +49,18 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
   };
 
   return (
-    <div className="flex min-h-screen bg-[#020205] text-white">
-      {/* Sidebar - Premium Glassmorphism */}
-      <aside className="w-64 border-r border-white/5 p-6 flex flex-col fixed h-full bg-white/[0.02] backdrop-blur-3xl z-30 shadow-[20px_0_80px_rgba(0,0,0,0.6)]">
-        <div className="flex items-center gap-3 mb-12 px-2">
+  return (
+    <div className="flex min-h-screen bg-[#010103] text-white">
+      {/* Floating Glass Sidebar */}
+      <aside className="fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex flex-col bg-white/[0.03] backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] transition-all duration-500">
+        <div className="flex items-center gap-3 mb-10 px-2">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-2xl shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-white/10">
             J
           </div>
           <span className="text-2xl font-black tracking-tight text-white font-display">Joyida</span>
         </div>
 
-        <nav className="flex-1 space-y-1.5">
+        <nav className="flex-1 space-y-1.5 overflow-y-auto no-scrollbar">
           {user?.is_superuser && (
             <div className="space-y-1.5">
               <NavItem icon={ShieldCheck} label="Admin Console" active={currentPage === 'admin'} onClick={() => onNavigate('admin')} />
@@ -97,7 +98,7 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
               onClick={() => setShowPlans(true)}
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-[#050505] font-black text-xs uppercase tracking-[2px] flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(251,191,36,0.2)]"
             >
-               <Zap className="w-4 h-4 fill-current" /> Upgrade to Pro
+               <Zap className="w-4 h-4 fill-current" /> Upgrade
             </motion.button>
           )}
           
@@ -105,8 +106,8 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 ml-64 min-h-screen bg-transparent relative">
+      {/* Main Content - Detached and shifted for the floating sidebar */}
+      <main className="flex-1 ml-[19rem] min-h-screen bg-transparent relative">
         {children}
         
         <AnimatePresence>

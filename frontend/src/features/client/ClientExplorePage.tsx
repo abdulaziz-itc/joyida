@@ -100,46 +100,23 @@ const ClientExplorePage = () => {
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-theme(spacing.16))] md:h-screen overflow-hidden bg-[#050505]">
+    <div className="relative w-full h-[calc(100vh-theme(spacing.16))] md:h-screen overflow-hidden">
       
-      {/* Background Layer with Rotating Globe */}
-      <AnimatePresence>
-        {!showRealMap && (
-           <motion.div 
-             initial={{ opacity: 0 }}
-             animate={{ opacity: 1 }}
-             exit={{ opacity: 0 }}
-             className="absolute inset-0 z-0 pointer-events-none"
-           >
-             {/* Base Gradient Overlay */}
-             <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-black z-10" />
-             
-             {/* Rotating Globe Container */}
-             <div className="absolute bottom-[-65%] left-1/2 -translate-x-1/2 w-[180%] md:w-[140%] aspect-square">
-               <motion.div 
-                 animate={{ rotate: 360 }}
-                 transition={{ repeat: Infinity, duration: 240, ease: "linear" }}
-                 className="w-full h-full opacity-70"
-                 style={{ 
-                   backgroundImage: 'url("/assets/globe-realistic.png")',
-                   backgroundSize: 'contain',
-                   backgroundRepeat: 'no-repeat',
-                   backgroundPosition: 'center',
-                   maskImage: 'radial-gradient(circle at center, black 45%, transparent 75%)',
-                   WebkitMaskImage: 'radial-gradient(circle at center, black 45%, transparent 75%)',
-                   willChange: 'transform',
-                   transform: 'translateZ(0)',
-                   backfaceVisibility: 'hidden'
-                 }} 
-               />
-               
-               {/* Globe Glow Effect - Adjusted for prominence */}
-               <div className="absolute inset-0 bg-primary/20 blur-[160px] rounded-full scale-110 opacity-50 pointer-events-none" />
-               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-transparent to-transparent z-20" />
-             </div>
-           </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Full-screen Background Layer */}
+      <motion.div 
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 2 }}
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ 
+          backgroundImage: 'url("/assets/globe-realistic.png")',
+          backgroundColor: '#010103'
+        }}
+      />
+      
+      {/* Background Overlays for Depth and Contrast */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none" />
+      <div className="fixed inset-0 z-0 backdrop-blur-[1px] pointer-events-none" />
 
       {/* Real Map Layer */}
       <AnimatePresence>
