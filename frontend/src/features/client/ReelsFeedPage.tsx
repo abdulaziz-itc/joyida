@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Volume2, VolumeX, MessageCircle, Heart, Share2, 
@@ -23,6 +23,9 @@ const ReelsFeedPage = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [viewedReels, setViewedReels] = useState<Set<number>>(new Set());
   const [selectedReel, setSelectedReel] = useState<any | null>(null);
+  const [activeReelId, setActiveReelId] = useState<number | null>(null);
+  
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const fetchReels = async (query = '', owned = false) => {
     setLoading(true);
@@ -31,7 +34,11 @@ const ReelsFeedPage = () => {
       const response = await apiClient.get(endpoint, {
         params: { search: query }
       });
-      setReels(response.data);
+      const data = response.data;
+      setReels(data);
+      if (data.length > 0 && activeTab === 'explore') {
+        setActiveReelId(data[0].id);
+      }
     } catch (err) {
       console.error("Error fetching reels", err);
     } finally {
@@ -42,6 +49,39 @@ const ReelsFeedPage = () => {
   useEffect(() => {
     fetchReels(searchQuery, activeTab === 'my-works');
   }, [activeTab]);
+
+  // Setup Intersection Observer for playback control
+  useEffect(() => {
+    if (activeTab !== 'explore' || loading || reels.length === 0) return;
+
+    const observerOptions = {
+      root: containerRef.current,
+      threshold: 0.6, // Fire when 60% of the reel is visible
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = Number(entry.target.getAttribute('data-reel-id'));
+          setActiveReelId(id);
+          handleView(id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    // We need to wait for DOM to render the reels
+    const timer = setTimeout(() => {
+      const elements = document.querySelectorAll('[data-reel-item="true"]');
+      elements.forEach((el) => observer.observe(el));
+    }, 100);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
+  }, [reels, activeTab, loading]);
 
   const handleLike = async (reelId: number) => {
     try {
@@ -91,7 +131,7 @@ const ReelsFeedPage = () => {
   };
 
   return (
-    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-[#050510] overflow-hidden relative">
+    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-[#050510] overflow-hidden relative font-outfit">
       
       {/* Background Nebula Aura */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -178,10 +218,12 @@ const ReelsFeedPage = () => {
       </AnimatePresence>
 
       <div className="flex-1 h-full bg-black relative overflow-y-auto hide-scrollbar">
-        {/* Snap scroll container or Grid container */}
-        <div className={`w-full h-full ${activeTab === 'explore' ? 'snap-y snap-mandatory overflow-y-scroll' : ''}`}>
-          
-          {/* Mute Button Overlay (Only for full screen) */}
+        {/* Scroll container */}
+        <div 
+          ref={containerRef}
+          className={`w-full h-full ${activeTab === 'explore' ? 'snap-y snap-mandatory overflow-y-scroll' : ''}`}
+        >
+          {/* Mute Button Overlay */}
           <div className="fixed top-24 right-8 z-40 flex flex-col gap-4">
             <button 
               onClick={() => setIsMuted(!isMuted)}
@@ -211,11 +253,11 @@ const ReelsFeedPage = () => {
                 key={reel.id}
                 reel={reel}
                 isMuted={isMuted}
+                isPlaying={reel.id === activeReelId}
                 user={user}
                 t={t}
                 getReelUrl={getReelUrl}
                 handleLike={handleLike}
-                handleView={handleView}
                 copyToClipboard={copyToClipboard}
               />
             ))
@@ -255,11 +297,11 @@ const ReelsFeedPage = () => {
               <FullReelView 
                 reel={selectedReel}
                 isMuted={isMuted}
+                isPlaying={true}
                 user={user}
                 t={t}
                 getReelUrl={getReelUrl}
                 handleLike={handleLike}
-                handleView={handleView}
                 copyToClipboard={copyToClipboard}
                 isModal
               />
@@ -271,17 +313,20 @@ const ReelsFeedPage = () => {
   );
 };
 
-// Sub-components for better organization
-const FullReelView = ({ reel, isMuted, user, t, getReelUrl, handleLike, handleView, copyToClipboard, isModal = false }: any) => {
+const FullReelView = ({ reel, isMuted, isPlaying, user, t, getReelUrl, handleLike, copyToClipboard, isModal = false }: any) => {
   return (
-    <div className={`w-full h-full ${isModal ? '' : 'snap-start'} relative flex justify-center items-center bg-black overflow-hidden`}>
+    <div 
+      data-reel-item="true"
+      data-reel-id={reel.id}
+      className={`w-full h-full ${isModal ? '' : 'snap-start'} relative flex justify-center items-center bg-black overflow-hidden`}
+    >
       <div className={`relative w-full ${isModal ? 'h-full' : 'max-w-[450px] h-[95vh] rounded-[2.5rem]'} bg-black overflow-hidden shadow-2xl group border border-white/5`}>
-        <div 
-          className="absolute inset-0 z-0"
-          onMouseEnter={() => handleView(reel.id)}
-          onTouchStart={() => handleView(reel.id)}
-        >
-          <SocialVideoPlayer url={getReelUrl(reel.video_url)} isMuted={isMuted} />
+        <div className="absolute inset-0 z-0">
+          <SocialVideoPlayer 
+            url={getReelUrl(reel.video_url)} 
+            isMuted={isMuted} 
+            isPlaying={isPlaying}
+          />
         </div>
         
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none z-10" />
@@ -291,7 +336,7 @@ const FullReelView = ({ reel, isMuted, user, t, getReelUrl, handleLike, handleVi
             <div className="flex-1 text-white">
               <motion.div 
                 initial={{ x: -20, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
+                animate={{ x: 0, opacity: 1 }}
                 className="flex items-center gap-3 mb-5"
               >
                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black backdrop-blur-3xl shadow-premium">
@@ -305,7 +350,7 @@ const FullReelView = ({ reel, isMuted, user, t, getReelUrl, handleLike, handleVi
 
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
                 className="max-w-[85%]"
               >
@@ -325,7 +370,7 @@ const FullReelView = ({ reel, isMuted, user, t, getReelUrl, handleLike, handleVi
 
         <div className="absolute right-4 bottom-12 z-30 flex flex-col gap-6 items-center pointer-events-auto">
           <ReelInteractionButton 
-            icon={<Heart size={28} className="drop-shadow-glow" />} 
+            icon={<Heart size={28} className={reel.is_liked ? "text-red-500 fill-red-500" : "drop-shadow-glow"} />} 
             label={reel.likes_count || 0} 
             color="hover:text-red-500" 
             onClick={() => handleLike(reel.id)}
@@ -347,7 +392,7 @@ const FullReelView = ({ reel, isMuted, user, t, getReelUrl, handleLike, handleVi
                   title: reel.title,
                   text: reel.description,
                   url: `${window.location.origin}/reels/${reel.id}`
-                });
+                }).catch(console.error);
               } else {
                 copyToClipboard(reel.id);
               }
@@ -364,8 +409,8 @@ const FullReelView = ({ reel, isMuted, user, t, getReelUrl, handleLike, handleVi
         <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/5 overflow-hidden z-10">
             <motion.div 
               initial={{ width: '0%' }}
-              whileInView={{ width: '100%' }}
-              transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+              animate={isPlaying ? { width: '100%' } : { width: '0%' }}
+              transition={isPlaying ? { duration: 15, repeat: Infinity, ease: 'linear' } : {}}
               className="h-full bg-primary shadow-glow-primary" 
             />
         </div>
@@ -397,7 +442,7 @@ const ReelGridCard = ({ reel, onClick }: any) => (
 );
 
 const ReelInteractionButton = ({ icon, label, color, onClick }: any) => (
-  <button onClick={onClick} className="flex flex-col items-center gap-1 group transition-all">
+  <button onClick={onClick} className="flex flex-col items-center gap-1 group transition-all pointer-events-auto">
     <div className={`w-14 h-14 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white transition-all group-hover:bg-white/20 ${color} group-hover:scale-110 shadow-premium`}>
       {icon}
     </div>

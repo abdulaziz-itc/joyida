@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { VideoOff, Loader2 } from 'lucide-react';
 
 interface SocialVideoPlayerProps {
   url: string;
   isMuted: boolean;
+  isPlaying?: boolean;
 }
 
 declare global {
@@ -12,9 +13,10 @@ declare global {
   }
 }
 
-const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
+const SocialVideoPlayer = ({ url, isMuted, isPlaying = false }: SocialVideoPlayerProps) => {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Load Instagram Embed Script
   useEffect(() => {
@@ -36,6 +38,17 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
     }
   }, [url]);
 
+  // Handle Play/Pause for Native Video
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play().catch(err => console.debug("Autoplay blocked or failed", err));
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
+
   const getPlatform = (link: string) => {
     if (link.includes('instagram.com')) return 'instagram';
     if (link.includes('tiktok.com')) return 'tiktok';
@@ -46,19 +59,19 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
   const platform = getPlatform(url);
 
   const getInstagramEmbedUrl = (link: string) => {
-    // Robust parsing for reels vs posts
     let cleanUrl = link.split('?')[0];
     if (cleanUrl.includes('/reels/')) {
         cleanUrl = cleanUrl.replace('/reels/', '/p/');
     }
     const slash = cleanUrl.endsWith('/') ? '' : '/';
+    // Instagram doesn't support a simple autoplay param, but we handle container visibility
     return `${cleanUrl}${slash}embed/captioned/`;
   };
 
   const getTikTokEmbedUrl = (link: string) => {
     const match = link.match(/\/video\/(\d+)/);
     if (match && match[1]) {
-      return `https://www.tiktok.com/embed/v2/${match[1]}`;
+      return `https://www.tiktok.com/embed/v2/${match[1]}?autoplay=${isPlaying ? 1 : 0}`;
     }
     return link;
   };
@@ -72,7 +85,8 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
     } else if (link.includes('youtu.be/')) {
       videoId = link.split('youtu.be/')[1]?.split('?')[0];
     }
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=${videoId}`;
+    // Autoplay depends on isPlaying prop
+    return `https://www.youtube.com/embed/${videoId}?autoplay=${isPlaying ? 1 : 0}&mute=${isMuted ? 1 : 0}&loop=1&playlist=${videoId}&controls=0&modestbranding=1`;
   };
 
   if (hasError) {
@@ -92,10 +106,12 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
         </div>
       )}
 
+      {/* Conditional Rendering helps restart iframes when active state changes for platforms that need it */}
       {platform === 'instagram' && (
         <iframe
+          key={`insta-${isPlaying}`}
           src={getInstagramEmbedUrl(url)}
-          className="w-full h-[105%] border-none -mt-4" // Hidden header lift
+          className="w-full h-[105%] border-none -mt-4"
           allowTransparency
           allowFullScreen
           scrolling="no"
@@ -110,6 +126,7 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
 
       {platform === 'tiktok' && (
         <iframe
+          key={`tiktok-${isPlaying}`}
           src={getTikTokEmbedUrl(url)}
           className="w-full h-full border-none"
           allow="autoplay; encrypted-media"
@@ -121,6 +138,7 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
 
       {platform === 'youtube' && (
         <iframe
+          key={`yt-${isPlaying}`}
           src={getYoutubeEmbedUrl(url)}
           className="w-full h-full border-none"
           allow="autoplay; encrypted-media; picture-in-picture"
@@ -132,8 +150,8 @@ const SocialVideoPlayer = ({ url, isMuted }: SocialVideoPlayerProps) => {
 
       {platform === 'native' && (
         <video 
+          ref={videoRef}
           src={url} 
-          autoPlay 
           loop 
           muted={isMuted}
           playsInline
