@@ -577,13 +577,3 @@ const ClientProfilePage = () => {
 };
 
 export default ClientProfilePage;
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
-};
-
-export default ClientProfilePage;
