@@ -11,6 +11,14 @@ import { useAuthStore } from '../../store/authStore';
 import UploadReelModal from './UploadReelModal';
 import SocialVideoPlayer from './SocialVideoPlayer';
 
+const getFileUrl = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  const baseUrl = (import.meta.env.VITE_API_URL as string)?.split('/api/')[0];
+  const cleanPath = url.replace(/^\//, '');
+  return `${baseUrl}/${cleanPath}`;
+};
+
 const ReelsFeedPage = () => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
@@ -123,13 +131,7 @@ const ReelsFeedPage = () => {
     navigator.clipboard.writeText(url);
   };
 
-  const getReelUrl = (url: string) => {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    const baseUrl = import.meta.env.VITE_API_URL?.split('/api/')[0];
-    const cleanPath = url.replace(/^\//, '');
-    return `${baseUrl}/${cleanPath}`;
-  };
+  const getReelUrl = (url: string) => getFileUrl(url);
 
   const handleDeleteReel = async (e: React.MouseEvent, reelId: number) => {
     e.stopPropagation();
@@ -360,10 +362,6 @@ const ReelsFeedPage = () => {
             className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4"
           >
             <button 
-              onDownload={() => handleDownload(selectedReel.id, selectedReel.title)}
-              onCaptureThumb={(video: any) => {
-                  if (!selectedReel.thumbnail_url) handleThumbnailCapture(selectedReel.id, video);
-              }}
               onClick={() => setSelectedReel(null)}
               className="absolute top-6 right-6 p-4 bg-white/10 rounded-full text-white hover:bg-white/20 transition-all z-[110]"
             >
@@ -393,7 +391,7 @@ const ReelsFeedPage = () => {
   );
 };
 
-const FullReelView = ({ reel, onClose, onDownload, onCaptureThumb, isPlaying, user, t, getReelUrl, handleLike, copyToClipboard, isModal = false }: any) => {
+const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPlaying, user, t, getReelUrl, handleLike, copyToClipboard, isModal = false }: any) => {
   const [isPaused, setIsPaused] = useState(false);
   const [showPlayIcon, setShowPlayIcon] = useState(false);
 
