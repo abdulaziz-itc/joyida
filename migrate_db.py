@@ -1,12 +1,13 @@
 import sqlite3
 import os
 
-# Possible paths for the database
+# Specific server paths and common local paths
 possible_paths = [
+    "/home/joidauz/backend/joyida.db",  # Exact server path from config
+    "../backend/joyida.db",
+    "../../backend/joyida.db",
     "backend/joyida.db",
-    "joyida.db",
-    "app/joyida.db",
-    "../backend/joyida.db"
+    "joyida.db"
 ]
 
 db_path = None
@@ -16,7 +17,7 @@ for path in possible_paths:
         break
 
 if not db_path:
-    print("Error: joyida.db not found in any common locations!")
+    print("Error: joyida.db not found!")
     print(f"Searched in: {', '.join(possible_paths)}")
     exit(1)
 
