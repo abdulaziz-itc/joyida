@@ -185,21 +185,26 @@ const ClientExplorePage = () => {
         {/* Top Search Area */}
         <div className={`p-8 w-full max-w-4xl mx-auto transition-all duration-1000 ${showRealMap ? 'opacity-90 pt-12' : 'mt-[22vh]'}`}>
           {!showRealMap && (
-             <div className="text-center mb-16 pointer-events-auto">
+             <div className="text-center mb-16 pointer-events-auto relative">
+                {/* Visual anchor for text readability */}
+                <div className={`absolute inset-[-4rem] rounded-[5rem] blur-[80px] opacity-20 -z-10 ${
+                  currentTheme === 'light' ? 'bg-primary/30' : 'bg-primary/20'
+                }`} />
+                
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
-                  className={`text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-sm ${
+                  className={`text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-2xl ${
                     currentTheme === 'light'
-                      ? 'bg-gradient-to-b from-primary/80 via-primary to-primary-hover drop-shadow-[0_0_30px_rgba(255,255,255,0.8)]'
+                      ? 'bg-gradient-to-b from-primary/90 via-primary to-primary-hover drop-shadow-[0_10px_20px_rgba(var(--primary-val),0.2)]'
                       : 'bg-gradient-to-b from-white via-white to-primary/60 drop-shadow-[0_0_50px_var(--color-primary-glow)]'
                   }`}
                 >
                   Joyida
                 </motion.h1>
-                <p className={`text-xl font-bold tracking-[2.5px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-sm ${
-                  currentTheme === 'light' ? 'text-foreground/90' : 'text-foreground/80'
+                <p className={`text-xl font-bold tracking-[2.5px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-md ${
+                  currentTheme === 'light' ? 'text-foreground font-black' : 'text-foreground/80'
                 }`}>
                   {t('explore.headline')}
                 </p>
