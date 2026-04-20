@@ -70,8 +70,11 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         )}
       </header>
 
-      {/* Floating Glass Sidebar - Hidden on mobile */}
-      <aside className="hidden lg:flex fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex flex-col bg-glass-bg backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-premium transition-all duration-500">
+      {/* Floating Glass Sidebar - Hidden on mobile with force-hide classes */}
+      <aside 
+        className="hidden lg:flex fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex-col bg-glass-bg backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-premium transition-all duration-500"
+        style={{ display: typeof window !== 'undefined' && window.innerWidth < 1024 ? 'none' : undefined }}
+      >
         <div className="flex items-center gap-3 mb-10 px-2 text-foreground">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-2xl shadow-[0_0_20px_var(--color-primary-glow)] border border-white/10">
             J
@@ -137,8 +140,11 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         </div>
       </aside>
 
-      {/* Main Content - No left margin on mobile */}
-      <main className="flex-1 lg:ml-[19rem] min-h-screen bg-transparent relative transition-all duration-500 pb-24 lg:pb-0 pt-16 lg:pt-0">
+      {/* Main Content - Force expanded width on mobile */}
+      <main 
+        className="flex-1 lg:ml-[19rem] min-h-screen bg-transparent relative transition-all duration-500 pb-24 lg:pb-0 pt-16 lg:pt-0"
+        style={{ marginLeft: typeof window !== 'undefined' && window.innerWidth < 1024 ? '0' : undefined }}
+      >
         {children}
         
         <AnimatePresence>
