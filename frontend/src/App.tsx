@@ -20,10 +20,21 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 function App() {
   const { isAuthenticated, user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState<string | null>(null);
+  const [sharedReelHash, setSharedReelHash] = useState<string | null>(null);
   const [showPreferences, setShowPreferences] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfileSetup, setShowProfileSetup] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+
+  // Deep linking handler: check URL for shared reels
+  useEffect(() => {
+    const path = window.location.pathname;
+    const reelMatch = path.match(/^\/reels\/([a-zA-Z0-9]+)/);
+    if (reelMatch && reelMatch[1]) {
+      setSharedReelHash(reelMatch[1]);
+      setCurrentPage('reels');
+    }
+  }, []);
 
   // Determine initial page based on authentication and roles
   useEffect(() => {
@@ -126,11 +137,17 @@ function App() {
     <GoogleOAuthProvider clientId="596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com">
       <div className="App">
         {currentPage ? (
-          <DashboardLayout onNavigate={setCurrentPage} currentPage={currentPage}>
+          <DashboardLayout 
+            onNavigate={(page) => {
+              setCurrentPage(page);
+              if (page !== 'reels') setSharedReelHash(null);
+            }} 
+            currentPage={currentPage}
+          >
             {currentPage === 'dashboard' && <DashboardPage />}
             {currentPage === 'projects' && <ProjectsPage />}
             {currentPage === 'explore' && <ClientExplorePage />}
-            {currentPage === 'reels' && <ReelsFeedPage />}
+            {currentPage === 'reels' && <ReelsFeedPage initialReelHash={sharedReelHash} />}
             {currentPage === 'messages' && <MessagesPage />}
             {currentPage === 'profile' && <ClientProfilePage />}
             {currentPage === 'admin' && <AdminLayout />}

@@ -38,7 +38,7 @@ const getFileUrl = (url: string, reelId?: number, type: 'view' | 'thumb' = 'view
   return `${baseUrl}/${cleanPath}`;
 };
 
-const ReelsFeedPage = () => {
+const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null }) => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const [reels, setReels] = useState<any[]>([]);
@@ -54,6 +54,30 @@ const ReelsFeedPage = () => {
   const [activeReelId, setActiveReelId] = useState<number | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Handle Shared Reels from Deep Link
+  useEffect(() => {
+    if (initialReelHash) {
+      const fetchSharedReel = async () => {
+        try {
+          const response = await apiClient.get(`/projects/by-hash/${initialReelHash}`);
+          const sharedReel = response.data;
+          
+          // Add it to the feed if not already present
+          setReels(prev => {
+            if (prev.some(r => r.id === sharedReel.id)) return prev;
+            return [sharedReel, ...prev];
+          });
+          
+          setActiveReelId(sharedReel.id);
+          setActiveTab('explore');
+        } catch (err) {
+          console.error("Failed to fetch shared reel", err);
+        }
+      };
+      fetchSharedReel();
+    }
+  }, [initialReelHash]);
 
   const fetchReels = async (query = '', owned = false) => {
     setLoading(true);
@@ -155,7 +179,7 @@ const ReelsFeedPage = () => {
   };
 
   const copyToClipboard = (reelId: number) => {
-    const url = `${window.location.origin}/reels/${reelId}`;
+    const url = `${window.location.origin}/reels/${encodeId(reelId)}`;
     navigator.clipboard.writeText(url);
   };
 
@@ -571,7 +595,7 @@ const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPl
                 navigator.share({
                   title: reel.title,
                   text: reel.description,
-                  url: `${window.location.origin}/reels/${reel.id}`
+                  url: `${window.location.origin}/reels/${encodeId(reel.id)}`
                 }).catch(console.error);
               } else {
                 copyToClipboard(reel.id);

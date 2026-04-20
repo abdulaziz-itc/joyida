@@ -191,3 +191,31 @@ def view_project(
     db.commit()
     db.refresh(project)
     return project
+
+@router.get("/by-hash/{h}", response_model=Project)
+def get_project_by_hash(
+    h: str,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(deps.get_current_user_optional)
+) -> Any:
+    """Retrieve a single project by its hashed ID."""
+    from app.api.v1.endpoints.utils import decode_id
+    try:
+        project_id = decode_id(h)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid project hash")
+        
+    project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Mark liked status if user is logged in
+    project.is_liked = False
+    if current_user:
+        like = db.query(ProjectLike).filter(
+            ProjectLike.user_id == current_user.id,
+            ProjectLike.project_id == project.id
+        ).first()
+        project.is_liked = like is not None
+        
+    return project
