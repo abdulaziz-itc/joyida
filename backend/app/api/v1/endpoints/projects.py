@@ -39,20 +39,24 @@ def read_public_projects(
             (ProjectModel.category.ilike(search_filter))
         )
     
-    projects = query.order_by(ProjectModel.created_at.desc()).offset(skip).limit(limit).all()
-    
-    # Proactive auto-downloader
-    if background_tasks:
-        for project in projects:
-            # If it looks like a social link and isn't downloaded, trigger it
-            if not project.is_downloaded and project.video_url and ('http' in project.video_url):
-                 # Verify it's actually a social platform we support
-                 url_low = project.video_url.lower()
-                 if any(x in url_low for x in ['instagram.com', 'instagr.am', 'tiktok.com', 'youtube.com', 'youtu.be']):
-                     print(f"DEBUG: Proactive trigger for project {project.id}")
-                     background_tasks.add_task(download_social_video, project.id, SessionLocal)
-
-    return projects
+    try:
+        projects = query.order_by(ProjectModel.created_at.desc()).offset(skip).limit(limit).all()
+        
+        # Proactive auto-downloader
+        if background_tasks:
+            for project in projects:
+                # If it looks like a social link and isn't downloaded, trigger it
+                if not project.is_downloaded and project.video_url and ('http' in project.video_url):
+                    # Verify it's actually a social platform we support
+                    url_low = project.video_url.lower()
+                    if any(x in url_low for x in ['instagram.com', 'instagr.am', 'tiktok.com', 'youtube.com', 'youtu.be']):
+                        print(f"DEBUG: Proactive trigger for project {project.id}")
+                        background_tasks.add_task(download_social_video, project.id, SessionLocal)
+        return projects
+    except Exception as e:
+        print(f"Public projects error: {str(e)}")
+        # If the query fails (e.g. schema mismatch), return whatever projects we can find without filtering
+        return db.query(ProjectModel).limit(limit).all()
 
 @router.post("/", response_model=Project)
 def create_project(

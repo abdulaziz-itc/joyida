@@ -568,7 +568,10 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
     return null;
   };
 
-  const thumb = reel.thumbnail_url ? getFileUrl(reel.thumbnail_url) : getThumbnail(reel.video_url);
+  const thumb = reel.thumbnail_url && reel.thumbnail_url !== 'updated' 
+    ? getFileUrl(reel.thumbnail_url) 
+    : getThumbnail(reel.video_url);
+
   const isDirectVideo = isVideoUrl(reel.video_url);
 
   // Auto-capture if thumb is missing and it's a direct video
@@ -579,21 +582,26 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
       video.crossOrigin = "anonymous";
       video.muted = true;
       video.currentTime = 1; // Seek to 1s
-      video.onseeked = async () => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = canvas.toDataURL('image/jpeg', 0.8);
-            await apiClient.post(`/utils/save-thumbnail/${reel.id}`, { image: imageData });
-          }
-        } catch (e) {
-          console.debug("Grid capture failed", e);
-        }
-      };
+      
+      const timeout = setTimeout(() => {
+          video.onseeked = async () => {
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              const ctx = canvas.getContext('2d');
+              if (ctx && canvas.width > 0) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/jpeg', 0.8);
+                await apiClient.post(`/utils/save-thumbnail/${reel.id}`, { image: imageData });
+              }
+            } catch (e) {
+              console.debug("Grid capture failed for project", reel.id, e);
+            }
+          };
+      }, 1500); // Small delay to ensure loading
+      
+      return () => clearTimeout(timeout);
     }
   }, [reel.id, reel.thumbnail_url, isDirectVideo]);
 
@@ -608,27 +616,29 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
         {thumb && !imgError ? (
           <img 
             src={thumb} 
-            className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" 
-            alt="" 
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+            alt={reel.title} 
             onError={() => setImgError(true)}
           />
         ) : isDirectVideo ? (
-          <video 
-            src={getFileUrl(reel.video_url)} 
-            className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
-            preload="metadata"
-            muted
-            playsInline
-          />
+          <div className="w-full h-full relative">
+              <video 
+                src={getFileUrl(reel.video_url)} 
+                className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
+                preload="metadata"
+                muted
+                playsInline
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                  <Play size={32} className="text-white/40" />
+              </div>
+          </div>
         ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black p-4 text-center">
                 <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin mb-4 shadow-glow-primary" />
-                <span className="text-[10px] text-white/60 font-black uppercase tracking-widest animate-pulse">
-                    {reel.is_downloaded ? 'Preparing Preview...' : 'Downloading Reel...'}
+                <span className="text-[10px] text-white/50 font-black uppercase tracking-widest animate-pulse">
+                    {reel.is_downloaded ? 'Syncing...' : 'Fetching...'}
                 </span>
-                <p className="text-[8px] text-white/20 mt-2 font-medium max-w-[80%] uppercase tracking-tighter">
-                   {reel.is_downloaded ? 'Capturing best frame' : 'Securing local copy'}
-                </p>
             </div>
         )}
       </div>

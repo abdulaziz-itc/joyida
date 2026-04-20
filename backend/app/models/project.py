@@ -16,6 +16,7 @@ class Project(Base):
     views_count = Column(Integer, default=0)
     likes_count = Column(Integer, default=0)
     is_downloaded = Column(Boolean, default=False)
+    is_public = Column(Boolean, default=True)
     thumbnail_url = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     owner_id = Column(Integer, ForeignKey("users.id"))
