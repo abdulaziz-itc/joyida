@@ -157,6 +157,12 @@ const ClientProfilePage = () => {
       const photoUrl = uploadRes.data.url;
       
       const updateRes = await apiClient.put('/auth/me', { profile_picture_url: photoUrl });
+      console.log('DEBUG: Photo upload update response:', updateRes.data);
+      
+      if (updateRes.data.is_expert && !user?.is_expert) {
+        console.warn('CRITICAL: User role flipped to expert during photo upload!');
+      }
+
       setAuth(updateRes.data, token!);
       setImgError(false); // Reset error state on new upload
     } catch (error) {

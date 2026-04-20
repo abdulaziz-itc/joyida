@@ -573,7 +573,7 @@ const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPl
   );
 };
 
-const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) => {
+const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownload }: any) => {
   const [imgError, setImgError] = useState(false);
   
   const isVideoUrl = (url: string) => {
@@ -620,7 +620,6 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
       const video = document.createElement('video');
       video.src = getFileUrl(reel.video_url, reel.id, 'view');
       video.crossOrigin = "anonymous";
-// ... (omitting some lines for brevity in replacement, but I will provide the full block)
       video.muted = true;
       video.currentTime = 1; // Seek to 1s
       
@@ -650,14 +649,13 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
     <motion.div 
       whileHover={{ scale: 0.98 }}
       whileTap={{ scale: 0.95 }}
-      onClick={onClick}
-      className="aspect-[9/16] relative bg-slate-900 rounded-2xl overflow-hidden cursor-pointer group border border-white/5 shadow-premium"
+      className="aspect-[9/16] relative bg-slate-900 rounded-xl overflow-hidden cursor-pointer group border border-white/5 shadow-premium"
     >
-      <div className="absolute inset-0">
+      <div className="absolute inset-0" onClick={onClick}>
         {thumb && !imgError ? (
           <img 
             src={thumb} 
-            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-40 transition-all duration-500" 
             alt={reel.title} 
             onError={() => setImgError(true)}
           />
@@ -665,58 +663,68 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
           <div className="w-full h-full relative">
               <video 
                 src={getFileUrl(reel.video_url)} 
-                className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
+                className="w-full h-full object-cover opacity-40 group-hover:opacity-20 transition-all duration-500"
                 preload="metadata"
                 muted
                 playsInline
               />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                  <Play size={32} className="text-white/40" />
-              </div>
           </div>
         ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black p-4 text-center">
-                <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin mb-4 shadow-glow-primary" />
-                <span className="text-[10px] text-white/50 font-black uppercase tracking-widest animate-pulse">
-                    {reel.is_downloaded ? 'Syncing...' : 'Fetching...'}
-                </span>
+                <div className="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin mb-2" />
             </div>
         )}
       </div>
 
-      {showControls && (
-          <div className="absolute top-3 right-3 z-30 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 duration-300">
+      {/* Premium Actions Overlay on Hover */}
+      <div className="absolute inset-0 flex items-center justify-center z-40 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+          <div className="flex flex-col gap-3 scale-90 group-hover:scale-100 transition-transform duration-300 pointer-events-auto">
+              <div className="flex gap-3">
+                  {showControls && (
+                    <>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); onEdit(e); }}
+                        className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center text-white hover:bg-primary transition-all border border-white/10 shadow-xl"
+                        title="Edit"
+                      >
+                          <Edit2 size={16} />
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); onDelete(e); }}
+                        className="w-10 h-10 rounded-full bg-red-500/20 backdrop-blur-xl flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all border border-red-500/30 shadow-xl"
+                        title="Delete"
+                      >
+                          <Trash2 size={16} />
+                      </button>
+                    </>
+                  )}
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); onDownload(); }}
+                    className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center text-white hover:bg-green-500 transition-all border border-white/10 shadow-xl"
+                    title="Download"
+                  >
+                      <Download size={16} />
+                  </button>
+              </div>
               <button 
-                onClick={onEdit}
-                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-all border border-white/10"
-                title="Edit"
+                onClick={onClick}
+                className="px-4 py-2 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-primary hover:text-white transition-all shadow-glow-primary"
               >
-                  <Edit2 size={14} />
-              </button>
-              <button 
-                onClick={onDelete}
-                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-all border border-white/10"
-                title="Delete"
-              >
-                  <Trash2 size={14} />
+                OPEN WORK
               </button>
           </div>
-      )}
-
-      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-         <div className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center text-white scale-75 group-hover:scale-100 transition-transform border border-white/20">
-           <PlayCircle size={28} />
-         </div>
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity z-10" />
-      <div className="absolute bottom-0 left-0 right-0 p-3 z-20">
-        <h5 className="text-white text-[11px] font-black truncate mb-1 tracking-tight drop-shadow-lg">{reel.title}</h5>
-        <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-[9px] text-white/60 font-black uppercase tracking-widest">
-                <Eye size={10} className="text-primary" /> {reel.views_count || 0}
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-transparent to-transparent opacity-80 group-hover:opacity-20 transition-opacity z-10 pointer-events-none" />
+      
+      <div className="absolute bottom-0 left-0 right-0 p-3 z-20 pointer-events-none group-hover:opacity-0 transition-opacity">
+        <h5 className="text-white text-[10px] font-bold truncate mb-1 tracking-tight">{reel.title}</h5>
+        <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 text-[8px] text-white/50 font-black uppercase tracking-widest">
+                <Eye size={8} className="text-primary" /> {reel.views_count || 0}
             </div>
             {reel.is_downloaded && (
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-glow-green" title="Local Video" />
+                <div className="w-1 h-1 rounded-full bg-green-500" />
             )}
         </div>
       </div>

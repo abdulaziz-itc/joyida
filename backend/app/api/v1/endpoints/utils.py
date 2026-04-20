@@ -279,16 +279,22 @@ def download_reel(
             media_type="video/mp4",
             content_disposition_type="attachment"
         )
-    except subprocess.CalledProcessError as e:
-        print(f"FFmpeg error: {e.stderr.decode()}")
-        # Fallback to original if ffmpeg fails
+    except (subprocess.CalledProcessError, FileNotFoundError, PermissionError) as e:
+        error_msg = str(e)
+        if isinstance(e, subprocess.CalledProcessError):
+            error_msg = e.stderr.decode()
+        print(f"DEBUG: Download Fallback triggered. FFmpeg issue: {error_msg}")
+        
+        # Fallback to original if ffmpeg fails, is missing, or permission is denied
         return FileResponse(
             path=input_path, 
             filename=f"{project.title}.mp4",
+            media_type="video/mp4",
             content_disposition_type="attachment"
         )
     except Exception as e:
-         raise HTTPException(status_code=500, detail=str(e))
+        print(f"CRITICAL: Download failed completely: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/view/{project_id}")
 def view_reel(project_id: int, db: Session = Depends(get_db)):

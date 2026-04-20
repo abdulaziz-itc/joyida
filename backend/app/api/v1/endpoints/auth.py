@@ -116,24 +116,40 @@ def update_user_me(
 ) -> Any:
     """Update own user profile."""
     try:
+        # Debug logging to see what's coming from frontend
         update_data = user_in.model_dump(exclude_unset=True)
+        print(f"DEBUG: update_user_me request for user {current_user.email}")
+        print(f"DEBUG: Initial update_data: {update_data}")
+
         if "password" in update_data:
             hashed_password = security.get_password_hash(update_data["password"])
             del update_data["password"]
             update_data["hashed_password"] = hashed_password
         
+        # Security: DO NOT allow bulk updating these sensitive fields via /me
+        # These should only be changed via specialized endpoints like handleBecomeExpert
+        sensitive_fields = ["is_expert", "is_superuser", "is_active", "is_verified", "subscription_tier"]
+        for field in sensitive_fields:
+            if field in update_data:
+                print(f"WARNING: Attempted to update sensitive field '{field}' via /auth/me - Blocked.")
+                del update_data[field]
+
         # Handle JSON fields serialization
-        if "education_info" in update_data and update_data["education_info"]:
-            update_data["education_info"] = [item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) for item in update_data["education_info"]]
-        if "experience_info" in update_data and update_data["experience_info"]:
-            update_data["experience_info"] = [item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) for item in update_data["experience_info"]]
-        if "languages" in update_data and update_data["languages"]:
-            update_data["languages"] = [item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) for item in update_data["languages"]]
-        if "social_links" in update_data and update_data["social_links"]:
-            update_data["social_links"] = [item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) for item in update_data["social_links"]]
+        json_fields = ["education_info", "experience_info", "languages", "social_links"]
+        for field in json_fields:
+            if field in update_data and update_data[field]:
+                update_data[field] = [
+                    item if isinstance(item, dict) else (item.dict() if hasattr(item, 'dict') else item) 
+                    for item in update_data[field]
+                ]
+            
+        print(f"DEBUG: Final filtered update_data: {update_data}")
             
         for field, value in update_data.items():
-            setattr(current_user, field, value)
+            # Extra safety: Don't overwrite existing data with None if it's unset in a partial update
+            # This handles cases where unset optional fields might come through as None
+            if value is not None or field == "profile_picture_url": 
+                setattr(current_user, field, value)
         
         db.add(current_user)
         db.commit()
