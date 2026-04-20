@@ -68,9 +68,12 @@ const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null })
           const response = await apiClient.get(`/projects/by-hash/${initialReelHash}`);
           const sharedReel = response.data;
           
-          // Add it to the feed if not already present
           setReels(prev => {
-            if (prev.some(r => r.id === sharedReel.id)) return prev;
+            const exists = prev.some(r => r.id === sharedReel.id);
+            if (exists) {
+              // Move it to top if already exists
+              return [sharedReel, ...prev.filter(r => r.id !== sharedReel.id)];
+            }
             return [sharedReel, ...prev];
           });
           
@@ -92,8 +95,19 @@ const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null })
         params: { search: query }
       });
       const data = response.data;
-      setReels(data);
-      if (data.length > 0 && activeTab === 'explore') {
+      
+      setReels(prev => {
+        // If we're in explore mode and have an initial hash, preserve it at the top
+        if (!owned && initialReelHash) {
+          const firstReel = prev[0];
+          // Filter out the first reel from the new data if it exists there to avoid duplicates
+          const filteredNewData = data.filter((r: any) => r.id !== firstReel?.id);
+          return firstReel ? [firstReel, ...filteredNewData] : data;
+        }
+        return data;
+      });
+
+      if (data.length > 0 && activeTab === 'explore' && !initialReelHash) {
         setActiveReelId(data[0].id);
       }
     } catch (err) {
