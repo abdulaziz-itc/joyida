@@ -17,26 +17,83 @@ from app.schemas.user import ServiceCategory as ServiceCategorySchema
 from app.models.project import Project as ProjectModel
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-def encode_id(n):
-    if n == 0: return ALPHABET[0]
+SALT_OFFSET = 189283711
+SALT_XOR = 0x5DEECE66D
+
+def encode_id(n: int) -> str:
+    """Professional obfuscated encoding: Multiplicative hash + XOR + Base62 + Padding."""
+    if n < 0: return ""
+    
+    # 1. Obfuscate the integer
+    # Using a large prime and XOR to spread sequential IDs
+    val = ((n + SALT_OFFSET) * 2654435761) & 0xFFFFFFFF
+    val = val ^ SALT_XOR
+    
+    # 2. Base62 Encode
+    if val == 0: return "joyida00" # Min length padding
+    
     arr = []
     base = len(ALPHABET)
-    while n:
-        n, rem = divmod(n, base)
+    temp_val = val
+    while temp_val:
+        temp_val, rem = divmod(temp_val, base)
         arr.append(ALPHABET[rem])
-    arr.reverse()
-    return ''.join(arr)
+    
+    res = ''.join(reversed(arr))
+    
+    # 3. Padding to min length 8
+    # Use deterministic padding based on the value to keep it reversible if needed
+    # or just pad with constant-friendly chars
+    while len(res) < 8:
+        # Dynamic padding character
+        pad_idx = (val + len(res)) % base
+        res = ALPHABET[pad_idx] + res
+        
+    return res
 
-def decode_id(s):
+def decode_id(s: str) -> int:
+    """Reverse professional obfuscation."""
+    if not s: return 0
+    
+    # 1. Base62 Decode
     base = len(ALPHABET)
-    strlen = len(s)
     num = 0
-    idx = 0
     for char in s:
-        power = (strlen - (idx + 1))
-        num += ALPHABET.index(char) * (base ** power)
-        idx += 1
-    return num
+        if char not in ALPHABET: continue
+        num = num * base + ALPHABET.index(char)
+        
+    # 2. Reverse XOR and Multiplicative Hash
+    # To reverse (n * P) & mask, we need the modular multiplicative inverse
+    # but since it's a fixed bit width, it's easier to just use a reversible scrambling
+    # or just keep it simple. Let's use a simpler reversible XOR + Offset for now 
+    # to ensure consistency between FE and BE without complex math libs.
+    
+    # Simplified reversible version for high consistency:
+    # Let's redefine encode/decode slightly to be 100% reversible easily.
+    return _decode_robust(s)
+
+def _encode_robust(n: int) -> str:
+    # Reversible scrambling: (n + offset) XOR salt
+    val = (n + SALT_OFFSET) ^ SALT_XOR
+    # Convert to base62
+    res = ""
+    base = len(ALPHABET)
+    temp = val
+    while temp > 0:
+        res = ALPHABET[temp % base] + res
+        temp //= base
+    return res.rjust(8, ALPHABET[0])
+
+def _decode_robust(s: str) -> int:
+    base = len(ALPHABET)
+    val = 0
+    for char in s:
+        val = val * base + ALPHABET.index(char)
+    return (val ^ SALT_XOR) - SALT_OFFSET
+
+# Overriding with stable reversible versions
+encode_id = _encode_robust
+decode_id = _decode_robust
 
 # Robust base directory discovery
 def find_app_root():

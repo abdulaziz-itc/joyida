@@ -81,12 +81,16 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
             </div>
           )}
 
-          {!user?.is_superuser && !user?.is_expert && (
+          {(!user || (!user?.is_superuser && !user?.is_expert)) && (
             <div className="space-y-1.5">
               <NavItem icon={MapPin} label={t('nav.explore')} active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
               <NavItem icon={Film} label={t('nav.reels')} active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
-              <NavItem icon={MessageCircle} label={t('nav.messages')} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
-              <NavItem icon={User} label={t('nav.profile')} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
+              {user && (
+                <>
+                  <NavItem icon={MessageCircle} label={t('nav.messages')} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
+                  <NavItem icon={User} label={t('nav.profile')} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
+                </>
+              )}
             </div>
           )}
         </nav>
@@ -103,7 +107,15 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
             </motion.button>
           )}
           
-          <NavItem icon={LogOut} label={t('nav.logout')} onClick={logout} />
+          {user ? (
+            <NavItem icon={LogOut} label={t('nav.logout')} onClick={logout} />
+          ) : (
+            <NavItem 
+              icon={User} 
+              label={t('nav.login', 'Kirish')} 
+              onClick={() => window.location.href = '/'} 
+            />
+          )}
         </div>
       </aside>
 

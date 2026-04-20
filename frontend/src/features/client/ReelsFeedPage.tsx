@@ -12,16 +12,21 @@ import UploadReelModal from './UploadReelModal';
 import SocialVideoPlayer from './SocialVideoPlayer';
 
 const ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const SALT_OFFSET = 189283711n;
+const SALT_XOR = 25214903917n; // 0x5DEECE66D
+
 const encodeId = (n: number) => {
-  if (n === 0) return ALPHABET[0];
-  let arr = [];
-  let num = n;
-  const base = ALPHABET.length;
-  while (num > 0) {
-    arr.push(ALPHABET[num % base]);
-    num = Math.floor(num / base);
+  if (n < 0) return "";
+  let val = (BigInt(n) + SALT_OFFSET) ^ SALT_XOR;
+  let res = "";
+  const base = BigInt(ALPHABET.length);
+  
+  while (val > 0n) {
+    res = ALPHABET[Number(val % base)] + res;
+    val = val / base;
   }
-  return arr.reverse().join('');
+  
+  return res.padStart(8, ALPHABET[0]);
 };
 
 const getFileUrl = (url: string, reelId?: number, type: 'view' | 'thumb' = 'view') => {
@@ -136,6 +141,10 @@ const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null })
   }, [reels, activeTab, loading]);
 
   const handleLike = async (reelId: number) => {
+    if (!user) {
+      alert(t('reels.login_to_like', 'Yoqtirish uchun iltimos tizimga kiring.'));
+      return;
+    }
     try {
       const response = await apiClient.post(`/projects/${reelId}/like`);
       const updatedReel = response.data;

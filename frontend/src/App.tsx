@@ -105,7 +105,7 @@ function App() {
     // In a real app, the user object would be updated via API and store
   };
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !sharedReelHash) {
     return (
       <GoogleOAuthProvider clientId="596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com">
         <div className="App">
@@ -120,16 +120,16 @@ function App() {
     );
   }
 
-  // Authenticated user flows
-  if (showPreferences) {
+  // Authenticated user flows or Public Deep Link flow
+  if (showPreferences && !sharedReelHash) {
     return <PreferenceSelection onFinish={handleFinishPreferences} />;
   }
 
-  if (showOnboarding) {
+  if (showOnboarding && !sharedReelHash) {
     return <Onboarding onFinish={handleFinishOnboarding} />;
   }
 
-  if (showProfileSetup) {
+  if (showProfileSetup && !sharedReelHash) {
     return <ProfileSetup onFinish={handleFinishProfileSetup} />;
   }
 
