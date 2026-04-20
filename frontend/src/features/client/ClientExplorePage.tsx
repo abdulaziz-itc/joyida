@@ -185,16 +185,20 @@ const ClientExplorePage = () => {
         {/* Top Search Area */}
         <div className={`p-8 w-full max-w-4xl mx-auto transition-all duration-1000 ${showRealMap ? 'opacity-90 pt-12' : 'mt-[22vh]'}`}>
           {!showRealMap && (
-             <div className="text-center mb-16 pointer-events-auto relative">
-                {/* Visual anchor for text readability */}
-                <div className={`absolute inset-[-4rem] rounded-[5rem] blur-[80px] opacity-20 -z-10 ${
-                  currentTheme === 'light' ? 'bg-primary/30' : 'bg-primary/20'
-                }`} />
+             <motion.div 
+               initial={{ opacity: 0, scale: 0.95 }}
+               animate={{ opacity: 1, scale: 1 }}
+               transition={{ duration: 1 }}
+               className="text-center mb-16 pointer-events-auto relative px-12 py-16 rounded-[4rem] bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group/hero overflow-hidden"
+             >
+                {/* Dynamic background glow inside the glass island */}
+                <div className={`absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 transition-opacity duration-1000`} />
+                <div className={`absolute -top-24 -left-24 w-48 h-48 bg-primary/20 blur-[100px] rounded-full animate-pulse`} />
                 
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
                   className={`text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-2xl ${
                     currentTheme === 'light'
                       ? 'bg-gradient-to-b from-primary/90 via-primary to-primary-hover drop-shadow-[0_10px_20px_rgba(var(--primary-val),0.2)]'
@@ -203,12 +207,12 @@ const ClientExplorePage = () => {
                 >
                   Joyida
                 </motion.h1>
-                <p className={`text-xl font-bold tracking-[2.5px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-md ${
-                  currentTheme === 'light' ? 'text-foreground font-black' : 'text-foreground/80'
+                <p className={`text-xl font-bold tracking-[3px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-md ${
+                  currentTheme === 'light' ? 'text-foreground' : 'text-foreground/80'
                 }`}>
                   {t('explore.headline')}
                 </p>
-             </div>
+             </motion.div>
           )}
 
           <form onSubmit={handleSearch} className="pointer-events-auto relative group max-w-2xl mx-auto">
