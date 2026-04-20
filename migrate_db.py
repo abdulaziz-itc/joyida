@@ -45,6 +45,12 @@ try:
     add_column("projects", "thumbnail_url", "VARCHAR")
     add_column("projects", "is_public", "BOOLEAN DEFAULT 1")
     add_column("projects", "original_url", "VARCHAR")
+    
+    # User Profile Extensions
+    add_column("users", "first_name", "VARCHAR")
+    add_column("users", "last_name", "VARCHAR")
+    add_column("users", "patronymic", "VARCHAR")
+    
     print("Migration check completed.")
 
 except Exception as e:

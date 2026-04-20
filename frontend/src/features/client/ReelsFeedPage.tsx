@@ -412,6 +412,26 @@ const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPl
     setTimeout(() => setShowPlayIcon(false), 800);
   };
 
+  const getUserHandle = (u: any) => {
+    if (!u) return 'user';
+    // Priority 1: Full Name
+    if (u.full_name && u.full_name.trim()) {
+      return u.full_name.toLowerCase().replace(/\s+/g, '_');
+    }
+    // Priority 2: First Name
+    if (u.first_name && u.first_name.trim()) {
+      return u.first_name.toLowerCase();
+    }
+    // Priority 3: Email Prefix (most robust fallback)
+    if (u.email) {
+      return u.email.split('@')[0].toLowerCase();
+    }
+    return 'user';
+  };
+
+  const handle = getUserHandle(reel.expert || reel.owner);
+  const displayName = (reel.expert?.full_name || reel.owner?.full_name) || handle;
+
   return (
     <div 
       data-reel-item="true"
@@ -458,10 +478,10 @@ const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPl
                 className="flex items-center gap-3 mb-3"
               >
                 <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black backdrop-blur-3xl shadow-premium">
-                  {reel.expert?.full_name?.charAt(0) || reel.owner?.full_name?.charAt(0) || 'U'}
+                  {displayName.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="font-black text-base tracking-tight">@{reel.expert?.full_name?.toLowerCase().replace(' ', '_') || reel.owner?.full_name?.toLowerCase().replace(' ', '_') || 'user'}</h3>
+                  <h3 className="font-black text-base tracking-tight">@{handle}</h3>
                   <p className="text-primary/80 text-[9px] font-black uppercase tracking-widest">{reel.category || reel.expert?.profession || t('reels.profession_fallback')}</p>
                 </div>
               </motion.div>
