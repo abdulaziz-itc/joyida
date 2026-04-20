@@ -71,6 +71,7 @@ app.include_router(api_router, prefix="/api/v1")
 def short_media_proxy(h: str, request: Request, db: Session = Depends(get_db)):
     """Decode hash and proxy to internal media logic."""
     from app.api.v1.endpoints.utils import decode_id, view_reel, view_thumb, download_reel
+    from fastapi import HTTPException
     try:
         project_id = decode_id(h)
         path = request.url.path
@@ -80,9 +81,12 @@ def short_media_proxy(h: str, request: Request, db: Session = Depends(get_db)):
             return view_thumb(project_id, db)
         elif "/m/d/" in path:
             return download_reel(project_id, db)
-    except:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail="Media not found")
+    except HTTPException as e:
+        # Re-raise internal HTTP exceptions (like 404 Video not found)
+        raise e
+    except Exception as e:
+        logger.error(f"Media Proxy Critical Error: {str(e)}")
+        raise HTTPException(status_code=404, detail="Media resolution failed")
 
 # Serve static files with robust absolute path discovery
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

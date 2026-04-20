@@ -246,19 +246,18 @@ def download_reel(
     # Clean path
     raw_path = project.video_url.lstrip('/')
     if raw_path.startswith('uploads/'):
-        input_path = os.path.join("static", raw_path)
+        input_path = os.path.join(APP_ROOT, "static", raw_path)
     else:
-        # If it's an external URL, we'd need to download it first
-        # For now, let's assume it's local since we download them
-        input_path = raw_path
+        # If it's an external URL (shouldn't happen for downloaded ones), fallback
+        input_path = os.path.join(APP_ROOT, "static", "uploads", os.path.basename(raw_path))
 
     if not os.path.exists(input_path):
          raise HTTPException(status_code=404, detail=f"File not found on server: {input_path}")
 
     # Output path for watermarked video
-    output_dir = "static/uploads/exports"
+    output_dir = os.path.join(APP_ROOT, "static", "uploads", "exports")
     if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
     
     output_filename = f"joida_{os.path.basename(input_path)}"
     output_path = os.path.join(output_dir, output_filename)
