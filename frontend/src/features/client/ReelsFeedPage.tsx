@@ -214,12 +214,12 @@ const ReelsFeedPage = () => {
   };
 
   return (
-    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-[#050510] overflow-hidden relative font-outfit">
+    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-slate-50 overflow-hidden relative font-outfit">
       
       {/* Background Nebula Aura */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/10 blur-[120px] rounded-full animate-pulse-slow" />
-        <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary/10 blur-[120px] rounded-full animate-pulse-slow" />
+        <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full animate-pulse-slow" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary/5 blur-[120px] rounded-full animate-pulse-slow" />
       </div>
 
       <UploadReelModal 
@@ -232,13 +232,15 @@ const ReelsFeedPage = () => {
         onSuccess={() => fetchReels('', activeTab === 'my-works')}
       />
 
+// ... (omitting modal part for context match)
+// ...
       {/* Top Header Overlay */}
-      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none">
+      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 bg-white/70 backdrop-blur-md pointer-events-none border-b border-slate-200/50">
         <div className="flex items-center gap-10 pointer-events-auto">
           <div className="relative group">
             <button 
               onClick={() => setActiveTab('explore')}
-              className={`text-xl font-black tracking-tighter transition-all ${activeTab === 'explore' ? 'text-white' : 'text-white/40 hover:text-white/60'}`}
+              className={`text-xl font-black tracking-tighter transition-all ${activeTab === 'explore' ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
             >
               {t('reels.explore')}
             </button>
@@ -251,7 +253,7 @@ const ReelsFeedPage = () => {
             <div className="relative group">
               <button 
                 onClick={() => setActiveTab('my-works')}
-                className={`text-xl font-black tracking-tighter transition-all ${activeTab === 'my-works' ? 'text-white' : 'text-white/40 hover:text-white/60'}`}
+                className={`text-xl font-black tracking-tighter transition-all ${activeTab === 'my-works' ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
               >
                 {t('reels.my_works')}
               </button>
@@ -265,7 +267,7 @@ const ReelsFeedPage = () => {
         <div className="flex items-center gap-4 pointer-events-auto">
           <button 
             onClick={() => setShowSearch(!showSearch)}
-            className="p-3 bg-white/10 backdrop-blur-3xl rounded-2xl text-white border border-white/10 hover:bg-white/20 transition-all shadow-premium"
+            className="p-3 bg-slate-100 rounded-2xl text-slate-700 border border-slate-200 hover:bg-slate-200 transition-all shadow-sm"
           >
             <Search size={22} />
           </button>
@@ -290,21 +292,21 @@ const ReelsFeedPage = () => {
             className="absolute top-24 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-6"
           >
             <form onSubmit={handleSearch} className="relative group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-focus-within:text-primary transition-colors" />
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
               <input 
                 type="text" 
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('reels.search_placeholder')}
-                className="w-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] py-5 pl-14 pr-6 text-white focus:outline-none focus:border-primary/50 transition-all shadow-2xl"
+                className="w-full bg-white/90 backdrop-blur-3xl border border-slate-200 rounded-[2rem] py-5 pl-14 pr-6 text-slate-900 focus:outline-none focus:border-primary/50 transition-all shadow-xl"
               />
             </form>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="flex-1 h-full bg-black relative overflow-y-auto hide-scrollbar">
+      <div className="flex-1 h-full bg-white relative overflow-y-auto hide-scrollbar">
         {/* Scroll container */}
         <div 
           ref={containerRef}
@@ -314,23 +316,23 @@ const ReelsFeedPage = () => {
           <div className="fixed top-24 right-8 z-40 flex flex-col gap-4">
             <button 
               onClick={() => setIsMuted(!isMuted)}
-              className="p-4 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl text-white hover:bg-white/10 transition-all shadow-premium"
+              className="p-4 bg-white shadow-xl border border-slate-100 rounded-2xl text-slate-700 hover:bg-slate-50 transition-all"
             >
               {isMuted ? <VolumeX /> : <Volume2 />}
             </button>
           </div>
 
           {loading ? (
-            <div className="w-full h-full flex items-center justify-center bg-black">
+            <div className="w-full h-full flex items-center justify-center bg-white">
                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-glow-primary" />
             </div>
           ) : reels.length === 0 ? (
-            <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black text-white">
+            <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-white text-slate-900">
               <div className="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 shadow-glow-primary">
                 <VideoOff className="w-12 h-12 text-primary/40" />
               </div>
               <h2 className="text-3xl font-black mb-4 tracking-tight">{t('reels.no_videos')}</h2>
-              <p className="text-white/50 max-w-sm font-medium leading-relaxed">
+              <p className="text-slate-500 max-w-sm font-medium leading-relaxed">
                 {t('reels.no_videos_desc')}
               </p>
             </div>
@@ -553,10 +555,10 @@ const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPl
             }}
             className="flex flex-col items-center gap-1 group"
           >
-            <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:bg-primary transition-all hover:scale-110 shadow-premium">
+            <div className="w-14 h-14 rounded-full bg-black/20 backdrop-blur-3xl border border-white/20 flex items-center justify-center text-white hover:bg-primary transition-all hover:scale-110 shadow-xl">
               <Share2 size={28} />
             </div>
-            <span className="text-[10px] font-black text-white/70 uppercase tracking-tighter">SHARE</span>
+            <span className="text-[10px] font-black text-white uppercase tracking-tighter drop-shadow-md">SHARE</span>
           </button>
         </div>
 
@@ -649,28 +651,28 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
     <motion.div 
       whileHover={{ scale: 0.98 }}
       whileTap={{ scale: 0.95 }}
-      className="aspect-[9/16] relative bg-slate-900 rounded-xl overflow-hidden cursor-pointer group border border-white/5 shadow-premium"
+      className="aspect-[9/16] relative bg-white rounded-xl overflow-hidden cursor-pointer group border border-slate-200 shadow-sm"
     >
       <div className="absolute inset-0" onClick={onClick}>
         {thumb && !imgError ? (
           <img 
             src={thumb} 
-            className="w-full h-full object-cover opacity-80 group-hover:opacity-40 transition-all duration-500" 
+            className="w-full h-full object-cover opacity-90 group-hover:opacity-40 transition-all duration-500" 
             alt={reel.title} 
             onError={() => setImgError(true)}
           />
         ) : isDirectVideo ? (
-          <div className="w-full h-full relative">
+          <div className="w-full h-full relative bg-slate-900">
               <video 
                 src={getFileUrl(reel.video_url)} 
-                className="w-full h-full object-cover opacity-40 group-hover:opacity-20 transition-all duration-500"
+                className="w-full h-full object-cover opacity-60 group-hover:opacity-20 transition-all duration-500"
                 preload="metadata"
                 muted
                 playsInline
               />
           </div>
         ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black p-4 text-center">
+            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 p-4 text-center">
                 <div className="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin mb-2" />
             </div>
         )}
@@ -684,14 +686,14 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
                     <>
                       <button 
                         onClick={(e) => { e.stopPropagation(); onEdit(e); }}
-                        className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center text-white hover:bg-primary transition-all border border-white/10 shadow-xl"
+                        className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl flex items-center justify-center text-slate-900 hover:bg-primary hover:text-white transition-all border border-slate-200 shadow-xl"
                         title="Edit"
                       >
                           <Edit2 size={16} />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); onDelete(e); }}
-                        className="w-10 h-10 rounded-full bg-red-500/20 backdrop-blur-xl flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all border border-red-500/30 shadow-xl"
+                        className="w-10 h-10 rounded-full bg-red-50/10 backdrop-blur-xl flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all border border-red-500/20 shadow-xl"
                         title="Delete"
                       >
                           <Trash2 size={16} />
@@ -700,7 +702,7 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
                   )}
                   <button 
                     onClick={(e) => { e.stopPropagation(); onDownload(); }}
-                    className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center text-white hover:bg-green-500 transition-all border border-white/10 shadow-xl"
+                    className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl flex items-center justify-center text-slate-900 hover:bg-green-500 hover:text-white transition-all border border-slate-200 shadow-xl"
                     title="Download"
                   >
                       <Download size={16} />
@@ -708,19 +710,19 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
               </div>
               <button 
                 onClick={onClick}
-                className="px-4 py-2 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-primary hover:text-white transition-all shadow-glow-primary"
+                className="px-4 py-2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-primary transition-all shadow-xl"
               >
                 OPEN WORK
               </button>
           </div>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-transparent to-transparent opacity-80 group-hover:opacity-20 transition-opacity z-10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-90 group-hover:opacity-0 transition-opacity z-10 pointer-events-none" />
       
       <div className="absolute bottom-0 left-0 right-0 p-3 z-20 pointer-events-none group-hover:opacity-0 transition-opacity">
-        <h5 className="text-white text-[10px] font-bold truncate mb-1 tracking-tight">{reel.title}</h5>
+        <h5 className="text-slate-900 text-[10px] font-bold truncate mb-1 tracking-tight">{reel.title}</h5>
         <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 text-[8px] text-white/50 font-black uppercase tracking-widest">
+            <div className="flex items-center gap-1 text-[8px] text-slate-500 font-black uppercase tracking-widest">
                 <Eye size={8} className="text-primary" /> {reel.views_count || 0}
             </div>
             {reel.is_downloaded && (
@@ -734,10 +736,10 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
 
 const ReelInteractionButton = ({ icon, label, color, onClick }: any) => (
   <button onClick={onClick} className="flex flex-col items-center gap-1 group transition-all pointer-events-auto">
-    <div className={`w-14 h-14 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white transition-all group-hover:bg-white/20 ${color} group-hover:scale-110 shadow-premium`}>
+    <div className={`w-14 h-14 rounded-full bg-black/20 backdrop-blur-3xl border border-white/20 flex items-center justify-center text-white transition-all group-hover:bg-black/40 ${color} group-hover:scale-110 shadow-xl`}>
       {icon}
     </div>
-    <span className="text-[10px] font-black text-white/70 uppercase tracking-tighter">{label}</span>
+    <span className="text-[10px] font-black text-white uppercase tracking-tighter drop-shadow-md">{label}</span>
   </button>
 );
 
