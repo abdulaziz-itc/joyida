@@ -201,13 +201,13 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 const MobileNavItem = ({ icon: Icon, active = false, onClick }: any) => (
   <button 
     onClick={onClick}
-    className={`p-4 transition-all duration-300 relative z-10 ${active ? 'text-primary' : 'text-foreground/50 hover:text-foreground/80'}`}
+    className={`p-4 transition-all duration-300 relative z-10 outline-none focus:outline-none select-none touch-none ${active ? 'text-primary' : 'text-white/40 hover:text-white/70'}`}
   >
-    <Icon className={`w-7 h-7 transition-transform ${active ? 'scale-110 drop-shadow-[0_0_15px_var(--color-primary-glow)]' : ''}`} />
+    <Icon className={`w-7 h-7 transition-all duration-500 ${active ? 'scale-110 text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'scale-100'}`} />
     {active && (
       <motion.div 
         layoutId="activeBottomNav"
-        className="absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary shadow-[0_0_15px_var(--color-primary)]"
+        className="absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.8)]"
       />
     )}
   </button>
