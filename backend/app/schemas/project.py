@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
+from .user import User
 
 class ProjectBase(BaseModel):
     title: str
@@ -24,6 +25,7 @@ class Project(ProjectBase):
     id: int
     created_at: datetime
     owner_id: int
+    owner: Optional[User] = None
 
     class Config:
         from_attributes = True
