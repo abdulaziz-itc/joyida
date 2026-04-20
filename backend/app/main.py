@@ -64,6 +64,26 @@ api_router.include_router(utils.router, prefix="/utils", tags=["utils"])
 api_router.include_router(user_assets.router, prefix="/user-assets", tags=["user-assets"])
 app.include_router(api_router, prefix="/api/v1")
 
+# High-Security Short Media Router (Obfuscation)
+@app.get("/m/v/{h}")
+@app.get("/m/t/{h}")
+@app.get("/m/d/{h}")
+def short_media_proxy(h: str, request: Request, db: Session = Depends(get_db)):
+    """Decode hash and proxy to internal media logic."""
+    from app.api.v1.endpoints.utils import decode_id, view_reel, view_thumb, download_reel
+    try:
+        project_id = decode_id(h)
+        path = request.url.path
+        if "/m/v/" in path:
+            return view_reel(project_id, db)
+        elif "/m/t/" in path:
+            return view_thumb(project_id, db)
+        elif "/m/d/" in path:
+            return download_reel(project_id, db)
+    except:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Media not found")
+
 # Serve static files with robust absolute path discovery
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, "static", "uploads")

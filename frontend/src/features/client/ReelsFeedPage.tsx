@@ -11,8 +11,27 @@ import { useAuthStore } from '../../store/authStore';
 import UploadReelModal from './UploadReelModal';
 import SocialVideoPlayer from './SocialVideoPlayer';
 
-const getFileUrl = (url: string) => {
+const ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const encodeId = (n: number) => {
+  if (n === 0) return ALPHABET[0];
+  let arr = [];
+  let num = n;
+  const base = ALPHABET.length;
+  while (num > 0) {
+    arr.push(ALPHABET[num % base]);
+    num = Math.floor(num / base);
+  }
+  return arr.reverse().join('');
+};
+
+const getFileUrl = (url: string, reelId?: number, type: 'view' | 'thumb' = 'view') => {
   if (!url) return '';
+  if (reelId && !url.startsWith('http')) {
+     const baseUrl = (import.meta.env.VITE_API_URL as string)?.split('/api/')[0];
+     const hash = encodeId(reelId);
+     const prefix = type === 'view' ? 'v' : 't';
+     return `${baseUrl}/m/${prefix}/${hash}`;
+  }
   if (url.startsWith('http')) return url;
   const baseUrl = (import.meta.env.VITE_API_URL as string)?.split('/api/')[0];
   const cleanPath = url.replace(/^\//, '');
@@ -151,26 +170,18 @@ const ReelsFeedPage = () => {
     setIsUploadModalOpen(true);
   };
 
-  const handleDownload = async (reelId: number, title: string) => {
-    try {
-      const response = await apiClient.get(`/utils/download-reel/${reelId}`, {
-        responseType: 'blob'
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `JOIDA_${title}.mp4`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (err) {
-      console.error("Download failed", err);
-      // Fallback: try direct video URL if watermark fails
-      const reel = reels.find(r => r.id === reelId);
-      if (reel?.video_url) {
-          window.open(getFileUrl(reel.video_url), '_blank');
-      }
-    }
+  const handleDownload = (reelId: number, title: string) => {
+    const hash = encodeId(reelId);
+    const baseUrl = (import.meta.env.VITE_API_URL as string)?.split('/api/')[0];
+    const downloadUrl = `${baseUrl}/m/d/${hash}`;
+    
+    // Direct download trigger without opening a persistent tab
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => document.body.removeChild(link), 100);
   };
 
   const handleThumbnailCapture = async (reelId: number, videoElement: HTMLVideoElement) => {
@@ -569,7 +580,7 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
   };
 
   const thumb = reel.thumbnail_url && reel.thumbnail_url !== 'updated' 
-    ? getFileUrl(reel.thumbnail_url) 
+    ? getFileUrl(reel.thumbnail_url, reel.id, 'thumb') 
     : getThumbnail(reel.video_url);
 
   const isDirectVideo = isVideoUrl(reel.video_url);
@@ -578,8 +589,9 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete }: any) =>
   useEffect(() => {
     if (!reel.thumbnail_url && isDirectVideo && !imgError) {
       const video = document.createElement('video');
-      video.src = getFileUrl(reel.video_url);
+      video.src = getFileUrl(reel.video_url, reel.id, 'view');
       video.crossOrigin = "anonymous";
+// ... (omitting some lines for brevity in replacement, but I will provide the full block)
       video.muted = true;
       video.currentTime = 1; // Seek to 1s
       

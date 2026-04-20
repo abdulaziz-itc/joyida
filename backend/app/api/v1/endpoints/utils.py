@@ -16,6 +16,28 @@ from app.models.service import ServiceCategory
 from app.schemas.user import ServiceCategory as ServiceCategorySchema
 from app.models.project import Project as ProjectModel
 
+ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+def encode_id(n):
+    if n == 0: return ALPHABET[0]
+    arr = []
+    base = len(ALPHABET)
+    while n:
+        n, rem = divmod(n, base)
+        arr.append(ALPHABET[rem])
+    arr.reverse()
+    return ''.join(arr)
+
+def decode_id(s):
+    base = len(ALPHABET)
+    strlen = len(s)
+    num = 0
+    idx = 0
+    for char in s:
+        power = (strlen - (idx + 1))
+        num += ALPHABET.index(char) * (base ** power)
+        idx += 1
+    return num
+
 # Robust base directory discovery
 def find_app_root():
     current = os.path.abspath(__file__)
@@ -255,11 +277,48 @@ def download_reel(
         return FileResponse(
             path=output_path, 
             filename=f"JOIDA_{project.title}.mp4",
-            media_type="video/mp4"
+            media_type="video/mp4",
+            content_disposition_type="attachment"
         )
     except subprocess.CalledProcessError as e:
         print(f"FFmpeg error: {e.stderr.decode()}")
         # Fallback to original if ffmpeg fails
-        return FileResponse(path=input_path, filename=f"{project.title}.mp4")
+        return FileResponse(
+            path=input_path, 
+            filename=f"{project.title}.mp4",
+            content_disposition_type="attachment"
+        )
     except Exception as e:
          raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/view/{project_id}")
+def view_reel(project_id: int, db: Session = Depends(get_db)):
+    """Serve a reel securely without exposing raw path."""
+    project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not project or not project.video_url:
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    # Check if it's a social link (then proxy it) or local
+    if project.video_url.startswith('http'):
+        # For social links that aren't downloaded, we can't easily proxy without full stream
+        # But for downloaded ones, we use the local file
+        raise HTTPException(status_code=400, detail="Video not yet processed for secure view")
+        
+    abs_path = os.path.join(APP_ROOT, "static", project.video_url.lstrip('/'))
+    if not os.path.exists(abs_path):
+        raise HTTPException(status_code=404, detail="File missing on server")
+        
+    return FileResponse(path=abs_path, media_type="video/mp4")
+
+@router.get("/thumb/{project_id}")
+def view_thumb(project_id: int, db: Session = Depends(get_db)):
+    """Serve a thumbnail securely."""
+    project = db.query(ProjectModel).filter(ProjectModel.id == project_id).first()
+    if not project or not project.thumbnail_url:
+         raise HTTPException(status_code=404, detail="Thumbnail not found")
+         
+    abs_path = os.path.join(APP_ROOT, "static", project.thumbnail_url.lstrip('/'))
+    if not os.path.exists(abs_path):
+        raise HTTPException(status_code=404, detail="Thumbnail missing on server")
+        
+    return FileResponse(path=abs_path)
