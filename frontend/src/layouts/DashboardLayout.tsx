@@ -51,8 +51,8 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground transition-colors duration-500">
-      {/* Mobile Top Header */}
+    <div className="flex h-[100dvh] bg-background text-foreground transition-colors duration-500 overflow-hidden relative">
+      {/* Mobile Top Header - Truly Pinned */}
       <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-glass-bg backdrop-blur-2xl border-b border-white/5 z-50 flex items-center justify-between px-6">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg shadow-[0_0_15px_var(--color-primary-glow)] border border-white/10">
@@ -140,9 +140,9 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         </div>
       </aside>
 
-      {/* Main Content - Force expanded width on mobile */}
+      {/* Main Content - Independent Internal Scroll */}
       <main 
-        className="flex-1 lg:ml-[19rem] min-h-screen bg-transparent relative transition-all duration-500 pb-24 lg:pb-0 pt-16 lg:pt-0"
+        className="flex-1 h-full overflow-y-auto no-scrollbar lg:ml-[19rem] min-h-full bg-transparent relative transition-all duration-500 pb-24 lg:pb-8 pt-16 lg:pt-8"
         style={{ marginLeft: typeof window !== 'undefined' && window.innerWidth < 1024 ? '0' : undefined }}
       >
         {children}
