@@ -165,20 +165,25 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         </AnimatePresence>
       </main>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-glass-bg backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-around px-2">
-        <MobileNavItem icon={MapPin} active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
-        <MobileNavItem icon={Film} active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
-        {user && (
-          <>
-            <MobileNavItem icon={MessageCircle} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
-            <MobileNavItem icon={User} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
-          </>
-        )}
-        {!user && (
-           <MobileNavItem icon={User} active={false} onClick={() => window.location.href = '/'} />
-        )}
-      </nav>
+      {/* Modern Floating Bottom Navigation Bar */}
+      <div className="lg:hidden fixed bottom-6 left-0 right-0 z-50 px-6">
+        <nav className="h-18 bg-glass-bg backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-around px-2 relative overflow-hidden">
+          {/* Inner Glow Effect */}
+          <div className="absolute inset-0 bg-gradient-to-t from-white/[0.02] to-transparent pointer-events-none" />
+          
+          <MobileNavItem icon={MapPin} active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
+          <MobileNavItem icon={Film} active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
+          {user && (
+            <>
+              <MobileNavItem icon={MessageCircle} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
+              <MobileNavItem icon={User} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
+            </>
+          )}
+          {!user && (
+             <MobileNavItem icon={User} active={false} onClick={() => window.location.href = '/'} />
+          )}
+        </nav>
+      </div>
     </div>
   );
 };

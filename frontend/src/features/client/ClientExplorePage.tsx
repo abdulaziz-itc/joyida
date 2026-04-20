@@ -189,49 +189,50 @@ const ClientExplorePage = () => {
                initial={{ opacity: 0, scale: 0.95 }}
                animate={{ opacity: 1, scale: 1 }}
                transition={{ duration: 1 }}
-               className="text-center mb-16 pointer-events-auto relative px-6 md:px-12 py-12 md:py-16 rounded-[2.5rem] md:rounded-[4rem] bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group/hero overflow-hidden mx-4 md:mx-0"
+               className="text-center mb-16 pointer-events-auto relative px-8 md:px-12 py-12 md:py-20 rounded-[3rem] md:rounded-[5rem] bg-white/[0.03] backdrop-blur-3xl border border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.4)] group/hero overflow-hidden mx-4 md:mx-0 group"
              >
-                {/* Dynamic background glow inside the glass island */}
-                <div className={`absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 transition-opacity duration-1000`} />
-                <div className={`absolute -top-24 -left-24 w-48 h-48 bg-primary/20 blur-[100px] rounded-full animate-pulse`} />
+                {/* Dynamic Aurora Glow Effects */}
+                <div className={`absolute inset-0 -z-10 bg-gradient-to-br from-primary/20 via-transparent to-secondary/10 transition-opacity duration-1000 opacity-50 group-hover:opacity-100`} />
+                <div className="absolute -top-32 -left-32 w-64 h-64 bg-primary/30 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-secondary/20 blur-[120px] rounded-full animate-pulse" />
                 
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className={`text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-2xl ${
+                  className={`text-6xl sm:text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-2xl ${
                     currentTheme === 'light'
-                      ? 'bg-gradient-to-b from-primary/90 via-primary to-primary-hover drop-shadow-[0_10px_20px_rgba(var(--primary-val),0.2)]'
-                      : 'bg-gradient-to-b from-white via-white to-primary/60 drop-shadow-[0_0_50px_var(--color-primary-glow)]'
+                      ? 'bg-gradient-to-b from-primary/90 via-primary to-primary-hover drop-shadow-[0_10px_30px_rgba(var(--primary-val),0.2)]'
+                      : 'bg-gradient-to-b from-white via-white/90 to-primary/40 drop-shadow-[0_0_60px_var(--color-primary-glow)]'
                   }`}
                 >
                   Joyida
                 </motion.h1>
-                <p className={`text-sm sm:text-base md:text-xl font-bold tracking-[1.5px] md:tracking-[3px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-md ${
-                  currentTheme === 'light' ? 'text-foreground' : 'text-foreground/80'
+                <p className={`text-xs sm:text-sm md:text-xl font-bold tracking-[2px] md:tracking-[5px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-md brightness-110 ${
+                  currentTheme === 'light' ? 'text-foreground' : 'text-foreground/90'
                 }`}>
                   {t('explore.headline')}
                 </p>
              </motion.div>
           )}
 
-          <form onSubmit={handleSearch} className="pointer-events-auto relative group max-w-2xl mx-auto px-4 md:px-0">
+          <form onSubmit={handleSearch} className="pointer-events-auto relative group max-w-2xl mx-auto px-6 md:px-0">
              <div className="relative flex items-center">
-                <div className="absolute left-6 text-foreground/40 group-focus-within:text-primary transition-colors">
+                <div className="absolute left-6 text-foreground/40 group-focus-within:text-primary transition-all duration-300 transform group-focus-within:scale-110">
                   <Search className="w-6 h-6" />
                 </div>
                 <input 
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t('explore.search_placeholder')}
-                  className="w-full bg-glass-bg backdrop-blur-xl border border-white/10 rounded-3xl py-6 pl-16 pr-24 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all text-lg shadow-2xl"
+                  placeholder={t('explore.placeholder')}
+                  className="w-full bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-[2rem] py-6 pl-16 pr-24 focus:outline-none focus:border-primary/40 focus:ring-[12px] focus:ring-primary/5 transition-all text-lg shadow-[0_10px_40px_rgba(0,0,0,0.2)] text-foreground placeholder:text-foreground/30"
                 />
                 <button 
                   type="submit"
-                  className="absolute right-3 px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-2xl text-white font-bold hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_var(--color-primary-glow)]"
+                  className="absolute right-3 px-6 py-3 bg-gradient-to-r from-primary to-primary-hover rounded-[1.25rem] text-white font-black uppercase text-[10px] tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_25px_var(--color-primary-glow)] group-focus-within:ring-2 ring-white/20"
                 >
-                  {window.innerWidth < 640 ? <Search className="w-5 h-5" /> : t('explore.search_btn')}
+                  {window.innerWidth < 640 ? <Search className="w-5 h-5" /> : t('explore.find')}
                 </button>
              </div>
           </form>
