@@ -324,20 +324,19 @@ const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null })
         <div className="flex items-center gap-4 pointer-events-auto">
           <button 
             onClick={() => setShowSearch(!showSearch)}
-            className={`p-3 rounded-2xl transition-all shadow-sm border ${
-              activeTab === 'explore'
-                ? 'bg-white/10 text-white border-white/10 hover:bg-white/20'
-                : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
-            }`}
+            className="p-3 md:p-4 bg-glass-bg backdrop-blur-2xl rounded-2xl border border-white/5 text-foreground/70 hover:text-primary transition-all shadow-xl"
           >
-            <Search size={22} />
+            <Search className="w-5 h-5 md:w-6 md:h-6" />
           </button>
-          {user && (
+          
+          {((user?.is_expert) || activeTab === 'my-works') && (
             <button 
               onClick={() => setIsUploadModalOpen(true)}
-              className="px-6 py-3 bg-primary text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-glow-primary hover:scale-105 transition-all flex items-center gap-2"
+              className="flex items-center gap-2 px-4 md:px-8 py-3 md:py-4 bg-primary rounded-2xl text-white font-black text-[10px] md:text-xs uppercase tracking-[2px] shadow-[0_0_30px_var(--color-primary-glow)] hover:scale-105 active:scale-95 transition-all"
             >
-              <Plus size={18} /> {t('reels.upload_work')}
+              <Plus className="w-4 h-4" /> 
+              <span className="hidden sm:inline">{t('reels.upload')}</span>
+              <span className="sm:hidden">{t('reels.up')}</span>
             </button>
           )}
         </div>

@@ -215,27 +215,25 @@ const ClientExplorePage = () => {
              </motion.div>
           )}
 
-          <form onSubmit={handleSearch} className="pointer-events-auto relative group max-w-2xl mx-auto">
-            <div className={`absolute inset-0 bg-primary/20 rounded-3xl blur-[60px] opacity-0 group-hover:opacity-40 transition-opacity duration-700`} />
-            <div className="relative flex items-center bg-glass-bg backdrop-blur-3xl border border-glass-border p-2.5 rounded-3xl shadow-premium group-hover:border-primary/30 transition-all">
-              <div className="pl-6">
-                <Search className={`w-6 h-6 ${isSearching ? 'text-primary animate-spin' : 'text-foreground/40'}`} />
-              </div>
-              <input 
-                type="text" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('explore.placeholder')}
-                className={`flex-1 bg-transparent border-none focus:ring-0 text-foreground px-6 py-5 text-xl placeholder:text-foreground/40`}
-              />
-              <button 
-                type="submit"
-                disabled={isSearching}
-                className="glow-button !px-10 !py-5 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-              >
-                {isSearching ? '...' : t('explore.find')}
-              </button>
-            </div>
+          <form onSubmit={handleSearch} className="pointer-events-auto relative group max-w-2xl mx-auto px-4 md:px-0">
+             <div className="relative flex items-center">
+                <div className="absolute left-6 text-foreground/40 group-focus-within:text-primary transition-colors">
+                  <Search className="w-6 h-6" />
+                </div>
+                <input 
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t('explore.search_placeholder')}
+                  className="w-full bg-glass-bg backdrop-blur-xl border border-white/10 rounded-3xl py-6 pl-16 pr-24 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all text-lg shadow-2xl"
+                />
+                <button 
+                  type="submit"
+                  className="absolute right-3 px-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-2xl text-white font-bold hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_var(--color-primary-glow)]"
+                >
+                  {window.innerWidth < 640 ? <Search className="w-5 h-5" /> : t('explore.search_btn')}
+                </button>
+             </div>
           </form>
         </div>
 
