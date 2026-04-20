@@ -38,6 +38,12 @@ function App() {
 
   // Determine initial page based on authentication and roles
   useEffect(() => {
+    // If we have a shared reel link via URL, don't override it with default pages
+    if (sharedReelHash) {
+      setCurrentPage('reels');
+      return;
+    }
+
     if (isAuthenticated && user && !currentPage) {
        if (user.is_superuser) {
          setCurrentPage('admin');
@@ -47,7 +53,7 @@ function App() {
          setCurrentPage('explore');
        }
     }
-  }, [isAuthenticated, user, currentPage]);
+  }, [isAuthenticated, user, currentPage, sharedReelHash]);
 
   useEffect(() => {
     // Apply saved theme
