@@ -353,7 +353,7 @@ const ReelsFeedPage = () => {
               />
             ))
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-4 pt-24">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-1 p-1 pt-24">
               {reels.map((reel) => (
                 <ReelGridCard 
                   key={reel.id} 
