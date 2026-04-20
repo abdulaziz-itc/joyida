@@ -186,7 +186,7 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 const MobileNavItem = ({ icon: Icon, active = false, onClick }: any) => (
   <button 
     onClick={onClick}
-    className={`p-4 transition-all duration-300 relative ${active ? 'text-primary' : 'text-foreground/40'}`}
+    className={`p-4 transition-all duration-300 relative ${active ? 'text-primary' : 'text-foreground/60 hover:text-foreground/80'}`}
   >
     <Icon className={`w-7 h-7 ${active ? 'scale-110 drop-shadow-[0_0_10px_var(--color-primary-glow)]' : ''}`} />
     {active && (
