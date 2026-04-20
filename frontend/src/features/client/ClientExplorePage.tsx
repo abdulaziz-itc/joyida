@@ -189,7 +189,7 @@ const ClientExplorePage = () => {
                initial={{ opacity: 0, scale: 0.95 }}
                animate={{ opacity: 1, scale: 1 }}
                transition={{ duration: 1 }}
-               className="text-center mb-16 pointer-events-auto relative px-12 py-16 rounded-[4rem] bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group/hero overflow-hidden"
+               className="text-center mb-16 pointer-events-auto relative px-6 md:px-12 py-12 md:py-16 rounded-[2.5rem] md:rounded-[4rem] bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] group/hero overflow-hidden mx-4 md:mx-0"
              >
                 {/* Dynamic background glow inside the glass island */}
                 <div className={`absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-transparent to-primary/5 transition-opacity duration-1000`} />
@@ -199,7 +199,7 @@ const ClientExplorePage = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className={`text-8xl md:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-2xl ${
+                  className={`text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black mb-6 text-transparent bg-clip-text font-display tracking-tighter drop-shadow-2xl ${
                     currentTheme === 'light'
                       ? 'bg-gradient-to-b from-primary/90 via-primary to-primary-hover drop-shadow-[0_10px_20px_rgba(var(--primary-val),0.2)]'
                       : 'bg-gradient-to-b from-white via-white to-primary/60 drop-shadow-[0_0_50px_var(--color-primary-glow)]'
@@ -207,7 +207,7 @@ const ClientExplorePage = () => {
                 >
                   Joyida
                 </motion.h1>
-                <p className={`text-xl font-bold tracking-[3px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-md ${
+                <p className={`text-sm sm:text-base md:text-xl font-bold tracking-[1.5px] md:tracking-[3px] max-w-2xl mx-auto leading-relaxed uppercase transition-colors duration-500 drop-shadow-md ${
                   currentTheme === 'light' ? 'text-foreground' : 'text-foreground/80'
                 }`}>
                   {t('explore.headline')}

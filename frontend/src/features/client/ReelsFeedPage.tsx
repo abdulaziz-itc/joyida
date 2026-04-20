@@ -520,7 +520,7 @@ const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPl
       data-reel-id={reel.id}
       className={`w-full h-full ${isModal ? '' : 'snap-start'} relative flex justify-center items-center bg-black overflow-hidden`}
     >
-      <div className={`relative w-full ${isModal ? 'h-full' : 'max-w-[450px] h-[95vh] rounded-[2.5rem]'} bg-black overflow-hidden shadow-2xl group border border-white/5`}>
+      <div className={`relative w-full ${isModal ? 'h-full' : 'lg:max-w-[450px] h-[100dvh] lg:h-[95vh] lg:rounded-[2.5rem]'} bg-black overflow-hidden shadow-2xl group border border-white/5`}>
         <div 
             className="absolute inset-0 z-0 cursor-pointer"
             onClick={handleTogglePlay}

@@ -52,8 +52,26 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 
   return (
     <div className="flex min-h-screen bg-background text-foreground transition-colors duration-500">
-      {/* Floating Glass Sidebar */}
-      <aside className="fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex flex-col bg-glass-bg backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-premium transition-all duration-500">
+      {/* Mobile Top Header */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-glass-bg backdrop-blur-2xl border-b border-white/5 z-50 flex items-center justify-between px-6">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg shadow-[0_0_15px_var(--color-primary-glow)] border border-white/10">
+            J
+          </div>
+          <span className="text-xl font-black tracking-tight font-display">Joyida</span>
+        </div>
+        {!user && (
+          <button 
+            onClick={() => window.location.href = '/'}
+            className="text-xs font-black uppercase tracking-widest text-primary"
+          >
+            {t('nav.login')}
+          </button>
+        )}
+      </header>
+
+      {/* Floating Glass Sidebar - Hidden on mobile */}
+      <aside className="hidden lg:flex fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex flex-col bg-glass-bg backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-premium transition-all duration-500">
         <div className="flex items-center gap-3 mb-10 px-2 text-foreground">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-2xl shadow-[0_0_20px_var(--color-primary-glow)] border border-white/10">
             J
@@ -119,8 +137,8 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         </div>
       </aside>
 
-      {/* Main Content - Detached and shifted for the floating sidebar */}
-      <main className="flex-1 ml-[19rem] min-h-screen bg-transparent relative transition-all duration-500">
+      {/* Main Content - No left margin on mobile */}
+      <main className="flex-1 lg:ml-[19rem] min-h-screen bg-transparent relative transition-all duration-500 pb-24 lg:pb-0 pt-16 lg:pt-0">
         {children}
         
         <AnimatePresence>
@@ -140,8 +158,38 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
           )}
         </AnimatePresence>
       </main>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-glass-bg backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-around px-2">
+        <MobileNavItem icon={MapPin} active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
+        <MobileNavItem icon={Film} active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
+        {user && (
+          <>
+            <MobileNavItem icon={MessageCircle} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
+            <MobileNavItem icon={User} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
+          </>
+        )}
+        {!user && (
+           <MobileNavItem icon={User} active={false} onClick={() => window.location.href = '/'} />
+        )}
+      </nav>
     </div>
   );
 };
+
+const MobileNavItem = ({ icon: Icon, active = false, onClick }: any) => (
+  <button 
+    onClick={onClick}
+    className={`p-4 transition-all duration-300 relative ${active ? 'text-primary' : 'text-foreground/40'}`}
+  >
+    <Icon className={`w-7 h-7 ${active ? 'scale-110 drop-shadow-[0_0_10px_var(--color-primary-glow)]' : ''}`} />
+    {active && (
+      <motion.div 
+        layoutId="activeBottomNav"
+        className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_var(--color-primary)]"
+      />
+    )}
+  </button>
+);
 
 export default DashboardLayout;
