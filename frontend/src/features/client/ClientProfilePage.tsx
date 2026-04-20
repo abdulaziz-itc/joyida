@@ -17,6 +17,7 @@ const ClientProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -157,11 +158,20 @@ const ClientProfilePage = () => {
       
       const updateRes = await apiClient.put('/auth/me', { profile_picture_url: photoUrl });
       setAuth(updateRes.data, token!);
+      setImgError(false); // Reset error state on new upload
     } catch (error) {
       console.error('Upload failed', error);
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const getMediaUrl = (path: string | null) => {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    const base = apiClient.defaults.baseURL || import.meta.env.VITE_API_URL || 'https://backend.joida.uz';
+    const domain = base.split('/api/v1')[0];
+    return `${domain}${path.startsWith('/') ? '' : '/'}${path}`;
   };
 
   const addSkill = () => {
@@ -209,34 +219,34 @@ const ClientProfilePage = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
             
             <div className="relative w-32 h-32 mx-auto mb-6">
-              <div className="w-full h-full rounded-full p-1 bg-gradient-to-br from-primary to-secondary animate-pulse">
+              <div className="w-full h-full rounded-full p-1 bg-gradient-to-br from-primary to-secondary animate-pulse shadow-glow-primary">
                 <div className="w-full h-full bg-background rounded-full flex items-center justify-center overflow-hidden relative border-4 border-background">
-                  {user?.profile_picture_url ? (
-                    <img src={`https://backend.joida.uz${user.profile_picture_url}`} className="w-full h-full object-cover" alt="Profile" />
+                  {user?.profile_picture_url && !imgError ? (
+                    <img 
+                      src={getMediaUrl(user.profile_picture_url)!} 
+                      className="w-full h-full object-cover transition-opacity duration-300" 
+                      alt="Profile" 
+                      onError={() => setImgError(true)}
+                    />
                   ) : (
                     <UserIcon className="w-12 h-12 text-foreground/10" />
                   )}
                   {isUploading && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10 backdrop-blur-sm">
                       <Loader2 className="w-8 h-8 text-white animate-spin" />
                     </div>
                   )}
                 </div>
               </div>
               
-              <AnimatePresence>
-                {isEditing && (
-                  <motion.button 
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
-                    onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-1 right-1 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-10 border-4 border-background"
-                  >
-                    <Camera className="w-5 h-5" />
-                  </motion.button>
-                )}
-              </AnimatePresence>
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute bottom-1 right-1 w-11 h-11 bg-primary text-white rounded-full flex items-center justify-center shadow-premium hover:scale-110 active:scale-95 transition-all z-20 border-4 border-background group/cam"
+                title={t('profile.change_photo', 'Rasm o\'zgartirish')}
+              >
+                <Camera className="w-5 h-5 group-hover/cam:rotate-12 transition-transform" />
+                <div className="absolute inset-0 bg-white/20 rounded-full opacity-0 group-hover/cam:opacity-100 transition-opacity" />
+              </button>
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handlePhotoUpload} />
             </div>
 
