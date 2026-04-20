@@ -51,7 +51,7 @@ def get_nearby_experts(
         )
     ).order_by(UserModel.subscription_tier.desc())
     
-    if category:
+    if category and category.lower() not in ["any", "any text", "all", "none"]:
         query = query.filter(UserModel.profession == category)
         
     experts = query.all()
@@ -59,12 +59,25 @@ def get_nearby_experts(
     # 3. Precise Filtering and Sorting by Distance
     nearby_experts = []
     for expert in experts:
-        dist = haversine(lat, lon, expert.latitude, expert.longitude)
-        if dist <= radius:
-            # Create a dict from the SQLAlchemy model and add distance
-            expert_data = UserWithDistance.model_validate(expert).model_dump()
-            expert_data["distance"] = round(dist, 2)
-            nearby_experts.append(expert_data)
+        try:
+            # Skip experts with invalid coordinates as a safety measure
+            if expert.latitude is None or expert.longitude is None:
+                continue
+                
+            dist = haversine(lat, lon, expert.latitude, expert.longitude)
+            if dist <= radius:
+                # Isolated validation: If one profile fails Pydantic, others should still load
+                try:
+                    expert_data = UserWithDistance.model_validate(expert).model_dump()
+                    expert_data["distance"] = round(dist, 2)
+                    nearby_experts.append(expert_data)
+                except Exception as pydantic_err:
+                    print(f"CRITICAL: User schema validation failed for user ID {expert.id}: {str(pydantic_err)}")
+                    # Optionally log more details here
+                    continue
+        except Exception as loop_err:
+            print(f"ERROR: Unexpected error processing expert {expert.id}: {str(loop_err)}")
+            continue
             
     # Sort by distance
     nearby_experts.sort(key=lambda x: x["distance"])
