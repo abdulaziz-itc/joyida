@@ -456,98 +456,100 @@ const ClientProfilePage = () => {
               )}
             </div>
 
-            {/* 2. EXPERTISE & SKILLS */}
-            <div className="glass-card p-6 md:p-8 border-white/5 shadow-xl space-y-8">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-glow-amber"><Award className="w-6 h-6" /></div>
-                <div>
-                  <h3 className="text-xl font-black text-foreground">{t('profile.expertise')}</h3>
-                  <p className="text-sm text-foreground/40 font-medium">{t('profile.expertiseDesc')}</p>
-                </div>
-              </div>
-
-              {isEditing ? (
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2">{t('profile.skills')}</label>
-                    <div className="flex gap-2">
-                      <input type="text" value={tempSkill} onChange={e => setTempSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSkill()} className="premium-input flex-1 !py-3" placeholder="Ko'nikma qo'shish..." />
-                      <button onClick={addSkill} className="px-6 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-2xl font-black text-xs">+</button>
-                    </div>
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {localUser.skills.map((s: string) => (
-                        <span key={s} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs flex items-center gap-2 group">
-                          {s} <X className="w-3 h-3 text-foreground/20 hover:text-rose-500 cursor-pointer" onClick={() => removeSkill(s)} />
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2">{t('profile.languages')}</label>
-                        <div className="space-y-2">
-                          {localUser.languages.map((l: any, i: number) => (
-                            <div key={i} className="flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-xl text-sm">
-                                <span className="font-bold">{l.language}</span>
-                                <span className="text-primary font-black uppercase text-[10px]">{l.level}</span>
-                            </div>
-                          ))}
-                          <button className="w-full py-2 border border-dashed border-white/10 hover:border-primary/50 text-foreground/20 hover:text-primary transition-all rounded-xl text-[10px] font-black uppercase tracking-widest">+ Qo'shish</button>
-                        </div>
-                    </div>
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2">{t('profile.socials')}</label>
-                        <div className="space-y-2">
-                          {localUser.socialLinks.map((s: any, i: number) => (
-                            <div key={i} className="flex items-center gap-3 p-3 bg-white/[0.02] border border-white/5 rounded-xl text-sm">
-                              <Globe2 className="w-4 h-4 text-foreground/20" />
-                              <span className="truncate flex-1">{s.url}</span>
-                              <Trash2 className="w-3 h-3 text-foreground/20 hover:text-rose-500 cursor-pointer" />
-                            </div>
-                          ))}
-                          <button className="w-full py-2 border border-dashed border-white/10 hover:border-primary/50 text-foreground/20 hover:text-primary transition-all rounded-xl text-[10px] font-black uppercase tracking-widest">+ Ulash</button>
-                        </div>
-                    </div>
+            {/* 2. EXPERTISE & SKILLS - Expert Only */}
+            {user?.is_expert && (
+              <div className="glass-card p-6 md:p-8 border-white/5 shadow-xl space-y-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-glow-amber"><Award className="w-6 h-6" /></div>
+                  <div>
+                    <h3 className="text-xl font-black text-foreground">{t('profile.expertise')}</h3>
+                    <p className="text-sm text-foreground/40 font-medium">{t('profile.expertiseDesc')}</p>
                   </div>
                 </div>
-              ) : (
-                <div className="space-y-8">
-                   <div className="flex flex-col gap-3">
-                      <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">{t('profile.skills')}</span>
-                      <div className="flex flex-wrap gap-2">
-                         {user?.skills?.length ? user.skills.map((s: string) => (
-                           <span key={s} className="px-4 py-2 bg-primary/5 border border-primary/10 rounded-2xl text-[10px] font-black text-primary uppercase tracking-widest shadow-sm">
-                             {s}
-                           </span>
-                         )) : <span className="text-sm text-foreground/30 italic">{t('profile.noData')}</span>}
+
+                {isEditing ? (
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2">{t('profile.skills')}</label>
+                      <div className="flex gap-2">
+                        <input type="text" value={tempSkill} onChange={e => setTempSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSkill()} className="premium-input flex-1 !py-3" placeholder="Ko'nikma qo'shish..." />
+                        <button onClick={addSkill} className="px-6 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-2xl font-black text-xs">+</button>
                       </div>
-                   </div>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-glass-border">
-                      <div className="flex flex-col gap-3">
-                        <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">{t('profile.languages')}</span>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {localUser.skills.map((s: string) => (
+                          <span key={s} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs flex items-center gap-2 group">
+                            {s} <X className="w-3 h-3 text-foreground/20 hover:text-rose-500 cursor-pointer" onClick={() => removeSkill(s)} />
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
+                      <div className="space-y-3">
+                          <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2">{t('profile.languages')}</label>
+                          <div className="space-y-2">
+                            {localUser.languages.map((l: any, i: number) => (
+                              <div key={i} className="flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-xl text-sm">
+                                  <span className="font-bold">{l.language}</span>
+                                  <span className="text-primary font-black uppercase text-[10px]">{l.level}</span>
+                              </div>
+                            ))}
+                            <button className="w-full py-2 border border-dashed border-white/10 hover:border-primary/50 text-foreground/20 hover:text-primary transition-all rounded-xl text-[10px] font-black uppercase tracking-widest">+ Qo'shish</button>
+                          </div>
+                      </div>
+                      <div className="space-y-3">
+                          <label className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] ml-2">{t('profile.socials')}</label>
+                          <div className="space-y-2">
+                            {localUser.socialLinks.map((s: any, i: number) => (
+                              <div key={i} className="flex items-center gap-3 p-3 bg-white/[0.02] border border-white/5 rounded-xl text-sm">
+                                <Globe2 className="w-4 h-4 text-foreground/20" />
+                                <span className="truncate flex-1">{s.url}</span>
+                                <Trash2 className="w-3 h-3 text-foreground/20 hover:text-rose-500 cursor-pointer" />
+                              </div>
+                            ))}
+                            <button className="w-full py-2 border border-dashed border-white/10 hover:border-primary/50 text-foreground/20 hover:text-primary transition-all rounded-xl text-[10px] font-black uppercase tracking-widest">+ Ulash</button>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    <div className="flex flex-col gap-3">
+                        <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">{t('profile.skills')}</span>
                         <div className="flex flex-wrap gap-2">
-                           {user?.languages?.length ? user.languages.map((l: any, i: number) => (
-                             <div key={i} className="px-3 py-1.5 bg-glass-bg border border-glass-border rounded-lg text-xs font-bold flex items-center gap-2">
-                               {l.language} <span className="w-1 h-1 rounded-full bg-primary" /> <span className="text-[9px] text-primary uppercase">{l.level}</span>
-                             </div>
-                           )) : <span className="text-sm text-foreground/30 italic">{t('profile.noData')}</span>}
+                          {user?.skills?.length ? user.skills.map((s: string) => (
+                            <span key={s} className="px-4 py-2 bg-primary/5 border border-primary/10 rounded-2xl text-[10px] font-black text-primary uppercase tracking-widest shadow-sm">
+                              {s}
+                            </span>
+                          )) : <span className="text-sm text-foreground/30 italic">{t('profile.noData')}</span>}
                         </div>
-                      </div>
-                      <div className="flex flex-col gap-3">
-                        <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">{t('profile.socials')}</span>
-                        <div className="flex gap-3">
-                           {user?.social_links?.length ? user.social_links.map((s: any, i: number) => (
-                             <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-xl bg-glass-bg border border-glass-border flex items-center justify-center text-foreground/60 hover:text-primary hover:border-primary/30 transition-all">
-                               <Globe2 className="w-5 h-5" />
-                             </a>
-                           )) : <span className="text-sm text-foreground/30 italic">{t('profile.noData')}</span>}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-glass-border">
+                        <div className="flex flex-col gap-3">
+                          <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">{t('profile.languages')}</span>
+                          <div className="flex flex-wrap gap-2">
+                            {user?.languages?.length ? user.languages.map((l: any, i: number) => (
+                              <div key={i} className="px-3 py-1.5 bg-glass-bg border border-glass-border rounded-lg text-xs font-bold flex items-center gap-2">
+                                {l.language} <span className="w-1 h-1 rounded-full bg-primary" /> <span className="text-[9px] text-primary uppercase">{l.level}</span>
+                              </div>
+                            )) : <span className="text-sm text-foreground/30 italic">{t('profile.noData')}</span>}
+                          </div>
                         </div>
-                      </div>
-                   </div>
-                </div>
-              )}
-            </div>
+                        <div className="flex flex-col gap-3">
+                          <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">{t('profile.socials')}</span>
+                          <div className="flex gap-3">
+                            {user?.social_links?.length ? user.social_links.map((s: any, i: number) => (
+                              <a key={i} href={s.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-xl bg-glass-bg border border-glass-border flex items-center justify-center text-foreground/60 hover:text-primary hover:border-primary/30 transition-all">
+                                <Globe2 className="w-5 h-5" />
+                              </a>
+                            )) : <span className="text-sm text-foreground/30 italic">{t('profile.noData')}</span>}
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* 3. EDUCATION - Expert Only */}
             {user?.is_expert && (
