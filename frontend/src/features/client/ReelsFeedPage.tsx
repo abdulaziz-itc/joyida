@@ -214,10 +214,10 @@ const ReelsFeedPage = () => {
   };
 
   return (
-    <div className="flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen bg-slate-50 overflow-hidden relative font-outfit">
+    <div className={`flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen transition-colors duration-500 overflow-hidden relative font-outfit ${activeTab === 'explore' ? 'bg-black' : 'bg-slate-50'}`}>
       
       {/* Background Nebula Aura */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className={`absolute inset-0 pointer-events-none overflow-hidden transition-opacity duration-700 ${activeTab === 'explore' ? 'opacity-40' : 'opacity-100'}`}>
         <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full animate-pulse-slow" />
         <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary/5 blur-[120px] rounded-full animate-pulse-slow" />
       </div>
@@ -232,15 +232,21 @@ const ReelsFeedPage = () => {
         onSuccess={() => fetchReels('', activeTab === 'my-works')}
       />
 
-// ... (omitting modal part for context match)
-// ...
       {/* Top Header Overlay */}
-      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 bg-white/70 backdrop-blur-md pointer-events-none border-b border-slate-200/50">
+      <div className={`absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 backdrop-blur-md pointer-events-none transition-all duration-500 border-b ${
+        activeTab === 'explore' 
+          ? 'bg-black/40 border-white/5' 
+          : 'bg-white/70 border-slate-200/50'
+      }`}>
         <div className="flex items-center gap-10 pointer-events-auto">
           <div className="relative group">
             <button 
               onClick={() => setActiveTab('explore')}
-              className={`text-xl font-black tracking-tighter transition-all ${activeTab === 'explore' ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`text-xl font-black tracking-tighter transition-all ${
+                activeTab === 'explore' 
+                  ? 'text-white' 
+                  : 'text-slate-400 hover:text-slate-600'
+              }`}
             >
               {t('reels.explore')}
             </button>
@@ -253,7 +259,11 @@ const ReelsFeedPage = () => {
             <div className="relative group">
               <button 
                 onClick={() => setActiveTab('my-works')}
-                className={`text-xl font-black tracking-tighter transition-all ${activeTab === 'my-works' ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`text-xl font-black tracking-tighter transition-all ${
+                  activeTab === 'my-works' 
+                    ? 'text-slate-900' 
+                    : activeTab === 'explore' ? 'text-white/40 hover:text-white/60' : 'text-slate-400 hover:text-slate-600'
+                }`}
               >
                 {t('reels.my_works')}
               </button>
@@ -267,7 +277,11 @@ const ReelsFeedPage = () => {
         <div className="flex items-center gap-4 pointer-events-auto">
           <button 
             onClick={() => setShowSearch(!showSearch)}
-            className="p-3 bg-slate-100 rounded-2xl text-slate-700 border border-slate-200 hover:bg-slate-200 transition-all shadow-sm"
+            className={`p-3 rounded-2xl transition-all shadow-sm border ${
+              activeTab === 'explore'
+                ? 'bg-white/10 text-white border-white/10 hover:bg-white/20'
+                : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+            }`}
           >
             <Search size={22} />
           </button>
@@ -292,21 +306,25 @@ const ReelsFeedPage = () => {
             className="absolute top-24 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-6"
           >
             <form onSubmit={handleSearch} className="relative group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+              <Search className={`absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${activeTab === 'explore' ? 'text-white/30' : 'text-slate-400'} group-focus-within:text-primary`} />
               <input 
                 type="text" 
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('reels.search_placeholder')}
-                className="w-full bg-white/90 backdrop-blur-3xl border border-slate-200 rounded-[2rem] py-5 pl-14 pr-6 text-slate-900 focus:outline-none focus:border-primary/50 transition-all shadow-xl"
+                className={`w-full backdrop-blur-3xl border rounded-[2rem] py-5 pl-14 pr-6 focus:outline-none focus:border-primary/50 transition-all shadow-xl ${
+                  activeTab === 'explore'
+                    ? 'bg-black/60 border-white/10 text-white'
+                    : 'bg-white/90 border-slate-200 text-slate-900'
+                }`}
               />
             </form>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="flex-1 h-full bg-white relative overflow-y-auto hide-scrollbar">
+      <div className={`flex-1 h-full transition-colors duration-500 relative overflow-y-auto hide-scrollbar ${activeTab === 'explore' ? 'bg-black' : 'bg-white'}`}>
         {/* Scroll container */}
         <div 
           ref={containerRef}
@@ -316,23 +334,29 @@ const ReelsFeedPage = () => {
           <div className="fixed top-24 right-8 z-40 flex flex-col gap-4">
             <button 
               onClick={() => setIsMuted(!isMuted)}
-              className="p-4 bg-white shadow-xl border border-slate-100 rounded-2xl text-slate-700 hover:bg-slate-50 transition-all"
+              className={`p-4 backdrop-blur-3xl rounded-2xl transition-all shadow-xl border ${
+                activeTab === 'explore'
+                  ? 'bg-white/5 text-white border-white/10 hover:bg-white/10'
+                  : 'bg-white text-slate-700 border-slate-100 hover:bg-slate-50'
+              }`}
             >
               {isMuted ? <VolumeX /> : <Volume2 />}
             </button>
           </div>
 
           {loading ? (
-            <div className="w-full h-full flex items-center justify-center bg-white">
+            <div className={`w-full h-full flex items-center justify-center transition-colors ${activeTab === 'explore' ? 'bg-black' : 'bg-white'}`}>
                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-glow-primary" />
             </div>
           ) : reels.length === 0 ? (
-            <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-white text-slate-900">
+            <div className={`w-full h-full flex flex-col items-center justify-center p-6 text-center transition-colors ${
+              activeTab === 'explore' ? 'bg-black text-white' : 'bg-white text-slate-900'
+            }`}>
               <div className="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 shadow-glow-primary">
                 <VideoOff className="w-12 h-12 text-primary/40" />
               </div>
               <h2 className="text-3xl font-black mb-4 tracking-tight">{t('reels.no_videos')}</h2>
-              <p className="text-slate-500 max-w-sm font-medium leading-relaxed">
+              <p className={`max-w-sm font-medium leading-relaxed ${activeTab === 'explore' ? 'text-white/50' : 'text-slate-500'}`}>
                 {t('reels.no_videos_desc')}
               </p>
             </div>
