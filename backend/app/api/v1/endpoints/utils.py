@@ -71,11 +71,28 @@ def read_services(
     return services
 
 @router.get("/resolve-instagram")
-def resolve_instagram_video(url: str = Query(...)):
-    """Extract direct video URL from an Instagram public link with robust handling."""
+def resolve_instagram_video(
+    url: str = Query(...),
+    db: Session = Depends(get_db)
+):
+    """
+    Intelligent Instagram resolver:
+    1. Checks if we already have a local copy in the database.
+    2. Falls back to direct extraction.
+    """
     try:
         # Normalize URL
-        url = url.split('?')[0].rstrip('/') + '/'
+        url_normalized = url.split('?')[0].rstrip('/') + '/'
+        
+        # Priority 1: Check database for already downloaded copies of this URL
+        existing_project = db.query(ProjectModel).filter(
+            ProjectModel.original_url.like(f"%{url_normalized.rstrip('/')}%"),
+            ProjectModel.is_downloaded == True
+        ).first()
+
+        if existing_project:
+            print(f"INFO: Local copy found for {url_normalized}")
+            return {"direct_url": existing_project.video_url}
         
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -83,11 +100,10 @@ def resolve_instagram_video(url: str = Query(...)):
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
         }
         
-        req = urllib.request.Request(url, headers=headers)
+        req = urllib.request.Request(url_normalized, headers=headers)
         with urllib.request.urlopen(req, timeout=12) as response:
             html = response.read().decode('utf-8')
             
-            # Enhanced discovery patterns (2024/2025 structure)
             patterns = [
                 r'"video_url":"([^"]+)"',
                 r'<meta[^>]*property="og:video"[^>]*content="([^"]+)"',
@@ -108,12 +124,10 @@ def resolve_instagram_video(url: str = Query(...)):
             if video_url:
                 return {"direct_url": video_url}
             
-            # If standard regex fails, don't crash, return empty so frontend can handle
-            return {"direct_url": None, "message": "Could not extract direct URL automatically"}
+            return {"direct_url": None, "message": "Could not extract direct URL"}
             
     except Exception as e:
         print(f"Resolve error for {url}: {str(e)}")
-        # Return 200 with null instead of 500 to keep the frontend running smoothly
         return {"direct_url": None, "error": str(e)}
 
 @router.get("/diag/system")

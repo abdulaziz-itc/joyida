@@ -44,6 +44,7 @@ try:
     add_column("projects", "is_downloaded", "BOOLEAN DEFAULT 0")
     add_column("projects", "thumbnail_url", "VARCHAR")
     add_column("projects", "is_public", "BOOLEAN DEFAULT 1")
+    add_column("projects", "original_url", "VARCHAR")
     print("Migration check completed.")
 
 except Exception as e:

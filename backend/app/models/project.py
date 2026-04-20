@@ -18,6 +18,7 @@ class Project(Base):
     is_downloaded = Column(Boolean, default=False)
     is_public = Column(Boolean, default=True)
     thumbnail_url = Column(String, nullable=True)
+    original_url = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     owner_id = Column(Integer, ForeignKey("users.id"))
 

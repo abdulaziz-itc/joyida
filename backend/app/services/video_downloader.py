@@ -112,6 +112,7 @@ def download_social_video(project_id: int, db_session_factory: callable):
             
             if os.path.exists(filepath) and os.path.getsize(filepath) > 1000:
                 project.video_url = local_url
+                project.original_url = original_url
                 project.is_downloaded = True
                 db.add(project)
                 db.commit()

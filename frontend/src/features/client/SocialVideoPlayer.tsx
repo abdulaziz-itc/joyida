@@ -113,11 +113,32 @@ const SocialVideoPlayer = ({ url, isMuted, isPlaying = false, onLoadedData }: So
     return `https://www.youtube.com/embed/${videoId}?autoplay=${isPlaying ? 1 : 0}&mute=${isMuted ? 1 : 0}&loop=1&playlist=${videoId}&controls=0&modestbranding=1`;
   };
 
+  const getFullUrl = (path: string) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const baseUrl = (import.meta.env.VITE_API_URL as string)?.split('/api/')[0];
+    const cleanPath = path.replace(/^\//, '');
+    return `${baseUrl}/${cleanPath}`;
+  };
+
   if (hasError) {
     return (
-      <div className="w-full h-full bg-slate-900/50 flex flex-col items-center justify-center text-white/20 gap-4">
-        <VideoOff size={48} />
-        <span className="text-xs font-black uppercase tracking-widest text-center">Video o'ynatilmadi</span>
+      <div className="w-full h-full bg-slate-900/80 backdrop-blur-md flex flex-col items-center justify-center text-white/50 p-8 text-center gap-6">
+        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+            <VideoOff size={32} className="text-primary/50" />
+        </div>
+        <div className="space-y-2">
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white">Video yopiq</h3>
+            <p className="text-[10px] font-medium leading-relaxed uppercase tracking-wider opacity-60">
+                Ushbu video muallif tomonidan yashirilgan yoki o'chirilgan bo'lishi mumkin. Instagram orqali tekshirib ko'ring.
+            </p>
+        </div>
+        <button 
+            onClick={() => window.open(url, '_blank')}
+            className="px-6 py-2 rounded-full border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-colors"
+        >
+            Instagramda ko'rish
+        </button>
       </div>
     );
   }
@@ -136,7 +157,7 @@ const SocialVideoPlayer = ({ url, isMuted, isPlaying = false, onLoadedData }: So
       {isDirectPlayable && (
         <video 
           ref={videoRef}
-          src={directUrl || url} 
+          src={getFullUrl(directUrl || url)} 
           loop 
           muted={isMuted}
           playsInline
