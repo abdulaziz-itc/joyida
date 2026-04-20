@@ -4,7 +4,7 @@ from typing import List, Any, Optional
 from app.db.session import get_db, SessionLocal
 from app.api import deps
 from app.models.user import User
-from app.models.project import Project as ProjectModel
+from app.models.project import Project as ProjectModel, ProjectLike
 from app.schemas.project import Project, ProjectCreate, ProjectUpdate
 from app.services.video_downloader import download_social_video
 
@@ -27,7 +27,8 @@ def read_public_projects(
     skip: int = 0,
     limit: int = 20,
     search: Optional[str] = None,
-    background_tasks: BackgroundTasks = None
+    background_tasks: BackgroundTasks = None,
+    current_user: Optional[User] = Depends(deps.get_current_user_optional)
 ) -> Any:
     """Retrieve all public projects with proactive auto-downloader."""
     query = db.query(ProjectModel).filter(ProjectModel.is_public == True)
@@ -41,6 +42,18 @@ def read_public_projects(
     
     try:
         projects = query.order_by(ProjectModel.created_at.desc()).offset(skip).limit(limit).all()
+        
+        # Mark liked status for returned projects
+        liked_project_ids = set()
+        if current_user:
+            liked_project_ids = {
+                lp.project_id for lp in db.query(ProjectLike.project_id)
+                .filter(ProjectLike.user_id == current_user.id)
+                .all()
+            }
+
+        for project in projects:
+            project.is_liked = project.id in liked_project_ids
         
         # Proactive auto-downloader
         if background_tasks:
@@ -136,15 +149,31 @@ def like_project(
     *,
     db: Session = Depends(get_db),
     id: int,
+    current_user: User = Depends(deps.get_current_user),
 ) -> Any:
-    """Increment likes for a project."""
+    """Toggle like for a project."""
     project = db.query(ProjectModel).filter(ProjectModel.id == id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
-    project.likes_count += 1
-    db.add(project)
+        
+    like = db.query(ProjectLike).filter(
+        ProjectLike.user_id == current_user.id,
+        ProjectLike.project_id == id
+    ).first()
+    
+    if like:
+        db.delete(like)
+        project.likes_count = max(0, (project.likes_count or 1) - 1)
+        is_liked = False
+    else:
+        new_like = ProjectLike(user_id=current_user.id, project_id=id)
+        db.add(new_like)
+        project.likes_count = (project.likes_count or 0) + 1
+        is_liked = True
+        
     db.commit()
     db.refresh(project)
+    project.is_liked = is_liked
     return project
 
 @router.post("/{id}/view", response_model=Project)

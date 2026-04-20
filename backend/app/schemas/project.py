@@ -26,6 +26,7 @@ class Project(ProjectBase):
     created_at: datetime
     owner_id: int
     owner: Optional[User] = None
+    is_liked: bool = False
 
     class Config:
         from_attributes = True

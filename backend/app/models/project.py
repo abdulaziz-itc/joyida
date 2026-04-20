@@ -23,6 +23,19 @@ class Project(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="projects")
+    likes = relationship("ProjectLike", back_populates="project", cascade="all, delete-orphan")
+
+class ProjectLike(Base):
+    __tablename__ = "project_likes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    project_id = Column(Integer, ForeignKey("projects.id"), index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = relationship("User")
+    project = relationship("Project", back_populates="likes")
 
 # Update User model to include projects relationship
 # (This would usually be in models/user.py)

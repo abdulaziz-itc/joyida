@@ -51,6 +51,18 @@ try:
     add_column("users", "last_name", "VARCHAR")
     add_column("users", "patronymic", "VARCHAR")
     
+    # Persistent Likes Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS project_likes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            project_id INTEGER,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(project_id) REFERENCES projects(id)
+        )
+    """)
+    
     print("Migration check completed.")
 
 except Exception as e:

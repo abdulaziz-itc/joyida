@@ -43,3 +43,26 @@ def get_current_active_superuser(
             status_code=403, detail="The user doesn't have enough privileges"
         )
     return current_user
+
+# Optional authentication for public endpoints
+reusable_oauth2_optional = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_V1_STR}/auth/login/access-token",
+    auto_error=False
+)
+
+def get_current_user_optional(
+    db: Session = Depends(get_db), token: Optional[str] = Depends(reusable_oauth2_optional)
+) -> Optional[User]:
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
+        )
+        token_data = TokenPayload(**payload)
+        user = db.query(User).filter(User.id == token_data.sub).first()
+        if user and user.is_active:
+            return user
+        return None
+    except:
+        return None
