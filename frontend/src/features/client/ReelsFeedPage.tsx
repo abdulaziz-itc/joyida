@@ -115,9 +115,18 @@ const ReelsFeedPage = () => {
     try {
       const response = await apiClient.post(`/projects/${reelId}/like`);
       const updatedReel = response.data;
-      setReels(prev => prev.map(r => r.id === reelId ? { ...r, likes_count: updatedReel.likes_count } : r));
+      setReels(prev => prev.map(r => r.id === reelId ? { 
+        ...r, 
+        likes_count: updatedReel.likes_count,
+        is_liked: updatedReel.is_liked 
+      } : r));
+      
       if (selectedReel?.id === reelId) {
-        setSelectedReel({ ...selectedReel, likes_count: updatedReel.likes_count });
+        setSelectedReel({ 
+          ...selectedReel, 
+          likes_count: updatedReel.likes_count,
+          is_liked: updatedReel.is_liked 
+        });
       }
     } catch (err) {
       console.error("Error liking reel", err);
