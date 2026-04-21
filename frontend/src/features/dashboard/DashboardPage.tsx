@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { 
   Users, DollarSign, Briefcase, Activity, 
   TrendingUp, TrendingDown, Search, Bell, 
-  LayoutDashboard, PieChart, Settings, LogOut, Loader2 
+  LayoutDashboard, PieChart, Settings, LogOut, Loader2,
+  Eye, Star
 } from 'lucide-react';
 import { 
   XAxis, YAxis, CartesianGrid, 
@@ -78,6 +79,8 @@ const DashboardPage: React.FC = () => {
     fetchDashboardData();
   }, []);
   
+  const isAdmin = stats?.is_admin || false;
+
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-10 animate-in fade-in duration-700">
       {/* Header */}
@@ -107,15 +110,15 @@ const DashboardPage: React.FC = () => {
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <KpiCard 
-          title={t('dashboard.total_users')} 
-          value={stats?.total_users?.value || "0"} 
-          trend={stats?.total_users?.trend || "+0%"} 
-          isPositive={stats?.total_users?.is_positive !== false} 
-          icon={Users}
+          title={isAdmin ? t('dashboard.total_users') : t('dashboard.profile_views')} 
+          value={isAdmin ? stats?.total_users?.value : stats?.profile_views?.value} 
+          trend={isAdmin ? stats?.total_users?.trend : stats?.profile_views?.trend} 
+          isPositive={isAdmin ? stats?.total_users?.is_positive : stats?.profile_views?.is_positive} 
+          icon={isAdmin ? Users : Eye}
           isLoading={isLoading}
         />
         <KpiCard 
-          title={t('dashboard.revenue')} 
+          title={isAdmin ? t('dashboard.revenue') : t('dashboard.my_revenue')} 
           value={stats?.revenue?.value || "$0.00"} 
           trend={stats?.revenue?.trend || "+0%"} 
           isPositive={stats?.revenue?.is_positive !== false} 
@@ -131,11 +134,11 @@ const DashboardPage: React.FC = () => {
           isLoading={isLoading}
         />
         <KpiCard 
-          title={t('dashboard.conv_rate')} 
-          value={stats?.conversion_rate?.value || "0.0%"} 
-          trend={stats?.conversion_rate?.trend || "+0%"} 
-          isPositive={stats?.conversion_rate?.is_positive !== false} 
-          icon={Activity}
+          title={isAdmin ? t('dashboard.conv_rate') : t('dashboard.my_rating')} 
+          value={isAdmin ? stats?.conversion_rate?.value : stats?.rating?.value} 
+          trend={isAdmin ? stats?.conversion_rate?.trend : stats?.rating?.trend} 
+          isPositive={isAdmin ? stats?.conversion_rate?.is_positive : stats?.rating?.is_positive} 
+          icon={isAdmin ? Activity : Star}
           isLoading={isLoading}
         />
       </div>

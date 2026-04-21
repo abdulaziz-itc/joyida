@@ -14,24 +14,42 @@ async def get_stats(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(deps.get_current_user)
 ) -> Dict[str, Any]:
-    """Get real platform and personal stats."""
-    total_users_count = db.query(UserModel).count()
-    my_projects_count = db.query(ProjectModel).filter(ProjectModel.owner_id == current_user.id).count()
+    """Get stats based on user role (Admin vs Expert)."""
     
-    return {
-        "total_users": {"value": f"{total_users_count}", "trend": "+0%", "is_positive": True},
-        "revenue": {"value": "$0.00", "trend": "+0%", "is_positive": True},
-        "active_projects": {"value": f"{my_projects_count}", "trend": "+0%", "is_positive": True},
-        "conversion_rate": {"value": "0.0%", "trend": "+0%", "is_positive": True},
-    }
+    if current_user.is_superuser:
+        # Admin gets global platform-wide stats
+        total_users_count = db.query(UserModel).count()
+        global_projects_count = db.query(ProjectModel).count()
+        return {
+            "is_admin": True,
+            "total_users": {"value": f"{total_users_count}", "trend": "+0%", "is_positive": True},
+            "revenue": {"value": "$0.00", "trend": "+0%", "is_positive": True},
+            "active_projects": {"value": f"{global_projects_count}", "trend": "+0%", "is_positive": True},
+            "conversion_rate": {"value": "0.0%", "trend": "+0%", "is_positive": True},
+        }
+    else:
+        # Expert gets personal professional stats
+        my_projects_count = db.query(ProjectModel).filter(ProjectModel.owner_id == current_user.id).count()
+        
+        # Calculate total views across all expert's projects
+        total_views = db.query(func.sum(ProjectModel.views_count)).filter(
+            ProjectModel.owner_id == current_user.id
+        ).scalar() or 0
+        
+        return {
+            "is_admin": False,
+            "profile_views": {"value": f"{total_views}", "trend": "+0%", "is_positive": True},
+            "revenue": {"value": "$0.00", "trend": "+0%", "is_positive": True},
+            "active_projects": {"value": f"{my_projects_count}", "trend": "+0%", "is_positive": True},
+            "rating": {"value": f"{current_user.rating or 0.0}", "trend": "+0%", "is_positive": True},
+        }
 
 @router.get("/analytics")
 async def get_analytics(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(deps.get_current_user)
 ) -> List[Dict[str, Any]]:
-    """Get basic project growth data (simplified for now)."""
-    # For now returning zeroed out monthly data until we aggregate real history
+    """Get growth data (simplified for now)."""
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
     return [{"name": m, "users": 0, "revenue": 0} for m in months]
 
@@ -40,15 +58,22 @@ async def get_activity(
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(deps.get_current_user)
 ) -> List[Dict[str, Any]]:
-    """Get real recent activity for the user's projects."""
-    recent_projects = db.query(ProjectModel).filter(
-        ProjectModel.owner_id == current_user.id
-    ).order_by(ProjectModel.created_at.desc()).limit(5).all()
+    """Get recent activity for the user's projects."""
+    if current_user.is_superuser:
+        # Admin sees global activity (limited to 5)
+        recent_projects = db.query(ProjectModel).order_by(ProjectModel.created_at.desc()).limit(5).all()
+    else:
+        # Expert sees only their own activity
+        recent_projects = db.query(ProjectModel).filter(
+            ProjectModel.owner_id == current_user.id
+        ).order_by(ProjectModel.created_at.desc()).limit(5).all()
     
     activities = []
     for p in recent_projects:
+        # For admin, show who created it
+        actor_name = p.owner.full_name if (current_user.is_superuser and p.owner) else "You"
         activities.append({
-            "user": current_user.full_name or "You",
+            "user": actor_name,
             "action": f"created project '{p.title}'",
             "time": "recent"
         })

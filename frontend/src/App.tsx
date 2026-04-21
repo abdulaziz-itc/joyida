@@ -180,7 +180,7 @@ function App() {
             {currentPage === 'admin' && <AdminLayout />}
           </DashboardLayout>
         ) : (
-          <div className="w-full h-screen bg-background flex items-center justify-center">
+          <div className="w-full h-[100dvh] bg-background flex items-center justify-center">
              <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         )}

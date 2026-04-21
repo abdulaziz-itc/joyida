@@ -163,8 +163,11 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 
       {/* Main Content - Independent Internal Scroll */}
       <main 
-        className="flex-1 h-full overflow-y-auto no-scrollbar lg:ml-[20rem] min-h-full bg-transparent relative transition-all duration-500 z-10 pb-32 lg:pb-8 pt-16 lg:pt-8"
-        style={{ marginLeft: typeof window !== 'undefined' && window.innerWidth < 1024 ? '0' : undefined }}
+        className="flex-1 h-full overflow-y-auto overflow-x-hidden no-scrollbar bg-transparent relative transition-all duration-500 z-10 pb-32 lg:pb-8 pt-16 lg:pt-8"
+        style={{ 
+          marginLeft: typeof window !== 'undefined' && window.innerWidth < 1024 ? '0' : '16rem',
+          WebkitOverflowScrolling: 'touch'
+        }}
       >
         {children}
         

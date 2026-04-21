@@ -261,7 +261,7 @@ const ReelsFeedPage = ({ initialReelHash, onViewExpert }: { initialReelHash?: st
   };
 
   return (
-    <div className={`flex w-full h-[calc(100vh-theme(spacing.16))] md:h-screen transition-colors duration-500 overflow-hidden relative font-outfit ${activeTab === 'explore' ? 'bg-black' : 'bg-slate-50'}`}>
+    <div className={`flex w-full h-[calc(100dvh-theme(spacing.16))] md:h-full transition-colors duration-500 overflow-hidden relative font-outfit ${activeTab === 'explore' ? 'bg-black' : 'bg-slate-50'}`}>
       
       {/* Background Nebula Aura */}
       <div className={`absolute inset-0 pointer-events-none overflow-hidden transition-opacity duration-700 ${activeTab === 'explore' ? 'opacity-40' : 'opacity-100'}`}>
