@@ -11,6 +11,7 @@ import ClientExplorePage from './features/client/ClientExplorePage';
 import ReelsFeedPage from './features/client/ReelsFeedPage';
 import ClientProfilePage from './features/client/ClientProfilePage';
 import MessagesPage from './features/client/MessagesPage';
+import PublicProfilePage from './features/client/PublicProfilePage';
 import AdminLayout from './layouts/AdminLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import ToastContainer from './features/notifications/ToastContainer';
@@ -20,6 +21,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 function App() {
   const { isAuthenticated, user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState<string | null>(null);
+  const [selectedExpertId, setSelectedExpertId] = useState<number | null>(null);
   const [sharedReelHash, setSharedReelHash] = useState<string | null>(null);
   const [showPreferences, setShowPreferences] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -147,15 +149,34 @@ function App() {
             onNavigate={(page) => {
               setCurrentPage(page);
               if (page !== 'reels') setSharedReelHash(null);
+              if (page !== 'expert_profile') setSelectedExpertId(null);
             }} 
             currentPage={currentPage}
           >
             {currentPage === 'dashboard' && <DashboardPage />}
             {currentPage === 'projects' && <ProjectsPage />}
             {currentPage === 'explore' && <ClientExplorePage />}
-            {currentPage === 'reels' && <ReelsFeedPage initialReelHash={sharedReelHash} />}
+            {currentPage === 'reels' && (
+              <ReelsFeedPage 
+                initialReelHash={sharedReelHash} 
+                onViewExpert={(id) => {
+                  setSelectedExpertId(id);
+                  setCurrentPage('expert_profile');
+                }}
+              />
+            )}
             {currentPage === 'messages' && <MessagesPage />}
             {currentPage === 'profile' && <ClientProfilePage />}
+            {currentPage === 'expert_profile' && selectedExpertId && (
+              <PublicProfilePage 
+                expertId={selectedExpertId} 
+                onBack={() => setCurrentPage('reels')}
+                onNavigate={(page) => {
+                  setCurrentPage(page);
+                  setSelectedExpertId(null);
+                }}
+              />
+            )}
             {currentPage === 'admin' && <AdminLayout />}
           </DashboardLayout>
         ) : (

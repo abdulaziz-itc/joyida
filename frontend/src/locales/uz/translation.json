@@ -262,7 +262,9 @@
     "reels": "Reels",
     "profile": "Profil va Sozlamalar",
     "upgrade": "PRO darajaga o'tish",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "client_view": "Mijoz rejimi",
+    "expert_view": "Mutaxassis rejimi"
   },
   "reels": {
     "no_videos": "Hozircha videolar yo'q",

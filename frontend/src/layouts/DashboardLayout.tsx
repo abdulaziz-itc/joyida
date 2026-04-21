@@ -105,10 +105,21 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 
           {!user?.is_superuser && user?.is_expert && (
             <div className="space-y-1.5">
-              <NavItem icon={LayoutDashboard} label={t('nav.dashboard')} active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
-              <NavItem icon={Briefcase} label={t('nav.projects')} active={currentPage === 'projects'} onClick={() => onNavigate('projects')} />
-              <NavItem icon={MessageCircle} label={t('nav.messages')} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
-              <NavItem icon={Settings} label={t('nav.settings')} active={currentPage === 'settings'} onClick={() => onNavigate('settings')} />
+              <>
+                <div className="px-4 py-2 mt-4 mb-1">
+                  <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">{t('nav.client_view', 'Mijoz rejimi')}</span>
+                </div>
+                <NavItem icon={MapPin} label={t('nav.explore')} active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
+                <NavItem icon={Film} label={t('nav.reels')} active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
+                
+                <div className="px-4 py-2 mt-6 mb-1">
+                  <span className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.2em]">{t('nav.expert_view', 'Mutaxassis rejimi')}</span>
+                </div>
+                <NavItem icon={LayoutDashboard} label={t('nav.dashboard')} active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
+                <NavItem icon={Briefcase} label={t('nav.projects')} active={currentPage === 'projects'} onClick={() => onNavigate('projects')} />
+                <NavItem icon={MessageCircle} label={t('nav.messages')} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
+                <NavItem icon={User} label={t('nav.profile')} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
+              </>
             </div>
           )}
 
@@ -201,9 +212,9 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 const MobileNavItem = ({ icon: Icon, active = false, onClick }: any) => (
   <button 
     onClick={onClick}
-    className={`p-4 transition-all duration-300 relative z-10 outline-none focus:outline-none select-none touch-none ${active ? 'text-primary' : 'text-white/40 hover:text-white/70'}`}
+    className={`p-4 transition-all duration-300 relative z-10 outline-none focus:outline-none select-none touch-none ${active ? 'text-primary' : 'text-foreground/50 hover:text-foreground/80'}`}
   >
-    <Icon className={`w-7 h-7 transition-all duration-500 ${active ? 'scale-110 text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'scale-100'}`} />
+    <Icon className={`w-7 h-7 transition-all duration-500 ${active ? 'scale-110 text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'scale-100 opacity-70 group-hover:opacity-100'}`} />
     {active && (
       <motion.div 
         layoutId="activeBottomNav"

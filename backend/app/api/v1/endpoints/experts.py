@@ -83,3 +83,21 @@ def get_nearby_experts(
     nearby_experts.sort(key=lambda x: x["distance"])
     
     return nearby_experts
+@router.get("/{user_id}", response_model=UserSchema)
+def get_expert_by_id(
+    user_id: int,
+    db: Session = Depends(get_db)
+) -> Any:
+    """Fetch a specific expert's public profile data."""
+    expert = db.query(UserModel).filter(
+        UserModel.id == user_id,
+        UserModel.is_expert == True
+    ).first()
+    
+    if not expert:
+        raise HTTPException(
+            status_code=404,
+            detail="Expert not found"
+        )
+        
+    return expert

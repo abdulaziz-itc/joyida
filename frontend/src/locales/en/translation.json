@@ -229,7 +229,9 @@
     "reels": "Reels",
     "profile": "Profile & Settings",
     "upgrade": "Upgrade to PRO",
-    "logout": "Logout"
+    "logout": "Logout",
+    "client_view": "Client View",
+    "expert_view": "Expert View"
   },
   "reels": {
     "no_videos": "No videos yet",

@@ -232,7 +232,9 @@
     "reels": "Reels",
     "profile": "Профиль и Настройки",
     "upgrade": "Перейти на PRO",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "client_view": "Режим Клиента",
+    "expert_view": "Режим Эксперта"
   },
   "reels": {
     "no_videos": "Пока видео нет",

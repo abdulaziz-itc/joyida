@@ -43,7 +43,7 @@ const getFileUrl = (url: string, reelId?: number, type: 'view' | 'thumb' = 'view
   return `${baseUrl}/${cleanPath}`;
 };
 
-const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null }) => {
+const ReelsFeedPage = ({ initialReelHash, onViewExpert }: { initialReelHash?: string | null, onViewExpert?: (id: number) => void }) => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const [reels, setReels] = useState<any[]>([]);
@@ -418,6 +418,7 @@ const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null })
                 getReelUrl={getReelUrl}
                 handleLike={handleLike}
                 copyToClipboard={copyToClipboard}
+                onViewExpert={onViewExpert}
                 onDownload={() => handleDownload(reel.id, reel.title)}
                 onCaptureThumb={(video: any) => {
                     if (!reel.thumbnail_url) handleThumbnailCapture(reel.id, video);
@@ -469,6 +470,7 @@ const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null })
                 getReelUrl={getReelUrl}
                 handleLike={handleLike}
                 copyToClipboard={copyToClipboard}
+                onViewExpert={onViewExpert}
                 onDownload={() => handleDownload(selectedReel.id, selectedReel.title)}
                 onCaptureThumb={(video: any) => {
                     if (!selectedReel.thumbnail_url) handleThumbnailCapture(selectedReel.id, video);
@@ -483,7 +485,7 @@ const ReelsFeedPage = ({ initialReelHash }: { initialReelHash?: string | null })
   );
 };
 
-const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPlaying, user, t, getReelUrl, handleLike, copyToClipboard, isModal = false }: any) => {
+const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPlaying, user, t, getReelUrl, handleLike, copyToClipboard, onViewExpert, isModal = false }: any) => {
   const [isPaused, setIsPaused] = useState(false);
   const [showPlayIcon, setShowPlayIcon] = useState(false);
 
@@ -559,13 +561,17 @@ const FullReelView = ({ reel, isMuted, onClose, onDownload, onCaptureThumb, isPl
               <motion.div 
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                className="flex items-center gap-3 mb-3"
+                onClick={() => {
+                  const expertId = reel.expert?.id || reel.owner?.id;
+                  if (expertId && onViewExpert) onViewExpert(expertId);
+                }}
+                className="flex items-center gap-3 mb-3 cursor-pointer group/author pointer-events-auto"
               >
-                <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black backdrop-blur-3xl shadow-premium">
+                <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black backdrop-blur-3xl shadow-premium group-hover/author:border-primary/50 transition-colors">
                   {displayName.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="font-black text-base tracking-tight">@{handle}</h3>
+                  <h3 className="font-black text-base tracking-tight group-hover/author:text-primary transition-colors">@{handle}</h3>
                   <p className="text-primary/80 text-[9px] font-black uppercase tracking-widest">{reel.category || reel.expert?.profession || t('reels.profession_fallback')}</p>
                 </div>
               </motion.div>
