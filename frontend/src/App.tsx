@@ -1,22 +1,30 @@
 // Joyida Platform: FINAL DEPLOYMENT PUSH - VERIFIED CONFIG
-import { useState, useEffect } from 'react';
-import LoginPage from './features/auth/LoginPage';
-import RegisterPage from './features/auth/RegisterPage';
-import Onboarding from './features/auth/Onboarding';
-import PreferenceSelection from './features/auth/PreferenceSelection';
-import ProfileSetup from './features/auth/ProfileSetup';
-import DashboardPage from './features/dashboard/DashboardPage';
-import ProjectsPage from './features/projects/ProjectsPage';
-import ClientExplorePage from './features/client/ClientExplorePage';
-import ReelsFeedPage from './features/client/ReelsFeedPage';
-import ClientProfilePage from './features/client/ClientProfilePage';
-import MessagesPage from './features/client/MessagesPage';
-import PublicProfilePage from './features/client/PublicProfilePage';
-import AdminLayout from './layouts/AdminLayout';
-import DashboardLayout from './layouts/DashboardLayout';
-import ToastContainer from './features/notifications/ToastContainer';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuthStore } from './store/authStore';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+
+// Lazy load feature pages for optimal performance
+const LoginPage = lazy(() => import('./features/auth/LoginPage'));
+const RegisterPage = lazy(() => import('./features/auth/RegisterPage'));
+const Onboarding = lazy(() => import('./features/auth/Onboarding'));
+const PreferenceSelection = lazy(() => import('./features/auth/PreferenceSelection'));
+const ProfileSetup = lazy(() => import('./features/auth/ProfileSetup'));
+const DashboardPage = lazy(() => import('./features/dashboard/DashboardPage'));
+const ProjectsPage = lazy(() => import('./features/projects/ProjectsPage'));
+const ClientExplorePage = lazy(() => import('./features/client/ClientExplorePage'));
+const ReelsFeedPage = lazy(() => import('./features/client/ReelsFeedPage'));
+const ClientProfilePage = lazy(() => import('./features/client/ClientProfilePage'));
+const MessagesPage = lazy(() => import('./features/client/MessagesPage'));
+const PublicProfilePage = lazy(() => import('./features/client/PublicProfilePage'));
+const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
+const DashboardLayout = lazy(() => import('./layouts/DashboardLayout'));
+const ToastContainer = lazy(() => import('./features/notifications/ToastContainer'));
+
+const LoadingScreen = () => (
+  <div className="w-full h-[100dvh] bg-background flex items-center justify-center">
+    <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -125,76 +133,90 @@ function App() {
   if (!isAuthenticated && !sharedReelHash) {
     return (
       <GoogleOAuthProvider clientId="596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com">
-        <div className="App">
-          {showRegister ? (
-            <RegisterPage onBackToLogin={() => setShowRegister(false)} />
-          ) : (
-            <LoginPage onRegister={() => setShowRegister(true)} />
-          )}
-          <ToastContainer />
-        </div>
+        <Suspense fallback={<LoadingScreen />}>
+          <div className="App">
+            {showRegister ? (
+              <RegisterPage onBackToLogin={() => setShowRegister(false)} />
+            ) : (
+              <LoginPage onRegister={() => setShowRegister(true)} />
+            )}
+            <ToastContainer />
+          </div>
+        </Suspense>
       </GoogleOAuthProvider>
     );
   }
 
   // Authenticated user flows or Public Deep Link flow
   if (showPreferences && !sharedReelHash) {
-    return <PreferenceSelection onFinish={handleFinishPreferences} />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <PreferenceSelection onFinish={handleFinishPreferences} />
+      </Suspense>
+    );
   }
 
   if (showOnboarding && !sharedReelHash) {
-    return <Onboarding onFinish={handleFinishOnboarding} />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <Onboarding onFinish={handleFinishOnboarding} />
+      </Suspense>
+    );
   }
 
   if (showProfileSetup && !sharedReelHash) {
-    return <ProfileSetup onFinish={handleFinishProfileSetup} />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <ProfileSetup onFinish={handleFinishProfileSetup} />
+      </Suspense>
+    );
   }
 
   return (
     <GoogleOAuthProvider clientId="596799584146-vfqh5kfpr3imiq7evjaq6e5pifuhcfci.apps.googleusercontent.com">
-      <div className="App">
-        {currentPage ? (
-          <DashboardLayout 
-            onNavigate={(page) => {
-              setCurrentPage(page);
-              if (page !== 'reels') setSharedReelHash(null);
-              if (page !== 'expert_profile') setSelectedExpertId(null);
-            }} 
-            currentPage={currentPage}
-          >
-            {currentPage === 'dashboard' && <DashboardPage />}
-            {currentPage === 'projects' && <ProjectsPage />}
-            {currentPage === 'explore' && <ClientExplorePage />}
-            {currentPage === 'reels' && (
-              <ReelsFeedPage 
-                initialReelHash={sharedReelHash} 
-                onViewExpert={(id) => {
-                  setSelectedExpertId(id);
-                  setCurrentPage('expert_profile');
-                }}
-              />
-            )}
-            {currentPage === 'messages' && <MessagesPage />}
-            {currentPage === 'profile' && <ClientProfilePage />}
-            {currentPage === 'expert_profile' && selectedExpertId && (
-              <PublicProfilePage 
-                expertId={selectedExpertId} 
-                onBack={() => setCurrentPage('reels')}
-                onNavigate={(page) => {
-                  setCurrentPage(page);
-                  setSelectedExpertId(null);
-                }}
-              />
-            )}
-            {currentPage === 'admin' && <AdminLayout />}
-          </DashboardLayout>
-        ) : (
-          <div className="w-full h-[100dvh] bg-background flex items-center justify-center">
-             <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
-        <ToastContainer />
-      </div>
+      <Suspense fallback={<LoadingScreen />}>
+        <div className="App">
+          {currentPage ? (
+            <DashboardLayout 
+              onNavigate={(page) => {
+                setCurrentPage(page);
+                if (page !== 'reels') setSharedReelHash(null);
+                if (page !== 'expert_profile') setSelectedExpertId(null);
+              }} 
+              currentPage={currentPage}
+            >
+              {currentPage === 'dashboard' && <DashboardPage />}
+              {currentPage === 'projects' && <ProjectsPage />}
+              {currentPage === 'explore' && <ClientExplorePage />}
+              {currentPage === 'reels' && (
+                <ReelsFeedPage 
+                  initialReelHash={sharedReelHash} 
+                  onViewExpert={(id) => {
+                    setSelectedExpertId(id);
+                    setCurrentPage('expert_profile');
+                  }}
+                />
+              )}
+              {currentPage === 'messages' && <MessagesPage />}
+              {currentPage === 'profile' && <ClientProfilePage />}
+              {currentPage === 'expert_profile' && selectedExpertId && (
+                <PublicProfilePage 
+                  expertId={selectedExpertId} 
+                  onBack={() => setCurrentPage('reels')}
+                  onNavigate={(page) => {
+                    setCurrentPage(page);
+                    setSelectedExpertId(null);
+                  }}
+                />
+              )}
+              {currentPage === 'admin' && <AdminLayout />}
+            </DashboardLayout>
+          ) : (
+            <LoadingScreen />
+          )}
+          <ToastContainer />
+        </div>
+      </Suspense>
     </GoogleOAuthProvider>
   );
 

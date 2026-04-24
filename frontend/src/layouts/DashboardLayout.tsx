@@ -159,7 +159,7 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 
       {/* Main Content - Independent Internal Scroll */}
       <main 
-        className="flex-1 h-full overflow-y-auto overflow-x-hidden no-scrollbar bg-transparent relative transition-all duration-500 z-10 pb-32 lg:pb-8 pt-16 lg:pt-8 max-w-full"
+        className="flex-1 h-full overflow-y-auto overflow-x-hidden bg-transparent relative z-10 pb-32 lg:pb-8 pt-16 lg:pt-8 max-w-full"
         style={{ 
           marginLeft: typeof window !== 'undefined' && window.innerWidth < 1024 ? '0' : '16rem',
           WebkitOverflowScrolling: 'touch'
@@ -188,8 +188,6 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
       {/* Bottom Nav - Simplified Blur */}
       <div className="lg:hidden fixed bottom-6 left-0 right-0 z-50 px-6">
         <nav className="h-16 bg-glass-bg backdrop-blur-md border border-white/10 rounded-full shadow-2xl flex items-center justify-around px-2 relative overflow-hidden">
-          {/* Subtle Dynamic Light inside the pill */}
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-cyan-500/5 pointer-events-none" />
           
           <MobileNavItem icon={MapPin} active={currentPage === 'explore'} onClick={() => onNavigate('explore')} />
           <MobileNavItem icon={Film} active={currentPage === 'reels'} onClick={() => onNavigate('reels')} />
