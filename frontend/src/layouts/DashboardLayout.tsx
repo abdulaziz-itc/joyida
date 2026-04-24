@@ -51,7 +51,7 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
   };
 
   return (
-    <div className="flex h-[100dvh] bg-background text-foreground transition-colors duration-500 overflow-hidden relative">
+    <div className="flex h-[100dvh] w-full bg-background text-foreground transition-colors duration-500 overflow-hidden relative">
       {/* ELITE BACKGROUND LAYER: Aurora & Nebula Effects */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
         {/* Deep Background Glows */}
@@ -163,7 +163,7 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 
       {/* Main Content - Independent Internal Scroll */}
       <main 
-        className="flex-1 h-full overflow-y-auto overflow-x-hidden no-scrollbar bg-transparent relative transition-all duration-500 z-10 pb-32 lg:pb-8 pt-16 lg:pt-8"
+        className="flex-1 h-full overflow-y-auto overflow-x-hidden no-scrollbar bg-transparent relative transition-all duration-500 z-10 pb-32 lg:pb-8 pt-16 lg:pt-8 max-w-full"
         style={{ 
           marginLeft: typeof window !== 'undefined' && window.innerWidth < 1024 ? '0' : '16rem',
           WebkitOverflowScrolling: 'touch'

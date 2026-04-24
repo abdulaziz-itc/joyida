@@ -216,7 +216,7 @@ const ClientProfilePage = () => {
   );
 
   return (
-    <div className="w-full h-screen overflow-y-auto bg-background p-4 md:p-8 scroll-smooth hide-scrollbar transition-colors duration-500 font-main">
+    <div className="w-full bg-transparent p-4 md:p-8 scroll-smooth transition-colors duration-500 font-main">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 pb-32">
         
         {/* LEFT ASPECT: Identity Card - Sticky on desktop */}
