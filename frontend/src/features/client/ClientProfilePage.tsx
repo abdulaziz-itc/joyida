@@ -190,16 +190,15 @@ const ClientProfilePage = () => {
     <div className="w-full min-h-screen bg-background text-foreground font-main overflow-x-hidden p-4 md:p-8 lg:p-12">
       <div className="max-w-7xl mx-auto space-y-8 pb-40">
         
-        {/* HERO SECTION - Redesigned for Impact */}
-        <div className="relative rounded-[3rem] overflow-hidden bg-glass-bg border border-white/5 p-8 md:p-12 shadow-premium">
-          <div className="absolute top-0 right-0 w-[40%] h-full bg-gradient-to-l from-primary/10 via-transparent to-transparent pointer-events-none" />
-          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-secondary/5 blur-[100px] rounded-full pointer-events-none" />
+        {/* HERO SECTION - Optimized */}
+        <div className="relative rounded-[2rem] overflow-hidden bg-glass-bg border border-white/5 p-8 md:p-10 shadow-xl">
+          <div className="absolute top-0 right-0 w-[30%] h-full bg-primary/5 pointer-events-none" />
           
           <div className="relative flex flex-col lg:flex-row items-center lg:items-end gap-10">
             {/* Avatar with dynamic glow */}
             <div className="relative shrink-0">
-               <div className="w-40 h-40 md:w-52 md:h-52 rounded-[2.5rem] p-1 bg-gradient-to-br from-primary via-secondary to-accent shadow-glow-primary overflow-hidden group">
-                  <div className="w-full h-full bg-background rounded-[2.3rem] overflow-hidden relative">
+               <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] p-1 bg-primary/20 shadow-lg overflow-hidden group">
+                  <div className="w-full h-full bg-background rounded-[1.8rem] overflow-hidden relative">
                      {user?.profile_picture_url && !imgError ? (
                         <img src={getMediaUrl(user.profile_picture_url)!} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Avatar" onError={() => setImgError(true)} />
                      ) : (

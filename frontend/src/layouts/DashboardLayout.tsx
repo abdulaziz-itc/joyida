@@ -52,18 +52,14 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
 
   return (
     <div className="flex h-[100dvh] w-full bg-background text-foreground transition-colors duration-500 overflow-hidden relative">
-      {/* ELITE BACKGROUND LAYER: Aurora & Nebula Effects */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
-        {/* Deep Background Glows */}
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[150px] rounded-full animate-aurora mix-blend-screen" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-cyan-500/10 blur-[150px] rounded-full animate-nebula-float mix-blend-screen" />
-        
-        {/* Subtle Animated Particles/Gradient Mesh */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.02)_0%,transparent_100%)] opacity-30" />
+      {/* OPTIMIZED BACKGROUND LAYER */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none opacity-40">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[100px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-500/5 blur-[100px] rounded-full" />
       </div>
 
-      {/* Mobile Top Header - Truly Pinned */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-glass-bg backdrop-blur-3xl border-b border-white/10 z-50 flex items-center justify-between px-6 shadow-premium">
+      {/* Mobile Top Header - Optimized Blur */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-glass-bg backdrop-blur-xl border-b border-white/5 z-50 flex items-center justify-between px-6">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-cyan-500 flex items-center justify-center font-bold text-lg shadow-[0_0_20px_var(--color-primary-glow)] border border-white/10">
             J
@@ -80,9 +76,9 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         )}
       </header>
 
-      {/* Floating Glass Sidebar - Hidden on mobile with force-hide classes */}
+      {/* Sidebar - Simplified */}
       <aside 
-        className="hidden lg:flex fixed left-6 top-6 bottom-6 w-64 border border-white/10 p-6 flex-col bg-glass-bg backdrop-blur-3xl z-40 rounded-[2.5rem] shadow-premium transition-all duration-500 inner-glow"
+        className="hidden lg:flex fixed left-6 top-6 bottom-6 w-64 border border-white/5 p-6 flex-col bg-glass-bg backdrop-blur-xl z-40 rounded-[2rem] shadow-xl transition-all duration-500"
         style={{ display: typeof window !== 'undefined' && window.innerWidth < 1024 ? 'none' : undefined }}
       >
         <div className="flex items-center gap-3 mb-10 px-2 text-foreground">
@@ -189,9 +185,9 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
         </AnimatePresence>
       </main>
 
-      {/* Modern Floating Bottom Navigation Bar (Elite Pill) */}
+      {/* Bottom Nav - Simplified Blur */}
       <div className="lg:hidden fixed bottom-6 left-0 right-0 z-50 px-6">
-        <nav className="h-20 bg-glass-bg backdrop-blur-3xl border border-white/15 rounded-[2.5rem] shadow-premium flex items-center justify-around px-2 relative overflow-hidden inner-glow">
+        <nav className="h-16 bg-glass-bg backdrop-blur-xl border border-white/10 rounded-full shadow-2xl flex items-center justify-around px-2 relative overflow-hidden">
           {/* Subtle Dynamic Light inside the pill */}
           <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-cyan-500/5 pointer-events-none" />
           
