@@ -219,9 +219,9 @@ const ClientProfilePage = () => {
     <div className="w-full h-screen overflow-y-auto bg-background p-4 md:p-8 scroll-smooth hide-scrollbar transition-colors duration-500 font-main">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 pb-32">
         
-        {/* LEFT ASPECT: Identity Card */}
-        <div className="w-full lg:w-1/3 space-y-6">
-          <div className="glass-card p-8 border-white/5 shadow-premium relative overflow-hidden group">
+        {/* LEFT ASPECT: Identity Card - Sticky on desktop */}
+        <div className="w-full lg:w-1/3 lg:sticky lg:top-8 h-fit space-y-6">
+          <div className="glass-card p-6 md:p-8 border-white/5 shadow-premium relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
             
             <div className="relative w-32 h-32 mx-auto mb-6">
@@ -256,12 +256,12 @@ const ClientProfilePage = () => {
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handlePhotoUpload} />
             </div>
 
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-black text-foreground leading-tight">
+            <div className="text-center space-y-2 mb-6">
+              <h2 className="text-2xl font-black text-foreground leading-tight tracking-tight">
                 {user?.full_name || user?.email.split('@')[0]}
               </h2>
-              <p className="text-foreground/40 font-medium text-xs tracking-wider">{user?.email}</p>
-              <div className="pt-4 flex flex-col items-center gap-4">
+              <p className="text-foreground/40 font-bold text-xs tracking-wider">{user?.email}</p>
+              <div className="pt-3 flex flex-col items-center gap-3">
                 <span className={`px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-2xl border transition-all ${
                   user?.is_expert 
                     ? 'bg-primary/10 text-primary border-primary/20 shadow-glow-primary' 
@@ -364,16 +364,16 @@ const ClientProfilePage = () => {
         {/* RIGHT ASPECT: Information Display & Edit Forms */}
         <div className="w-full lg:w-2/3 space-y-8">
           
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h1 className="text-3xl md:text-4xl font-black text-foreground font-display tracking-tight leading-none">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-2">
+            <div className="space-y-2">
+              <h1 className="text-3xl md:text-5xl font-black text-foreground font-display tracking-tight leading-none uppercase">
                 {user?.is_expert ? t('profile.title') : t('profile.client_title', 'Mening Profilim')}
               </h1>
-              <p className="text-sm text-foreground/40 font-medium">
+              <p className="text-sm text-foreground/30 font-bold tracking-wide">
                 {user?.is_expert ? t('profile.subtitle') : t('profile.client_subtitle', 'Shaxsiy ma\'lumotlar va sozlamalaringizni boshqaring.')}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-3 shrink-0">
               {isEditing ? (
                 <>
                   <button onClick={handleCancel} className="p-4 bg-glass-bg border border-glass-border text-foreground hover:bg-white/5 rounded-2xl transition-all shadow-lg flex items-center gap-2 font-black text-[10px] uppercase tracking-widest">
@@ -436,8 +436,8 @@ const ClientProfilePage = () => {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                      <DetailItem label={t('profile.lastName')} value={user?.last_name} />
                      <DetailItem label={t('profile.firstName')} value={user?.first_name} />
                      <DetailItem label={t('profile.phone')} value={user?.phone_number} icon={Phone} />
