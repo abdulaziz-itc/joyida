@@ -364,33 +364,33 @@ const ClientProfilePage = () => {
         {/* RIGHT ASPECT: Information Display & Edit Forms */}
         <div className="w-full lg:w-2/3 space-y-8">
           
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-2">
-            <div className="space-y-2">
-              <h1 className="text-3xl md:text-5xl font-black text-foreground font-display tracking-tight leading-none uppercase">
+          <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 mb-6">
+            <div className="space-y-3 max-w-2xl">
+              <h1 className="text-3xl md:text-5xl font-black text-foreground font-display tracking-tight leading-[0.9] uppercase break-words">
                 {user?.is_expert ? t('profile.title') : t('profile.client_title', 'Mening Profilim')}
               </h1>
               <p className="text-sm text-foreground/30 font-bold tracking-wide">
                 {user?.is_expert ? t('profile.subtitle') : t('profile.client_subtitle', 'Shaxsiy ma\'lumotlar va sozlamalaringizni boshqaring.')}
               </p>
             </div>
-            <div className="flex gap-3 shrink-0">
+            <div className="flex gap-3 shrink-0 w-full sm:w-auto">
               {isEditing ? (
                 <>
-                  <button onClick={handleCancel} className="p-4 bg-glass-bg border border-glass-border text-foreground hover:bg-white/5 rounded-2xl transition-all shadow-lg flex items-center gap-2 font-black text-[10px] uppercase tracking-widest">
+                  <button onClick={handleCancel} className="flex-1 sm:flex-none p-4 bg-glass-bg border border-glass-border text-foreground hover:bg-white/5 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest">
                     <X className="w-4 h-4" /> {t('profile.cancel')}
                   </button>
                   <button 
                     onClick={handleSave}
                     disabled={saveStatus === 'saving'}
-                    className={`glow-button !px-8 !py-4 ${saveStatus === 'success' ? '!bg-emerald-500 shadow-emerald-500/20' : ''}`}
+                    className={`flex-1 sm:flex-none glow-button !px-6 !py-4 ${saveStatus === 'success' ? '!bg-emerald-500 shadow-emerald-500/20' : ''}`}
                   >
                     {saveStatus === 'saving' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
                     {saveStatus === 'saving' ? t('profile.saving') : t('profile.save')}
                   </button>
                 </>
               ) : (
-                <button onClick={() => setIsEditing(true)} className="glow-button !px-8 !py-4">
-                  <Edit3 className="w-5 h-5" /> {t('profile.edit')}
+                <button onClick={() => setIsEditing(true)} className="w-full sm:w-auto glow-button !px-6 !py-4 whitespace-nowrap">
+                  <Edit3 className="w-5 h-5 shrink-0" /> {t('profile.edit')}
                 </button>
               )}
             </div>
