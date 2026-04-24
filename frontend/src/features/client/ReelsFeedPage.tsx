@@ -261,7 +261,7 @@ const ReelsFeedPage = ({ initialReelHash, onViewExpert }: { initialReelHash?: st
   };
 
   return (
-    <div className={`flex w-full h-[calc(100dvh-theme(spacing.16))] md:h-full transition-colors duration-500 overflow-hidden relative font-outfit ${activeTab === 'explore' ? 'bg-black' : 'bg-slate-50'}`}>
+    <div className={`flex w-full h-[calc(100dvh-theme(spacing.16))] md:h-full transition-colors duration-500 overflow-hidden relative font-outfit ${activeTab === 'explore' ? 'bg-black' : 'bg-background'}`}>
       
       {/* Background Nebula Aura */}
       <div className={`absolute inset-0 pointer-events-none overflow-hidden transition-opacity duration-700 ${activeTab === 'explore' ? 'opacity-40' : 'opacity-100'}`}>
@@ -283,7 +283,7 @@ const ReelsFeedPage = ({ initialReelHash, onViewExpert }: { initialReelHash?: st
       <div className={`absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 backdrop-blur-md pointer-events-none transition-all duration-500 border-b ${
         activeTab === 'explore' 
           ? 'bg-black/40 border-white/5' 
-          : 'bg-white/70 border-slate-200/50'
+          : 'bg-background/70 border-white/5'
       }`}>
         <div className="flex items-center gap-10 pointer-events-auto">
           <div className="relative group">
@@ -308,8 +308,8 @@ const ReelsFeedPage = ({ initialReelHash, onViewExpert }: { initialReelHash?: st
                 onClick={() => setActiveTab('my-works')}
                 className={`text-xl font-black tracking-tighter transition-all ${
                   activeTab === 'my-works' 
-                    ? 'text-slate-900' 
-                    : activeTab === 'explore' ? 'text-white/40 hover:text-white/60' : 'text-slate-400 hover:text-slate-600'
+                    ? 'text-foreground' 
+                    : activeTab === 'explore' ? 'text-white/40 hover:text-white/60' : 'text-foreground/40 hover:text-foreground/60'
                 }`}
               >
                 {t('reels.my_works')}
@@ -362,7 +362,7 @@ const ReelsFeedPage = ({ initialReelHash, onViewExpert }: { initialReelHash?: st
                 className={`w-full backdrop-blur-3xl border rounded-[2rem] py-5 pl-14 pr-6 focus:outline-none focus:border-primary/50 transition-all shadow-xl ${
                   activeTab === 'explore'
                     ? 'bg-black/60 border-white/10 text-white'
-                    : 'bg-white/90 border-slate-200 text-slate-900'
+                    : 'bg-background/90 border-white/10 text-foreground'
                 }`}
               />
             </form>
@@ -370,7 +370,7 @@ const ReelsFeedPage = ({ initialReelHash, onViewExpert }: { initialReelHash?: st
         )}
       </AnimatePresence>
 
-      <div className={`flex-1 h-full transition-colors duration-500 relative overflow-y-auto hide-scrollbar ${activeTab === 'explore' ? 'bg-black' : 'bg-white'}`}>
+      <div className={`flex-1 h-full transition-colors duration-500 relative overflow-y-auto hide-scrollbar ${activeTab === 'explore' ? 'bg-black' : 'bg-background'}`}>
         {/* Scroll container */}
         <div 
           ref={containerRef}
@@ -396,7 +396,7 @@ const ReelsFeedPage = ({ initialReelHash, onViewExpert }: { initialReelHash?: st
             </div>
           ) : reels.length === 0 ? (
             <div className={`w-full h-full flex flex-col items-center justify-center p-6 text-center transition-colors ${
-              activeTab === 'explore' ? 'bg-black text-white' : 'bg-white text-slate-900'
+              activeTab === 'explore' ? 'bg-black text-white' : 'bg-background text-foreground'
             }`}>
               <div className="w-32 h-32 bg-primary/5 rounded-full flex items-center justify-center mb-8 border border-primary/10 shadow-glow-primary">
                 <VideoOff className="w-12 h-12 text-primary/40" />
@@ -730,7 +730,7 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
     <motion.div 
       whileHover={{ scale: 0.98 }}
       whileTap={{ scale: 0.95 }}
-      className="aspect-[9/16] relative bg-white rounded-xl overflow-hidden cursor-pointer group border border-slate-200 shadow-sm"
+      className="aspect-[9/16] relative bg-card rounded-xl overflow-hidden cursor-pointer group border border-white/5 shadow-sm"
     >
       <div className="absolute inset-0" onClick={onClick}>
         {thumb && !imgError ? (
@@ -765,7 +765,7 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
                     <>
                       <button 
                         onClick={(e) => { e.stopPropagation(); onEdit(e); }}
-                        className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl flex items-center justify-center text-slate-900 hover:bg-primary hover:text-white transition-all border border-slate-200 shadow-xl"
+                        className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-xl flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all border border-white/10 shadow-xl"
                         title="Edit"
                       >
                           <Edit2 size={16} />
@@ -781,7 +781,7 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
                   )}
                   <button 
                     onClick={(e) => { e.stopPropagation(); onDownload(); }}
-                    className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl flex items-center justify-center text-slate-900 hover:bg-green-500 hover:text-white transition-all border border-slate-200 shadow-xl"
+                    className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-xl flex items-center justify-center text-foreground hover:bg-green-500 hover:text-white transition-all border border-white/10 shadow-xl"
                     title="Download"
                   >
                       <Download size={16} />
@@ -789,18 +789,18 @@ const ReelGridCard = ({ reel, onClick, showControls, onEdit, onDelete, onDownloa
               </div>
               <button 
                 onClick={onClick}
-                className="px-4 py-2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-primary transition-all shadow-xl"
+                className="px-4 py-2 bg-foreground text-background text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-primary hover:text-white transition-all shadow-xl"
               >
                 OPEN WORK
               </button>
           </div>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-90 group-hover:opacity-0 transition-opacity z-10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90 group-hover:opacity-0 transition-opacity z-10 pointer-events-none" />
       
       <div className="absolute bottom-0 left-0 right-0 p-3 z-20 pointer-events-none group-hover:opacity-0 transition-opacity">
-        <h5 className="text-slate-900 text-[10px] font-bold truncate mb-1 tracking-tight">{reel.title}</h5>
-        <div className="flex items-center gap-2">
+        <h5 className="text-foreground text-[10px] font-bold truncate mb-1 tracking-tight">{reel.title}</h5>
+        <div className="flex items-center gap-1 text-foreground/40 text-[8px] font-bold">
             <div className="flex items-center gap-1 text-[8px] text-slate-500 font-black uppercase tracking-widest">
                 <Eye size={8} className="text-primary" /> {reel.views_count || 0}
             </div>
