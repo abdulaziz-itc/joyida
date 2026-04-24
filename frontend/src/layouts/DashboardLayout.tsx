@@ -118,7 +118,7 @@ const DashboardLayout = ({ children, onNavigate, currentPage }: { children: any,
                 <NavItem icon={LayoutDashboard} label={t('nav.dashboard')} active={currentPage === 'dashboard'} onClick={() => onNavigate('dashboard')} />
                 <NavItem icon={Briefcase} label={t('nav.projects')} active={currentPage === 'projects'} onClick={() => onNavigate('projects')} />
                 <NavItem icon={MessageCircle} label={t('nav.messages')} active={currentPage === 'messages'} onClick={() => onNavigate('messages')} />
-                <NavItem icon={User} label={t('nav.profile')} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
+                <NavItem icon={User} label={t('nav.profile', 'Profil')} active={currentPage === 'profile'} onClick={() => onNavigate('profile')} />
               </>
             </div>
           )}

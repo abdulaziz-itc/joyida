@@ -62,6 +62,15 @@ function App() {
     const savedTheme = localStorage.getItem('user-theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
+    // If user is already authenticated, skip onboarding/preferences flows entirely.
+    // These screens are only for new/first-time visitors.
+    if (isAuthenticated) {
+      // Ensure flags are set so they won't appear after logout→login either
+      localStorage.setItem('preferences_seen', 'true');
+      localStorage.setItem('onboarding_seen', 'true');
+      return;
+    }
+
     const prefsSeen = localStorage.getItem('preferences_seen');
     if (!prefsSeen) {
       setShowPreferences(true);
@@ -71,7 +80,7 @@ function App() {
         setShowOnboarding(true);
       }
     }
-  }, []);
+  }, [isAuthenticated]);
 
   // Check profile completion for authenticated users
   useEffect(() => {
