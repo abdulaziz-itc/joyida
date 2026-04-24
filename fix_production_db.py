@@ -13,22 +13,38 @@ def fix_db():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    columns_to_add = [
+    # Table: users
+    users_columns = [
         ("first_name", "TEXT"),
         ("last_name", "TEXT"),
-        ("patronymic", "TEXT")
+        ("patronymic", "TEXT"),
+        ("hourly_rate", "REAL"),
+        ("review_count", "INTEGER DEFAULT 0"),
+        ("rating", "REAL DEFAULT 0.0")
     ]
     
-    for col_name, col_type in columns_to_add:
-        try:
-            print(f"Adding column {col_name}...")
-            cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
-            print(f"Column {col_name} added successfully.")
-        except sqlite3.OperationalError as e:
-            if "duplicate column name" in str(e).lower():
-                print(f"Column {col_name} already exists, skipping.")
-            else:
-                print(f"Error adding {col_name}: {e}")
+    # Table: projects
+    projects_columns = [
+        ("is_downloaded", "BOOLEAN DEFAULT 0"),
+        ("is_public", "BOOLEAN DEFAULT 1"),
+        ("thumbnail_url", "TEXT"),
+        ("original_url", "TEXT")
+    ]
+    
+    def add_columns(table_name, columns):
+        for col_name, col_type in columns:
+            try:
+                print(f"Adding column {col_name} to {table_name}...")
+                cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type}")
+                print(f"Column {col_name} added to {table_name} successfully.")
+            except sqlite3.OperationalError as e:
+                if "duplicate column name" in str(e).lower():
+                    print(f"Column {col_name} already exists in {table_name}, skipping.")
+                else:
+                    print(f"Error adding {col_name} to {table_name}: {e}")
+
+    add_columns("users", users_columns)
+    add_columns("projects", projects_columns)
                 
     conn.commit()
     conn.close()
