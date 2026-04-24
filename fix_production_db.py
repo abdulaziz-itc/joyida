@@ -45,10 +45,18 @@ def fix_db():
 
     add_columns("users", users_columns)
     add_columns("projects", projects_columns)
+    
+    # 2. IMPORTANT: Update existing projects to be public
+    print("Enabling visibility for existing projects...")
+    cursor.execute("UPDATE projects SET is_public = 1 WHERE is_public IS NULL OR is_public = 0")
+    
+    # 3. Ensure users have correct default rating
+    cursor.execute("UPDATE users SET rating = 0.0 WHERE rating IS NULL")
+    cursor.execute("UPDATE users SET review_count = 0 WHERE review_count IS NULL")
                 
     conn.commit()
     conn.close()
-    print("Database fix completed.")
+    print("Database visibility fix completed.")
 
 if __name__ == "__main__":
     fix_db()
