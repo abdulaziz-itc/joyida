@@ -127,13 +127,11 @@ const ClientExplorePage = () => {
         }}
       />
       
-      {/* Background Overlays for Depth and Contrast */}
       <div className={`fixed inset-0 z-0 pointer-events-none transition-colors duration-1000 ${
         currentTheme === 'light' 
           ? 'bg-gradient-to-b from-white/40 via-transparent to-white/40' 
           : 'bg-gradient-to-b from-black/60 via-transparent to-black/80'
       }`} />
-      <div className="fixed inset-0 z-0 backdrop-blur-[1px] pointer-events-none" />
 
       {/* Real Map Layer */}
       <AnimatePresence>
@@ -189,12 +187,12 @@ const ClientExplorePage = () => {
                initial={{ opacity: 0, scale: 0.95 }}
                animate={{ opacity: 1, scale: 1 }}
                transition={{ duration: 1 }}
-               className="text-center mb-16 pointer-events-auto relative px-8 md:px-12 py-12 md:py-20 rounded-[3.5rem] md:rounded-[5.5rem] bg-white/[0.02] backdrop-blur-3xl border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.5)] group/hero overflow-hidden mx-4 md:mx-0 group"
+               className="text-center mb-16 pointer-events-auto relative px-8 md:px-12 py-12 md:py-20 rounded-[3.5rem] md:rounded-[5.5rem] bg-white/[0.02] backdrop-blur-xl border border-white/10 shadow-[0_40px_100_rgba(0,0,0,0.5)] group/hero overflow-hidden mx-4 md:mx-0 group"
              >
                 {/* Dynamic Aurora Glow Effects: Purple to Cyan Spectrum */}
                 <div className={`absolute inset-0 -z-10 bg-gradient-to-br from-primary/20 via-transparent to-cyan-500/10 transition-opacity duration-1000 opacity-60 group-hover:opacity-100`} />
-                <div className="absolute -top-32 -left-32 w-64 h-64 bg-primary/30 blur-[130px] rounded-full animate-aurora" />
-                <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-cyan-400/20 blur-[130px] rounded-full animate-nebula-float" />
+                <div className="absolute -top-32 -left-32 w-64 h-64 bg-primary/30 blur-[80px] rounded-full animate-aurora will-change-transform" />
+                <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-cyan-400/20 blur-[80px] rounded-full animate-nebula-float will-change-transform" />
                 
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
@@ -226,7 +224,7 @@ const ClientExplorePage = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('explore.placeholder')}
-                  className="w-full bg-white/[0.02] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] py-6 pl-16 pr-24 focus:outline-none focus:border-primary/40 focus:ring-[15px] focus:ring-primary/5 transition-all text-lg shadow-[0_20px_50px_rgba(0,0,0,0.3)] text-foreground placeholder:text-foreground/20"
+                  className="w-full bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-[2.5rem] py-6 pl-16 pr-24 focus:outline-none focus:border-primary/40 focus:ring-[15px] focus:ring-primary/5 transition-all text-lg shadow-[0_20px_50px_rgba(0,0,0,0.3)] text-foreground placeholder:text-foreground/20"
                 />
                 <button 
                   type="submit"
