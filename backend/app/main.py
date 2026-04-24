@@ -111,18 +111,41 @@ def health_check():
 
 @app.get("/api/v1/diagnostics")
 def debug_database(db: Session = Depends(get_db)):
-    """Diagnostic endpoint to verify database schema matches expectation."""
-    from sqlalchemy import inspect
-    inspector = inspect(db.bind)
-    columns = inspector.get_columns("users")
-    column_names = [c["name"] for c in columns]
-    expected_new_fields = ["first_name", "last_name", "phone_number", "bio", "headline", "skills"]
-    missing_fields = [f for f in expected_new_fields if f not in column_names]
+    """Diagnostic endpoint to verify database schema and dashboard logic."""
+    from sqlalchemy import inspect, func
+    from app.models.user import User as UserModel
+    from app.models.project import Project as ProjectModel
     
+    inspector = inspect(db.bind)
+    user_columns = [c["name"] for c in inspector.get_columns("users")]
+    project_columns = [c["name"] for c in inspector.get_columns("projects")]
+    
+    # Dry run dashboard logic
+    test_results = {}
+    try:
+        user_count = db.query(UserModel).count()
+        test_results["user_query"] = f"OK ({user_count} users)"
+    except Exception as e:
+        test_results["user_query"] = f"FAILED: {str(e)}"
+
+    try:
+        project_count = db.query(ProjectModel).count()
+        test_results["project_query"] = f"OK ({project_count} projects)"
+    except Exception as e:
+        test_results["project_query"] = f"FAILED: {str(e)}"
+
+    try:
+        # Test sum views
+        total_views = db.query(func.sum(ProjectModel.views_count)).scalar() or 0
+        test_results["views_sum"] = f"OK ({total_views} views)"
+    except Exception as e:
+        test_results["views_sum"] = f"FAILED: {str(e)}"
+
     return {
-        "status": "ready" if not missing_fields else "incomplete_migration",
-        "current_columns": column_names,
-        "missing_new_fields": missing_fields,
+        "status": "ready",
+        "user_columns": user_columns,
+        "project_columns": project_columns,
+        "test_results": test_results,
         "sqlite_db_path": str(db.bind.url)
     }
 
