@@ -3,10 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { User, Briefcase, MapPin, CheckCircle, ChevronRight, ArrowLeft, ShieldCheck, Upload } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/authStore';
+import apiClient from '../../api/apiClient';
 
 const ProfileSetup: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
   const { t } = useTranslation();
+  const { updateUser, token } = useAuthStore();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     isExpert: false,
     professions: [] as string[],
@@ -28,9 +31,34 @@ const ProfileSetup: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
   const prevStep = () => setStep(prev => prev - 1);
 
   const handleSubmit = async () => {
-    // In a real app, we would call the PUT /me API here
-    console.log('Submitting profile data:', formData);
-    onFinish();
+    setLoading(true);
+    try {
+      const updateData = {
+        is_expert: formData.isExpert,
+        skills: formData.professions,
+        bio: formData.bio,
+        profile_completed: true
+      };
+
+      // Call the API to update user profile
+      await apiClient.put('/auth/me', updateData);
+      
+      // Update local store
+      updateUser({
+        is_expert: formData.isExpert,
+        skills: formData.professions,
+        bio: formData.bio,
+        profile_completed: true
+      });
+      
+      onFinish();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      // Fallback: still call onFinish so user can use the app, but log it
+      onFinish();
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFinish = () => {
@@ -175,8 +203,16 @@ const ProfileSetup: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
 
                <div className="flex gap-4">
                 <button onClick={prevStep} className="px-6 py-4 text-gray-500 hover:text-white">Orqaga</button>
-                <button onClick={handleFinish} className="glow-button flex-1 flex items-center justify-center gap-2">
-                  {formData.isExpert ? "Keyingisi: Tasdiqlash" : "Yakunlash"} <ChevronRight className="w-5 h-5" />
+                <button 
+                  onClick={handleFinish} 
+                  disabled={loading}
+                  className="glow-button flex-1 flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>{formData.isExpert ? "Keyingisi: Tasdiqlash" : "Yakunlash"} <ChevronRight className="w-5 h-5" /></>
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -208,11 +244,25 @@ const ProfileSetup: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
 
               <div className="flex gap-4">
                 <button onClick={prevStep} className="px-6 py-4 text-gray-500 hover:text-white">Orqaga</button>
-                <button onClick={handleSubmit} className="glow-button flex-1 flex items-center justify-center gap-2">
-                  Tasdiqlash va Yakunlash <CheckCircle className="w-5 h-5" />
+                <button 
+                  onClick={handleSubmit} 
+                  disabled={loading}
+                  className="glow-button flex-1 flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>Tasdiqlash va Yakunlash <CheckCircle className="w-5 h-5" /></>
+                  )}
                 </button>
               </div>
-              <button onClick={handleSubmit} className="w-full mt-4 text-sm text-gray-500 hover:text-gray-300">Hoziroq emas, o'tkazib yuborish</button>
+              <button 
+                onClick={handleSubmit} 
+                disabled={loading}
+                className="w-full mt-4 text-sm text-gray-500 hover:text-gray-300 disabled:opacity-50"
+              >
+                {loading ? "Yuklanmoqda..." : "Hoziroq emas, o'tkazib yuborish"}
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

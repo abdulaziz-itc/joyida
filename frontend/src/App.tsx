@@ -85,7 +85,7 @@ function App() {
   // Check profile completion for authenticated users
   useEffect(() => {
     if (isAuthenticated && user) {
-      const isDismissed = sessionStorage.getItem('profile_setup_dismissed');
+      const isDismissed = localStorage.getItem('profile_setup_dismissed');
       if (!user.profile_completed && !isDismissed) {
         setShowProfileSetup(true);
       } else {
@@ -117,7 +117,7 @@ function App() {
   };
 
   const handleFinishProfileSetup = () => {
-    sessionStorage.setItem('profile_setup_dismissed', 'true');
+    localStorage.setItem('profile_setup_dismissed', 'true');
     setShowProfileSetup(false);
     // In a real app, the user object would be updated via API and store
   };
