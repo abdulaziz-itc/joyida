@@ -7,8 +7,13 @@ import os
 import traceback
 import logging
 
-# Setup absolute path for logging in production
-LOG_FILE = "/home/joidauz/backend/tmp/error.log"
+# Setup robust path for logging
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOG_DIR = os.path.join(BASE_DIR, "tmp")
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR, exist_ok=True)
+
+LOG_FILE = os.path.join(LOG_DIR, "error.log")
 
 logging.basicConfig(
     filename=LOG_FILE,
