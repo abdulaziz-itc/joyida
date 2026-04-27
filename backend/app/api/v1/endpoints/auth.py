@@ -160,3 +160,15 @@ def update_user_me(
         print(error_msg)
         raise HTTPException(status_code=500, detail=error_msg)
 
+@router.post("/become-expert", response_model=UserSchema)
+def become_expert(
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(deps.get_current_user),
+) -> Any:
+    """Upgrade current user to expert status."""
+    current_user.is_expert = True
+    db.add(current_user)
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+

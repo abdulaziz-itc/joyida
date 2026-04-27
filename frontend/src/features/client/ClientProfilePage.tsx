@@ -119,11 +119,15 @@ const ClientProfilePage = () => {
   const handleBecomeExpert = async () => {
     setSaveStatus('saving');
     try {
-      const response = await apiClient.put('/auth/me', {
-        is_expert: true,
-        full_name: user?.full_name || user?.email.split('@')[0],
-      });
-      setAuth(response.data, token!);
+      const response = await apiClient.post('/auth/become-expert');
+      // If the user's name wasn't set, we might also want to do a quick update, 
+      // but the main thing is they are now an expert.
+      if (!user?.full_name && user?.email) {
+        await apiClient.put('/auth/me', { full_name: user.email.split('@')[0] });
+      }
+      // Re-fetch the auth context to get the updated user object with is_expert=true
+      const meResponse = await apiClient.get('/auth/me');
+      setAuth(meResponse.data, token!);
       setSaveStatus('success');
       setTimeout(() => setSaveStatus('idle'), 3000);
     } catch (error) {
